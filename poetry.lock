@@ -275,7 +275,10 @@ files = [
     {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
 ]
 
+[extras]
+pytest = ["pytest"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "ece224e755ed9795125c5928ce0d913ad4384da3cc831d228b3ba0ee00239c62"
+content-hash = "ecc33016911232a71a7d35768a40702f678cb112cc5ddd32f9a6fea205793626"

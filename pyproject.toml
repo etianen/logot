@@ -13,12 +13,16 @@ packages = [{ include = "logtest" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+pytest = {version = "^7.4.4", optional = true}
 typing-extensions = "^4.9.0"
+
+[tool.poetry.extras]
+pytest = ["pytest"]
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.8.0"
 ruff = "^0.1.11"
-pytest = "^7.4.4"
+pytest = "*"
 pytest-cov = "^4.1.0"
 
 [tool.coverage.run]
