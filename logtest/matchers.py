@@ -8,7 +8,7 @@ from typing import ClassVar
 
 from typing_extensions import TypeAlias
 
-from logtest._compose import Composable, compose
+from logtest._compose import Composable
 
 _MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
 
@@ -17,10 +17,10 @@ class Matcher(ABC):
     __slots__ = ()
 
     def __and__(self, matcher: Matcher) -> AllMatcher:
-        return compose(AllMatcher, self, matcher)
+        return AllMatcher._compose(self, matcher)
 
     def __or__(self, matcher: Matcher) -> AnyMatcher:
-        return compose(AnyMatcher, self, matcher)
+        return AnyMatcher._compose(self, matcher)
 
     @abstractmethod
     def match(self, record: logging.LogRecord) -> bool:
