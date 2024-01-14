@@ -1,0 +1,35 @@
+name: Build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+          - "3.12"
+    env:
+      PYTHONDEVMODE: 1
+    steps:
+    - uses: actions/checkout@v4
+    # Install toolchain.
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - run: pipx install poetry
+    # Install dependencies.
+    - run: poetry check
+    - run: poetry check --lock
+    - run: poetry env use "python${{ matrix.python-version }}"
+    - run: poetry install
+    # Run checks.
+    - run: poetry run ruff check
+    - run: poetry run ruff format --check
+    - run: poetry run mypy
+    # Run tests.
+    - run: poetry run pytest
