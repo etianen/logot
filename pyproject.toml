@@ -35,7 +35,6 @@ exclude_lines = [
     "assert False",
     "if TYPE_CHECKING:",
     "@overload",
-    "^\\s+\\.\\.\\.\\s*$",
 ]
 
 [tool.mypy]
