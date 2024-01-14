@@ -22,12 +22,18 @@ class Matcher(ABC):
     def match(self, record: logging.LogRecord) -> bool:
         raise NotImplementedError
 
+    @abstractmethod
+    def __str__(self) -> str:
+        raise NotImplementedError
+
 
 @dataclasses.dataclass()
 class _ComposableMatcher(Matcher, Composable[Matcher]):
     __slots__ = ("matchers",)
 
     _composer: ClassVar[Callable[[Iterable[bool]], bool]]
+    _operator_str: ClassVar[str]
+
     matchers: Sequence[Matcher]
 
     def _decompose(self) -> Sequence[Matcher]:
@@ -36,12 +42,17 @@ class _ComposableMatcher(Matcher, Composable[Matcher]):
     def match(self, record: logging.LogRecord) -> bool:
         return self.__class__._composer(matcher.match(record) for matcher in self.matchers)
 
+    def __str__(self) -> str:
+        return f" {self._operator_str} ".join(map(str, self.matchers))
+
 
 class AllMatcher(_ComposableMatcher):
     __slots__ = ()
     _composer: ClassVar[Callable[[Iterable[bool]], bool]] = all
+    _operator_str: ClassVar[str] = "&"
 
 
 class AnyMatcher(_ComposableMatcher):
     __slots__ = ()
     _composer: ClassVar[Callable[[Iterable[bool]], bool]] = any
+    _operator_str: ClassVar[str] = "|"
