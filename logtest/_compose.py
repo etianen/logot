@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Sequence
-from typing import Protocol, TypeVar
+from typing import Generic, TypeVar
 
 from typing_extensions import Self
 
 T = TypeVar("T")
 
 
-class Composable(Protocol[T]):
+class Composable(Generic[T]):
     __slots__ = ()
 
     @classmethod
