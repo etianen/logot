@@ -13,7 +13,6 @@ from logtest._compose import Composable
 _MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
 
 
-@dataclasses.dataclass(frozen=True)
 class Matcher(ABC):
     __slots__ = ()
 
