@@ -6,7 +6,11 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sequence
 from typing import ClassVar
 
+from typing_extensions import TypeAlias
+
 from logtest._compose import Composable, compose
+
+_MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
 
 
 class Matcher(ABC):
@@ -48,11 +52,11 @@ class _ComposableMatcher(Matcher, Composable[Matcher]):
 
 class AllMatcher(_ComposableMatcher):
     __slots__ = ()
-    _composer: ClassVar[Callable[[Iterable[bool]], bool]] = all
+    _composer: ClassVar[_MatcherComposer] = all
     _operator_str: ClassVar[str] = "&"
 
 
 class AnyMatcher(_ComposableMatcher):
     __slots__ = ()
-    _composer: ClassVar[Callable[[Iterable[bool]], bool]] = any
+    _composer: ClassVar[_MatcherComposer] = any
     _operator_str: ClassVar[str] = "|"
