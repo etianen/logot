@@ -32,6 +32,9 @@ exclude_lines = [
     "raise NotImplementedError",
     "raise AssertionError",
     "assert False",
+    "if TYPE_CHECKING:",
+    "@overload",
+    "^\\s+\\.\\.\\.\\s*$",
 ]
 
 [tool.mypy]
