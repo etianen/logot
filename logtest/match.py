@@ -13,8 +13,8 @@ from logtest._compose import Composable
 
 P = ParamSpec("P")
 
+_MatcherCallable: TypeAlias = Callable[Concatenate[logging.LogRecord, P], bool]
 _MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
-MatcherCallable: TypeAlias = Callable[Concatenate[logging.LogRecord, P], bool]
 
 
 class Matcher(ABC):
@@ -87,7 +87,7 @@ class LevelMatcher(Matcher):
         return record.levelno == self.levelno
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.levelno!r})"
+        return f"{self.__class__.__qualname__}({self.levelno!r})"
 
     def __str__(self) -> str:
         return f"[{logging.getLevelName(self.levelno)}]"
@@ -115,7 +115,7 @@ class MessageMatcher(Matcher):
         return record.getMessage() == self.message
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.message!r})"
+        return f"{self.__class__.__qualname__}({self.message!r})"
 
     def __str__(self) -> str:
         return self.message
@@ -128,11 +128,11 @@ def message(message: str) -> MessageMatcher:
 class _CallableMatcher(Matcher):
     __slots__ = ("_fn", "_args", "_kwargs")
 
-    _fn: Final[MatcherCallable[Any]]
+    _fn: Final[_MatcherCallable[Any]]
     _args: Final[tuple[Any, ...]]
     _kwargs: Final[Mapping[str, Any]]
 
-    def __init__(self, fn: MatcherCallable[Any], args: tuple[Any, ...], kwargs: Mapping[str, Any]) -> None:
+    def __init__(self, fn: _MatcherCallable[Any], args: tuple[Any, ...], kwargs: Mapping[str, Any]) -> None:
         self._fn = fn
         self._args = args
         self._kwargs = kwargs
@@ -141,15 +141,15 @@ class _CallableMatcher(Matcher):
         return self._fn(record, *self._args, **self._kwargs)
 
     def __repr__(self) -> str:
-        return str(self)
+        return f"{self}"
 
     def __str__(self) -> str:
         args_str = ", ".join(chain(map(repr, self._args), (f"{key}={value!r}" for key, value in self._kwargs.items())))
-        return f"{self._fn.__name__}({args_str})"
+        return f"{self._fn.__qualname__}({args_str})"
 
 
-def matcher() -> Callable[[MatcherCallable[P]], Matcher]:
-    def decorator(fn: MatcherCallable[P]) -> Callable[P, Matcher]:
+def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
+    def decorator(fn: _MatcherCallable[P]) -> Callable[P, Matcher]:
         @wraps(fn)
         def matcher_wrapper(*args: P.args, **kwargs: P.kwargs) -> Matcher:
             return _CallableMatcher(fn, args, kwargs)
