@@ -57,10 +57,10 @@ class _ComposableMatcher(Matcher, Composable[Matcher]):
         return self.__class__._composer(matcher.match(record) for matcher in self.matchers)
 
     def __repr__(self) -> str:
-        return f" {self._operator_str} ".join(map(repr, self.matchers))
+        return f" {self.__class__._operator_str} ".join(map(repr, self.matchers))
 
     def __str__(self) -> str:
-        return f" {self._operator_str} ".join(map(str, self.matchers))
+        return f" {self.__class__._operator_str} ".join(map(str, self.matchers))
 
 
 class AllMatcher(_ComposableMatcher):
