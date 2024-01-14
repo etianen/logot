@@ -42,7 +42,7 @@ class Matcher(ABC):
 class _ComposableMatcher(Matcher, Composable[Matcher]):
     __slots__ = ("matchers",)
 
-    _composer: ClassVar[Callable[[Iterable[bool]], bool]]
+    _composer: ClassVar[_MatcherComposer]
     _operator_str: ClassVar[str]
 
     matchers: Final[Sequence[Matcher]]
