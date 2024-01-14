@@ -60,3 +60,41 @@ class AnyMatcher(_ComposableMatcher):
     __slots__ = ()
     _composer: ClassVar[_MatcherComposer] = any
     _operator_str: ClassVar[str] = "|"
+
+
+@dataclasses.dataclass(frozen=True)
+class LevelMatcher(Matcher):
+    __slots__ = ("level",)
+
+    level: int
+
+    def match(self, record: logging.LogRecord) -> bool:
+        return record.levelno == self.level
+
+    def __str__(self) -> str:
+        return str(logging.getLevelName(self.level))
+
+
+def level(level: int | str) -> LevelMatcher:
+    if isinstance(level, str):
+        level = logging.getLevelName(level)
+        if not isinstance(level, int):
+            raise ValueError(f"Unknown log level: {level}")
+    return LevelMatcher(level)
+
+
+@dataclasses.dataclass(frozen=True)
+class MessageMatcher(Matcher):
+    __slots__ = ("message",)
+
+    message: str
+
+    def match(self, record: logging.LogRecord) -> bool:
+        return record.getMessage() == self.message
+
+    def __str__(self) -> str:
+        return self.message
+
+
+def message(message: str) -> MessageMatcher:
+    return MessageMatcher(message)
