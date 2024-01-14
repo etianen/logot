@@ -8,6 +8,8 @@ T_co = TypeVar("T_co", covariant=True)
 
 
 class Composable(Protocol[T_co]):
+    __slots__ = ()
+
     def __init__(self, items: Sequence[T_co]) -> None:
         ...
 
