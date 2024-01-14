@@ -40,7 +40,6 @@ allow_redefinition = true
 explicit_package_bases = true
 show_column_numbers = true
 strict = true
-platform = "linux"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
