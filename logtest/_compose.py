@@ -16,9 +16,9 @@ class Composable(Protocol[T_co]):
 
 
 def compose(cls: type[Composable[T]], a: T, b: T) -> Composable[T]:
-    if isinstance(a, cls) and isinstance(b, cls):
-        return cls((*a._decompose(), *b._decompose()))
     if isinstance(a, cls):
+        if isinstance(b, cls):
+            return cls((*a._decompose(), *b._decompose()))
         return cls((*a._decompose(), b))
     if isinstance(b, cls):
         return cls((a, *b._decompose()))
