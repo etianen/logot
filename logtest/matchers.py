@@ -13,6 +13,7 @@ from logtest._compose import Composable
 _MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
 
 
+@dataclasses.dataclass(frozen=True)
 class Matcher(ABC):
     __slots__ = ()
 
@@ -31,7 +32,7 @@ class Matcher(ABC):
         raise NotImplementedError
 
 
-@dataclasses.dataclass()
+@dataclasses.dataclass(frozen=True)
 class _ComposableMatcher(Matcher, Composable[Matcher]):
     __slots__ = ("matchers",)
 
