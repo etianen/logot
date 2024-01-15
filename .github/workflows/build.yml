@@ -11,11 +11,11 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
+      fail-fast: false
     env:
       PYTHONDEVMODE: 1
     steps:
@@ -36,3 +36,5 @@ jobs:
     - run: poetry run mypy
     # Run tests.
     - run: poetry run pytest
+    # Build docs.
+    - run: poetry run sphinx-build -W docs docs/_build
