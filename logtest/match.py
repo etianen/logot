@@ -38,7 +38,7 @@ class _LevelMatcher(Matcher):
         return f"[{logging.getLevelName(self._levelno)}]"
 
 
-def level(level: int | str) -> _LevelMatcher:
+def level(level: int | str) -> Matcher:
     return _LevelMatcher(check_level(level))
 
 
@@ -58,5 +58,5 @@ class _MessageMatcher(Matcher):
         return self._message
 
 
-def message(message: str) -> _MessageMatcher:
+def message(message: str) -> Matcher:
     return _MessageMatcher(message)

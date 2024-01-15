@@ -11,7 +11,6 @@ def test_level_match_pass() -> None:
 
 
 def test_level_match_fail() -> None:
-    assert not logtest.match.level(logging.INFO).match(createLogRecord(level=logging.DEBUG))
     assert not logtest.match.level(logging.INFO).match(createLogRecord(level=logging.WARN))
 
 
@@ -21,3 +20,19 @@ def test_level_repr() -> None:
 
 def test_level_str() -> None:
     assert str(logtest.match.level(logging.INFO)) == "[INFO]"
+
+
+def test_message_match_pass() -> None:
+    assert logtest.match.message("Hello world").match(createLogRecord(message="Hello world"))
+
+
+def test_message_match_fail() -> None:
+    assert not logtest.match.message("Hello world").match(createLogRecord(message="BOOM"))
+
+
+def test_message_repr() -> None:
+    assert repr(logtest.match.message("Hello world")) == "message('Hello world')"
+
+
+def test_message_str() -> None:
+    assert str(logtest.match.message("Hello world")) == "Hello world"
