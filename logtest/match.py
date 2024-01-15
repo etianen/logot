@@ -124,5 +124,5 @@ def iglob(record: logging.LogRecord, pattern: str) -> bool:
 
 
 @matcher()
-def re(record: logging.LogRecord, pattern: str, flags: int | RegexFlag = 0) -> bool:
+def regex(record: logging.LogRecord, pattern: str, flags: int | RegexFlag = 0) -> bool:
     return match(pattern, record.getMessage(), flags) is not None
