@@ -106,10 +106,16 @@ def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
 
         # Update the signature so generated documentation and other introspection is correct.
         sig = signature(matcher_wrapper)
+        record_parameter, *parameters = sig.parameters.values()
         matcher_wrapper.__signature__ = sig.replace(  # type: ignore[attr-defined]
-            parameters=[*sig.parameters.values()][1:],
+            parameters=parameters,
             return_annotation=Matcher,
         )
+        # Update the annotations to be correct.
+        annotations = matcher_wrapper.__annotations__ = matcher_wrapper.__annotations__.copy()
+        del annotations[record_parameter.name]
+        annotations["return"] = Matcher
+        # All done!
         return matcher_wrapper
 
     return decorator
