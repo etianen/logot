@@ -8,11 +8,14 @@ from tests import createLogRecord
 
 def test_level_match_pass() -> None:
     assert logtest.match.level(logging.INFO).match(createLogRecord(level=logging.INFO))
+    assert logtest.match.level("INFO").match(createLogRecord(level=logging.INFO))
 
 
 def test_level_match_fail() -> None:
     assert not logtest.match.level(logging.INFO).match(createLogRecord(level=logging.DEBUG))
+    assert not logtest.match.level("INFO").match(createLogRecord(level=logging.DEBUG))
     assert not logtest.match.level(logging.INFO).match(createLogRecord(level=logging.WARN))
+    assert not logtest.match.level("INFO").match(createLogRecord(level=logging.WARN))
 
 
 def test_level_repr() -> None:
