@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
+from logtest.util import check_level
+
 
 class Matcher(ABC):
     __slots__ = ()
@@ -37,13 +39,7 @@ class _LevelMatcher(Matcher):
 
 
 def level(level: int | str) -> _LevelMatcher:
-    # Convert `str` level to `int`.
-    if isinstance(level, str):
-        level = logging.getLevelName(level)
-        if not isinstance(level, int):
-            raise ValueError(f"Unknown log level: {level[6:]}")
-    # All done!
-    return _LevelMatcher(level)
+    return _LevelMatcher(check_level(level))
 
 
 class _MessageMatcher(Matcher):
