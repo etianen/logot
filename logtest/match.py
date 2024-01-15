@@ -7,6 +7,7 @@ from fnmatch import fnmatch, fnmatchcase
 from functools import wraps
 from inspect import signature
 from itertools import chain
+from re import RegexFlag, match
 from typing import Generic
 
 from typing_extensions import Concatenate, ParamSpec, TypeAlias
@@ -120,3 +121,8 @@ def glob(record: logging.LogRecord, pattern: str) -> bool:
 @matcher()
 def iglob(record: logging.LogRecord, pattern: str) -> bool:
     return fnmatch(record.getMessage(), pattern)
+
+
+@matcher()
+def re(record: logging.LogRecord, pattern: str, flags: int | RegexFlag = 0) -> bool:
+    return match(pattern, record.getMessage(), flags) is not None
