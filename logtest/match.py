@@ -41,7 +41,7 @@ def level(level: int | str) -> _LevelMatcher:
     if isinstance(level, str):
         level = logging.getLevelName(level)
         if not isinstance(level, int):
-            raise ValueError(f"Unknown log level: {level}")
+            raise ValueError(f"Unknown log level: {level[6:]}")
     # All done!
     return _LevelMatcher(level)
 
