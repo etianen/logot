@@ -26,6 +26,7 @@ pytest = "*"
 pytest-cov = "^4.1.0"
 sphinx = "*"
 sphinx-autobuild = "*"
+tomli = "^2.0.1"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
