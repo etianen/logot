@@ -17,6 +17,10 @@ _MatcherCallable: TypeAlias = Callable[Concatenate[logging.LogRecord, P], bool]
 _MatcherComposer: TypeAlias = Callable[[Iterable[bool]], bool]
 
 
+# TODO: Make all classes other than Matcher private and have repr show the fn name!
+# TODO: Lose all documented attrs
+
+
 class Matcher(ABC):
     __slots__ = ()
 
@@ -87,7 +91,8 @@ class LevelMatcher(Matcher):
         return record.levelno == self.levelno
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}({self.levelno!r})"
+        # TODO: Show the level name
+        return f"level({self.levelno!r})"
 
     def __str__(self) -> str:
         return f"[{logging.getLevelName(self.levelno)}]"
@@ -115,7 +120,7 @@ class MessageMatcher(Matcher):
         return record.getMessage() == self.message
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}({self.message!r})"
+        return f"message({self.message!r})"
 
     def __str__(self) -> str:
         return self.message
@@ -126,26 +131,22 @@ def message(message: str) -> MessageMatcher:
 
 
 class _CallableMatcher(Matcher):
-    __slots__ = ("_fn", "_args", "_kwargs")
-
-    _fn: Final[_MatcherCallable[Any]]
-    _args: Final[tuple[Any, ...]]
-    _kwargs: Final[Mapping[str, Any]]
+    __slots__ = ("fn", "args", "kwargs")
 
     def __init__(self, fn: _MatcherCallable[Any], args: tuple[Any, ...], kwargs: Mapping[str, Any]) -> None:
-        self._fn = fn
-        self._args = args
-        self._kwargs = kwargs
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
 
     def match(self, record: logging.LogRecord) -> bool:
-        return self._fn(record, *self._args, **self._kwargs)
+        return self.fn(record, *self.args, **self.kwargs)
 
     def __repr__(self) -> str:
         return f"{self}"
 
     def __str__(self) -> str:
-        args_str = ", ".join(chain(map(repr, self._args), (f"{key}={value!r}" for key, value in self._kwargs.items())))
-        return f"{self._fn.__qualname__}({args_str})"
+        args_str = ", ".join(chain(map(repr, self.args), (f"{key}={value!r}" for key, value in self.kwargs.items())))
+        return f"{self.fn.__qualname__}({args_str})"
 
 
 def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
