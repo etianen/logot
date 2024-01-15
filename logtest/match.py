@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from fnmatch import fnmatch, fnmatchcase
 from functools import wraps
 from inspect import signature
 from itertools import chain
@@ -109,3 +110,13 @@ def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
         return matcher_wrapper
 
     return decorator
+
+
+@matcher()
+def glob(record: logging.LogRecord, pattern: str) -> bool:
+    return fnmatchcase(record.getMessage(), pattern)
+
+
+@matcher()
+def iglob(record: logging.LogRecord, pattern: str) -> bool:
+    return fnmatch(record.getMessage(), pattern)
