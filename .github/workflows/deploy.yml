@@ -1,0 +1,25 @@
+name: Deploy
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: PyPI
+    steps:
+    - uses: actions/checkout@v4
+    # Install toolchain.
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+    - run: pipx install poetry
+    # Build.
+    - run: poetry build
+    # Release.
+    - run: poetry config pypi-token.pypi "${{ secrets.PYPI_TOKEN }}"
+    - run: poetry publish
