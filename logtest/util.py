@@ -15,5 +15,5 @@ def check_level(level: int | str) -> int:
         if not isinstance(levelno, int):
             raise ValueError(f"Unknown level: {level!r}")
         return levelno
-    # Defensive assertion.
+    # Fail on other types.
     raise TypeError(f"Invalid level: {level!r}")
