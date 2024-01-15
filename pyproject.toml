@@ -12,25 +12,20 @@ keywords = ["test", "unittest", "pytest", "logging"]
 packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pytest = { version = "^7.4.4", optional = true }
 
 [tool.poetry.extras]
 pytest = ["pytest"]
 
 [tool.poetry.group.dev.dependencies]
+furo = "*"
 mypy = "^1.8.0"
 ruff = "^0.1.11"
 pytest = "*"
 pytest-cov = "^4.1.0"
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-furo = { version = "*", markers = "python_version >= '3.9'" }
-sphinx = { version = "^7.2.6", markers = "python_version >= '3.9'" }
-sphinx-autobuild = { version = "*", markers = "python_version >= '3.9'" }
+sphinx = "*"
+sphinx-autobuild = "*"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
