@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logtest"
-version = "0.1.0"
+version = "0.0.1-a0"
 description = "Log-based testing"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
@@ -13,7 +13,7 @@ packages = [{ include = "logtest" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pytest = {version = "^7.4.4", optional = true}
+pytest = { version = "^7.4.4", optional = true }
 
 [tool.poetry.extras]
 pytest = ["pytest"]
