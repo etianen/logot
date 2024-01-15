@@ -37,4 +37,4 @@ jobs:
     # Run tests.
     - run: poetry run pytest
     # Build docs.
-    - run: sphinx-build -W docs docs/_build
+    - run: poetry run sphinx-build -W docs docs/_build
