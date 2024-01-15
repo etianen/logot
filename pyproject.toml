@@ -14,7 +14,6 @@ packages = [{ include = "logtest" }]
 [tool.poetry.dependencies]
 python = "^3.8"
 pytest = {version = "^7.4.4", optional = true}
-typing-extensions = "^4.9.0"
 
 [tool.poetry.extras]
 pytest = ["pytest"]

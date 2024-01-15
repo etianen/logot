@@ -2,19 +2,6 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from collections.abc import Callable
-from fnmatch import fnmatch, fnmatchcase
-from functools import wraps
-from inspect import signature
-from itertools import chain
-from re import RegexFlag, match
-from typing import Generic
-
-from typing_extensions import Concatenate, ParamSpec, TypeAlias
-
-P = ParamSpec("P")
-
-_MatcherCallable: TypeAlias = Callable[Concatenate[logging.LogRecord, P], bool]
 
 
 class Matcher(ABC):
@@ -77,60 +64,3 @@ class _MessageMatcher(Matcher):
 
 def message(message: str) -> _MessageMatcher:
     return _MessageMatcher(message)
-
-
-class _CallableMatcher(Matcher, Generic[P]):
-    __slots__ = ("_fn", "_args", "_kwargs")
-
-    def __init__(self, fn: _MatcherCallable[...], args: tuple[object, ...], kwargs: dict[str, object]) -> None:
-        self._fn = fn
-        self._args = args
-        self._kwargs = kwargs
-
-    def match(self, record: logging.LogRecord) -> bool:
-        return self._fn(record, *self._args, **self._kwargs)
-
-    def __repr__(self) -> str:
-        return f"{self}"
-
-    def __str__(self) -> str:
-        args_str = ", ".join(chain(map(repr, self._args), (f"{key}={value!r}" for key, value in self._kwargs.items())))
-        return f"{self._fn.__qualname__}({args_str})"
-
-
-def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
-    def decorator(fn: _MatcherCallable[P]) -> Callable[P, Matcher]:
-        @wraps(fn)
-        def matcher_wrapper(*args: P.args, **kwargs: P.kwargs) -> Matcher:
-            return _CallableMatcher(fn, args, kwargs)
-
-        # Update the signature so generated documentation and other introspection is correct.
-        sig = signature(matcher_wrapper)
-        record_parameter, *parameters = sig.parameters.values()
-        matcher_wrapper.__signature__ = sig.replace(  # type: ignore[attr-defined]
-            parameters=parameters,
-            return_annotation=Matcher,
-        )
-        # Update the annotations to be correct.
-        annotations = matcher_wrapper.__annotations__ = matcher_wrapper.__annotations__.copy()
-        del annotations[record_parameter.name]
-        annotations["return"] = Matcher
-        # All done!
-        return matcher_wrapper
-
-    return decorator
-
-
-@matcher()
-def glob(record: logging.LogRecord, pattern: str) -> bool:
-    return fnmatchcase(record.getMessage(), pattern)
-
-
-@matcher()
-def iglob(record: logging.LogRecord, pattern: str) -> bool:
-    return fnmatch(record.getMessage(), pattern)
-
-
-@matcher()
-def regex(record: logging.LogRecord, pattern: str, flags: int | RegexFlag = 0) -> bool:
-    return match(pattern, record.getMessage(), flags) is not None
