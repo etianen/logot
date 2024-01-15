@@ -17,3 +17,7 @@ def test_level_match_fail() -> None:
 
 def test_level_repr() -> None:
     assert repr(logtest.match.level(logging.INFO)) == "level('INFO')"
+
+
+def test_level_str() -> None:
+    assert str(logtest.match.level(logging.INFO)) == "[INFO]"
