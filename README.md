@@ -1,5 +1,5 @@
 # Log-based testing
 
-[![Build](https://github.com/etianen/logtest/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logtest/actions/workflows/build.yml)
+[![Build](https://github.com/etianen/logot/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logot/actions/workflows/build.yml)
 
-📖 [Read the docs](https://logtest.readthedocs.io) 📖
+📖 [Read the docs](https://logot.readthedocs.io) 📖

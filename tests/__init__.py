@@ -9,7 +9,7 @@ def createLogRecord(
     message: str = "Hello world",
 ) -> logging.LogRecord:
     return logging.LogRecord(
-        name="logtest",
+        name="logot",
         level=level,
         pathname=__file__,
         lineno=1,
