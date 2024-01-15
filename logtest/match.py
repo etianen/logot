@@ -4,6 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from functools import wraps
+from inspect import signature
 from itertools import chain
 from typing import Generic
 
@@ -100,6 +101,10 @@ def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
         @wraps(fn)
         def matcher_wrapper(*args: P.args, **kwargs: P.kwargs) -> Matcher:
             return _CallableMatcher(fn, args, kwargs)
+
+        # Remove the first param from the signature so generated documentation and other introspection is correct.
+        sig = signature(matcher_wrapper)
+        matcher_wrapper.__signature__ = sig.replace(parameters=[*sig.parameters.values()][1:])  # type: ignore[attr-defined]
 
         return matcher_wrapper
 
