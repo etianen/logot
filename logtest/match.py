@@ -104,10 +104,12 @@ def matcher() -> Callable[[_MatcherCallable[P]], Callable[P, Matcher]]:
         def matcher_wrapper(*args: P.args, **kwargs: P.kwargs) -> Matcher:
             return _CallableMatcher(fn, args, kwargs)
 
-        # Remove the first param from the signature so generated documentation and other introspection is correct.
+        # Update the signature so generated documentation and other introspection is correct.
         sig = signature(matcher_wrapper)
-        matcher_wrapper.__signature__ = sig.replace(parameters=[*sig.parameters.values()][1:])  # type: ignore[attr-defined]
-
+        matcher_wrapper.__signature__ = sig.replace(  # type: ignore[attr-defined]
+            parameters=[*sig.parameters.values()][1:],
+            return_annotation=Matcher,
+        )
         return matcher_wrapper
 
     return decorator
