@@ -3,3 +3,4 @@
 /.coverage
 /.mypy_cache
 /.venv
+/dist

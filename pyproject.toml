@@ -1,15 +1,15 @@
 [tool.poetry]
-name = "logtest"
+name = "logot"
 version = "0.0.1-a0"
 description = "Log-based testing"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://logtest.readthedocs.io"
-repository = "https://github.com/etianen/logtest"
-documentation = "https://logtest.readthedocs.io"
-keywords = ["test", "unittest", "pytest"]
-packages = [{ include = "logtest" }]
+homepage = "https://logot.readthedocs.io"
+repository = "https://github.com/etianen/logot"
+documentation = "https://logot.readthedocs.io"
+keywords = ["test", "unittest", "pytest", "logging"]
+packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -25,7 +25,7 @@ pytest = "*"
 pytest-cov = "^4.1.0"
 
 [tool.coverage.run]
-source = ["logtest", "tests"]
+source = ["logot", "tests"]
 
 [tool.coverage.report]
 show_missing = true
@@ -41,7 +41,7 @@ exclude_lines = [
 ]
 
 [tool.mypy]
-files = ["logtest/**/*.py", "tests/**/*.py"]
+files = ["logot/**/*.py", "tests/**/*.py"]
 allow_redefinition = true
 explicit_package_bases = true
 show_column_numbers = true
@@ -53,7 +53,7 @@ console_output_style = "classic"
 addopts = "--tb=native --cov"
 
 [tool.ruff]
-include = ["logtest/**/*.py", "tests/**/*.py"]
+include = ["logot/**/*.py", "tests/**/*.py"]
 line-length = 120
 select = ["E", "F", "W", "I", "UP"]
 

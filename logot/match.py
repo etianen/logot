@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
-from logtest.util import check_level
+from logot.util import check_level
 
 
 class Matcher(ABC):
