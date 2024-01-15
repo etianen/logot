@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 
+import pytest
+
 import logtest
 from tests import createLogRecord
 
@@ -24,3 +26,9 @@ def test_level_repr() -> None:
 
 def test_level_str() -> None:
     assert str(logtest.match.level(logging.INFO)) == "[INFO]"
+
+
+def test_level_unknown() -> None:
+    with pytest.raises(ValueError) as ex:
+        logtest.match.level("UNKNOWN")
+    assert str(ex.value) == "Unknown log level: UNKNOWN"
