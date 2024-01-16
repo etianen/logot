@@ -51,24 +51,28 @@ class _LogRecordExpectedLogs(ExpectedLogs):
 class _ComposedExpectedLogs(ExpectedLogs):
     __slots__ = ("_logs",)
 
-    def __init__(self, logs: tuple[ExpectedLogs, ...]) -> None:
+    def __init__(self, logs: list[ExpectedLogs]) -> None:
         assert len(logs) > 1, "Unreachable"
         self._logs = logs
 
     @classmethod
     def _from_compose(cls, log_a: ExpectedLogs, log_b: ExpectedLogs) -> ExpectedLogs:
-        # Flatten any logs of this type.
+        logs: list[ExpectedLogs] = []
+        # Add possibly-flattened logs from `log_a`.
         if isinstance(log_a, cls):
-            if isinstance(log_b, cls):
-                return cls((*log_a._logs, *log_b._logs))
-            return cls((*log_a._logs, log_b))
+            logs.extend(log_a._logs)
+        else:
+            logs.append(log_a)
+        # Add possibly-flattened logs from `log_b`.
         if isinstance(log_b, cls):
-            return cls((log_a, *log_b._logs))
-        # Create unflattened logs of this type.
-        return cls((log_a, log_b))
+            logs.extend(log_b._logs)
+        else:
+            logs.append(log_b)
+        # All done!
+        return cls(logs)
 
     @classmethod
-    def _from_reduce(cls, logs: tuple[ExpectedLogs, ...]) -> ExpectedLogs | None:
+    def _from_reduce(cls, logs: list[ExpectedLogs]) -> ExpectedLogs | None:
         # If all logs have been reduced, we're done!
         if not logs:
             return None
@@ -85,12 +89,14 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
         log, *logs = self._logs
         log = log._reduce(record)
+        # If we reduced the child log, attempt to reduce this log further.
         if log is None:
-            return _OrderedAllExpectedLogs._from_reduce((*logs,))
-        return _OrderedAllExpectedLogs((log, *logs))
+            return _OrderedAllExpectedLogs._from_reduce(logs)
+        # We didn't reduce the child log, so just re-wrap the new logs.
+        return _OrderedAllExpectedLogs([log, *logs])
 
     def _format(self, *, indent: str) -> str:
-        return "\n".join(expected_log._format(indent=indent) for expected_log in self._logs)
+        return "\n".join(log._format(indent=indent) for log in self._logs)
 
     def __repr__(self) -> str:
         return f"({' > '.join(map(repr, self._logs))})"
@@ -100,7 +106,7 @@ class _UnorderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
-        return _UnorderedAllExpectedLogs._from_reduce(expected_log._reduce(record) for expected_log in self._logs)
+        pass
 
     def __repr__(self) -> str:
         return f"({' & '.join(map(repr, self._logs))})"
