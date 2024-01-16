@@ -52,12 +52,14 @@ class _ComposedExpectedLogs(ExpectedLogs):
 
     @classmethod
     def _from_compose(cls, a: ExpectedLogs, b: ExpectedLogs) -> ExpectedLogs:
+        # Flatten any expected args of this type.
         if isinstance(a, cls):
             if isinstance(b, cls):
                 return cls((*a._expected_logs, *b._expected_logs))
             return cls((*a._expected_logs, b))
         if isinstance(b, cls):
             return cls((a, *b._expected_logs))
+        # Create an unflattened `ExpectedLogs` of this type.
         return cls((a, b))
 
     @classmethod
