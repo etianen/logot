@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
 
 
 class ExpectedLogs(ABC):
@@ -22,6 +21,9 @@ class ExpectedLogs(ABC):
 
     def __and__(self, expected: ExpectedLogs) -> ExpectedLogs:
         return _UnorderedAllExpectedLogs._from_compose(self, expected)
+
+    def __gt__(self, expected: ExpectedLogs) -> ExpectedLogs:
+        return _OrderedAllExpectedLogs._from_compose(self, expected)
 
     def __str__(self) -> str:
         return self._format(indent="")
@@ -66,7 +68,7 @@ class _ComposedExpectedLogs(ExpectedLogs):
         return cls((a, b))
 
     @classmethod
-    def _from_reduce(cls, expected_logs: Iterable[ExpectedLogs | None]) -> ExpectedLogs | None:
+    def _from_reduce(cls, expected_logs: tuple[ExpectedLogs, ...]) -> ExpectedLogs | None:
         # Remove all `None` values.
         expected_logs = (*filter(None, expected_logs),)
         # If all expected logs have been reduced, we're done!
