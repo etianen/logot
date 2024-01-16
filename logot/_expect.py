@@ -20,6 +20,9 @@ class ExpectedLogs(ABC):
     def __repr__(self) -> str:
         raise NotImplementedError
 
+    def __and__(self, expected: ExpectedLogs) -> ExpectedLogs:
+        return _UnorderedAllExpectedLogs._from_compose(self, expected)
+
     def __str__(self) -> str:
         return self._format(indent="")
 
