@@ -51,12 +51,26 @@ class _ComposedExpectedLogs(ExpectedLogs):
         self._expected_logs = expected_logs
 
     @classmethod
+    def _from_compose(cls, a: ExpectedLogs, b: ExpectedLogs) -> ExpectedLogs:
+        if isinstance(a, cls):
+            if isinstance(b, cls):
+                return cls((*a._expected_logs, *b._expected_logs))
+            return cls((*a._expected_logs, b))
+        if isinstance(b, cls):
+            return cls((a, *b._expected_logs))
+        return cls((a, b))
+
+    @classmethod
     def _from_reduce(cls, expected_logs: Iterable[ExpectedLogs | None]) -> ExpectedLogs | None:
+        # Remove all `None` values.
         expected_logs = (*filter(None, expected_logs),)
+        # If all expected logs have been reduced, we're done!
         if not expected_logs:
             return None
+        # If there is just a single expected log left, unwrap it.
         if len(expected_logs) == 1:
             return expected_logs[0]
+        # Wrap up the remaining expected logs.
         return cls(expected_logs)
 
 
