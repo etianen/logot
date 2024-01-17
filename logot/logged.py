@@ -82,6 +82,9 @@ class _ComposedExpectedLogs(ExpectedLogs):
 class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
+    def _format(self, *, indent: str) -> str:
+        return "\n".join(log._format(indent=indent) for log in self._logs)
+
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
         log = self._logs[0]
         reduced_log = log._reduce(record)
@@ -93,9 +96,6 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
             return _OrderedAllExpectedLogs((log, *self._logs[1:]))
         # If the child log is unchanged, return `self`.
         return self
-
-    def _format(self, *, indent: str) -> str:
-        return "\n".join(log._format(indent=indent) for log in self._logs)
 
     def __repr__(self) -> str:
         return f"({' > '.join(map(repr, self._logs))})"
