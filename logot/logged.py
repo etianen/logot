@@ -109,10 +109,10 @@ class _UnorderedAllExpectedLogs(_ComposedExpectedLogs):
             reduced_log = log._reduce(record)
             # If we fully reduced the child log, attempt to reduce this log further.
             if reduced_log is None:
-                return _UnorderedAllExpectedLogs._from_reduce((*self._logs[:n], *self._logs[n + 2 :]))
+                return _UnorderedAllExpectedLogs._from_reduce((*self._logs[:n], *self._logs[n + 1 :]))
             # If we partially reduced the child log, wrap it in a new composed log.
             if reduced_log is not log:
-                return _UnorderedAllExpectedLogs((*self._logs[:n], reduced_log, *self._logs[n + 2 :]))
+                return _UnorderedAllExpectedLogs((*self._logs[:n], reduced_log, *self._logs[n + 1 :]))
         # If all child logs are unchanged, return `self`.
         return self
 
