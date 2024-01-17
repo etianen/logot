@@ -51,7 +51,7 @@ class _LogRecordExpectedLogs(ExpectedLogs):
 class _ComposedExpectedLogs(ExpectedLogs):
     __slots__ = ("_logs",)
 
-    def __init__(self, logs: list[ExpectedLogs]) -> None:
+    def __init__(self, logs: tuple[ExpectedLogs, ...]) -> None:
         assert len(logs) > 1, "Unreachable"
         self._logs = logs
 
@@ -60,15 +60,15 @@ class _ComposedExpectedLogs(ExpectedLogs):
         # Try to flatten any logs of this type.
         if isinstance(log_a, cls):
             if isinstance(log_b, cls):
-                return cls([*log_a._logs, *log_b._logs])
-            return cls([*log_a._logs, log_b])
+                return cls((*log_a._logs, *log_b._logs))
+            return cls((*log_a._logs, log_b))
         if isinstance(log_b, cls):
-            return cls([log_a, *log_b._logs])
+            return cls((log_a, *log_b._logs))
         # Return the unflattened logs.
-        return cls([log_a, log_b])
+        return cls((log_a, log_b))
 
     @classmethod
-    def _from_reduce(cls, logs: list[ExpectedLogs]) -> ExpectedLogs | None:
+    def _from_reduce(cls, logs: tuple[ExpectedLogs, ...]) -> ExpectedLogs | None:
         # If all logs have been reduced, we're done!
         if not logs:
             return None
@@ -83,13 +83,12 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
-        log, *logs = self._logs
-        log = log._reduce(record)
+        log = self._logs[0]._reduce(record)
         # If we reduced the child log, attempt to reduce this log further.
         if log is None:
-            return _OrderedAllExpectedLogs._from_reduce(logs)
+            return _OrderedAllExpectedLogs._from_reduce(self._logs[1:])
         # We didn't reduce the child log, so just re-wrap the new logs.
-        return _OrderedAllExpectedLogs([log, *logs])
+        return _OrderedAllExpectedLogs((log, *self._logs[1:]))
 
     def _format(self, *, indent: str) -> str:
         return "\n".join(log._format(indent=indent) for log in self._logs)
