@@ -57,25 +57,25 @@ class _ComposedExpectedLogs(ExpectedLogs):
 
     @classmethod
     def _from_compose(cls, log_a: ExpectedLogs, log_b: ExpectedLogs) -> ExpectedLogs:
-        # Try to flatten any child logs of this type.
+        # Try to flatten any child logs of this composed type.
         if isinstance(log_a, cls):
             if isinstance(log_b, cls):
                 return cls((*log_a._logs, *log_b._logs))
             return cls((*log_a._logs, log_b))
         if isinstance(log_b, cls):
             return cls((log_a, *log_b._logs))
-        # Return the unflattened logs.
+        # Wrap the unflattened logs in a composed log.
         return cls((log_a, log_b))
 
     @classmethod
     def _from_reduce(cls, logs: tuple[ExpectedLogs, ...]) -> ExpectedLogs | None:
-        # If all logs have been reduced, we're done!
+        # If all child logs have been reduced, we're done!
         if not logs:
             return None
-        # If there's just a single log left, unwrap it.
+        # If there's a single log left, unwrap it.
         if len(logs) == 1:
             return logs[0]
-        # Wrap the remaining logs.
+        # Wrap the remaining child logs in a new composed log.
         return cls(logs)
 
 
@@ -91,7 +91,7 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
         # If the child log is unchanged, return `self`.
         if reduced_log is log:
             return self
-        # If we partially reduced the child log, return a new log.
+        # If we partially reduced the child log, wrap it in a new composed log.
         return _OrderedAllExpectedLogs((log, *self._logs[1:]))
 
     def _format(self, *, indent: str) -> str:
