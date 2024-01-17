@@ -104,6 +104,9 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
 class _UnorderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
+    def _format(self, *, indent: str) -> str:
+        raise NotImplementedError
+
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
         for n, log in enumerate(self._logs):
             reduced_log = log._reduce(record)
