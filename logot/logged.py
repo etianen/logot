@@ -84,9 +84,12 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
 
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
         log = self._logs[0]._reduce(record)
-        # If we reduced the child log, attempt to reduce this log further.
+        # If we fully reduced the child log, attempt to reduce this log further.
         if log is None:
             return _OrderedAllExpectedLogs._from_reduce(self._logs[1:])
+        # If we didn't change the child log, just return `self`.
+        if log is self._logs[0]:
+            return self
         # We didn't reduce the child log, so just re-wrap the new logs.
         return _OrderedAllExpectedLogs((log, *self._logs[1:]))
 
