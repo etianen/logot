@@ -57,19 +57,15 @@ class _ComposedExpectedLogs(ExpectedLogs):
 
     @classmethod
     def _from_compose(cls, log_a: ExpectedLogs, log_b: ExpectedLogs) -> ExpectedLogs:
-        logs: list[ExpectedLogs] = []
-        # Add possibly-flattened logs from `log_a`.
+        # Try to flatten any logs of this type.
         if isinstance(log_a, cls):
-            logs.extend(log_a._logs)
-        else:
-            logs.append(log_a)
-        # Add possibly-flattened logs from `log_b`.
+            if isinstance(log_b, cls):
+                return cls([*log_a._logs, *log_b._logs])
+            return cls([*log_a._logs, log_b])
         if isinstance(log_b, cls):
-            logs.extend(log_b._logs)
-        else:
-            logs.append(log_b)
-        # All done!
-        return cls(logs)
+            return cls([log_a, *log_b._logs])
+        # Return the unflattened logs.
+        return cls([log_a, log_b])
 
     @classmethod
     def _from_reduce(cls, logs: list[ExpectedLogs]) -> ExpectedLogs | None:
