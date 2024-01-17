@@ -57,7 +57,7 @@ class _ComposedExpectedLogs(ExpectedLogs):
 
     @classmethod
     def _from_compose(cls, log_a: ExpectedLogs, log_b: ExpectedLogs) -> ExpectedLogs:
-        # Try to flatten any logs of this type.
+        # Try to flatten any child logs of this type.
         if isinstance(log_a, cls):
             if isinstance(log_b, cls):
                 return cls((*log_a._logs, *log_b._logs))
@@ -83,14 +83,15 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
-        log = self._logs[0]._reduce(record)
+        log = self._logs[0]
+        reduced_log = log._reduce(record)
         # If we fully reduced the child log, attempt to reduce this log further.
-        if log is None:
+        if reduced_log is None:
             return _OrderedAllExpectedLogs._from_reduce(self._logs[1:])
-        # If we didn't change the child log, just return `self`.
-        if log is self._logs[0]:
+        # If the child log is unchanged, return `self`.
+        if reduced_log is log:
             return self
-        # We didn't reduce the child log, so just re-wrap the new logs.
+        # If we partially reduced the child log, return a new log.
         return _OrderedAllExpectedLogs((log, *self._logs[1:]))
 
     def _format(self, *, indent: str) -> str:
