@@ -88,11 +88,11 @@ class _OrderedAllExpectedLogs(_ComposedExpectedLogs):
         # If we fully reduced the child log, attempt to reduce this log further.
         if reduced_log is None:
             return _OrderedAllExpectedLogs._from_reduce(self._logs[1:])
-        # If the child log is unchanged, return `self`.
-        if reduced_log is log:
-            return self
         # If we partially reduced the child log, wrap it in a new composed log.
-        return _OrderedAllExpectedLogs((log, *self._logs[1:]))
+        if reduced_log is not log:
+            return _OrderedAllExpectedLogs((log, *self._logs[1:]))
+        # If the child log is unchanged, return `self`.
+        return self
 
     def _format(self, *, indent: str) -> str:
         return "\n".join(log._format(indent=indent) for log in self._logs)
@@ -105,7 +105,16 @@ class _UnorderedAllExpectedLogs(_ComposedExpectedLogs):
     __slots__ = ()
 
     def _reduce(self, record: logging.LogRecord) -> ExpectedLogs | None:
-        pass
+        for n, log in enumerate(self._logs):
+            reduced_log = log._reduce(record)
+            # If we fully reduced the child log, attempt to reduce this log further.
+            if reduced_log is None:
+                return _UnorderedAllExpectedLogs._from_reduce((*self._logs[:n], *self._logs[n + 2 :]))
+            # If we partially reduced the child log, wrap it in a new composed log.
+            if reduced_log is not log:
+                return _UnorderedAllExpectedLogs((*self._logs[:n], reduced_log, *self._logs[n + 2 :]))
+        # If all child logs are unchanged, return `self`.
+        return self
 
     def __repr__(self) -> str:
         return f"({' & '.join(map(repr, self._logs))})"
