@@ -28,11 +28,11 @@ def test_literal_str() -> None:
 
 
 def test_regex_match_pass() -> None:
-    assert match.regex(".*? .*?").match("Hello world")
+    assert match.regex(".*? world").match("Hello world")
 
 
 def test_regex_match_fail() -> None:
     # Must match.
-    assert not match.regex(".*? .*?").match("Boom!")
+    assert not match.regex(".*? world").match("Boom!")
     # Must be a full match.
-    assert not match.regex(".*? .*?").match("Hello world again!")
+    assert not match.regex(".*? world").match("Hello world again!")
