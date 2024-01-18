@@ -59,10 +59,12 @@ class _RegexMatcher(Matcher):
         return isinstance(other, _RegexMatcher) and other._pattern == self._pattern
 
     def __repr__(self) -> str:
+        # Format regex flags (minus implicit flags).
         flags: re.RegexFlag = re.RegexFlag(re.RegexFlag(self._pattern.flags) - re.RegexFlag.UNICODE)
         flags_str = ""
         if flags:
             flags_str = f", {' | '.join(map(repr, flags))}"
+        # All done!
         return f"regex({self._pattern.pattern!r}{flags_str})"
 
     def __str__(self) -> str:
