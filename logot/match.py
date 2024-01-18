@@ -53,7 +53,7 @@ class _RegexMatcher(Matcher):
         self._pattern = pattern
 
     def match(self, msg: str) -> bool:
-        return self._pattern.fullmatch(msg) is not None
+        return self._pattern.match(msg) is not None
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, _RegexMatcher) and other._pattern == self._pattern
@@ -79,7 +79,7 @@ class _GlobMatcher(Matcher):
         self._pattern = pattern
 
     def match(self, msg: str) -> bool:
-        return self._pattern.fullmatch(msg) is not None
+        return self._pattern.match(msg) is not None
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, _GlobMatcher) and other._pattern == self._pattern

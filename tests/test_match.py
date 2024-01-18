@@ -33,5 +33,3 @@ def test_regex_match_pass() -> None:
 
 def test_regex_match_fail() -> None:
     assert not match.regex(".*? world").match("Boom!")
-    # Must be a full match.
-    assert not match.regex(".*? world").match("Hello world again!")
