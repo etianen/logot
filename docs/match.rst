@@ -1,2 +1,4 @@
-Message matchers
+Message matching
 ================
+
+.. automodule:: logot.match

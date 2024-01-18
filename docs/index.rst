@@ -10,4 +10,3 @@ Log-based testing
 
    self
    match
-   util
