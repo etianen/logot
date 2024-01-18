@@ -22,6 +22,10 @@ class ExpectedLogs(ABC):
         return _OrderedAllExpectedLogs._from_compose(self, logs)
 
     @abstractmethod
+    def __eq__(self, other: object) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
     def __repr__(self) -> str:
         raise NotImplementedError
 
