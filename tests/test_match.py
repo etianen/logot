@@ -51,3 +51,7 @@ def test_regex_repr() -> None:
         repr(match.regex(".*? world", re.IGNORECASE | re.MULTILINE))
         == "regex('.*? world', re.IGNORECASE | re.MULTILINE)"
     )
+
+
+def test_regex_str() -> None:
+    assert str(match.regex(".*? world")) == ".*? world"
