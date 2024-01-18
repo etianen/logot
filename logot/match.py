@@ -59,13 +59,17 @@ class _RegexMatcher(Matcher):
         return isinstance(other, _RegexMatcher) and other._pattern == self._pattern
 
     def __repr__(self) -> str:
-        return f"regex({self._pattern!r})"
+        flags: re.RegexFlag = re.RegexFlag(re.RegexFlag(self._pattern.flags) - re.RegexFlag.UNICODE)
+        flags_str = ""
+        if flags:
+            flags_str = f", {' | '.join(map(repr, flags))}"
+        return f"regex({self._pattern.pattern!r}{flags_str})"
 
     def __str__(self) -> str:
         return self._pattern.pattern
 
 
-def regex(msg: str, flags: re.RegexFlag | int = 0) -> Matcher:
+def regex(msg: str, flags: re.RegexFlag | int = re.NOFLAG) -> Matcher:
     return _RegexMatcher(re.compile(msg, flags))
 
 
@@ -85,7 +89,7 @@ class _GlobMatcher(Matcher):
         return isinstance(other, _GlobMatcher) and other._pattern == self._pattern
 
     def __repr__(self) -> str:
-        return f"glob({self._pattern!r})"
+        return f"glob({self._msg!r})"
 
     def __str__(self) -> str:
         return self._msg

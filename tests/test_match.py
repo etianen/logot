@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from logot import match
 
 
@@ -33,3 +35,19 @@ def test_regex_match_pass() -> None:
 
 def test_regex_match_fail() -> None:
     assert not match.regex(".*? world").match("Boom!")
+
+
+def test_regex_eq_pass() -> None:
+    assert match.regex(".*? world") == match.regex(".*? world")
+
+
+def test_regex_eq_fail() -> None:
+    assert match.regex(".*? world") != match.regex("Boom!")
+
+
+def test_regex_repr() -> None:
+    assert repr(match.regex(".*? world")) == "regex('.*? world')"
+    assert (
+        repr(match.regex(".*? world", re.IGNORECASE | re.MULTILINE))
+        == "regex('.*? world', re.IGNORECASE | re.MULTILINE)"
+    )
