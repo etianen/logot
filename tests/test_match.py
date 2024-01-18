@@ -25,3 +25,14 @@ def test_literal_repr() -> None:
 
 def test_literal_str() -> None:
     assert str(match._LiteralMatcher("Hello world")) == "Hello world"
+
+
+def test_regex_match_pass() -> None:
+    assert match.regex(".*? .*?").match("Hello world")
+
+
+def test_regex_match_fail() -> None:
+    # Must match.
+    assert not match.regex(".*? .*?").match("Boom!")
+    # Must be a full match.
+    assert not match.regex(".*? .*?").match("Hello world again!")
