@@ -36,3 +36,10 @@ def test_float_matches(value: float) -> None:
 @given(st.characters())
 def test_char_matches(value: str) -> None:
     assert matches("foo %c bar", value)
+
+
+@given(st.text())
+def test_str_matches(value: str) -> None:
+    assert matches("foo %r bar", value)
+    assert matches("foo %s bar", value)
+    assert matches("foo %a bar", value)

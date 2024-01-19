@@ -5,7 +5,7 @@ import re
 _RE_FORMAT = re.compile(r"%(.)")
 
 _CONVERSION_INT = r"\-?\d+"
-_CONVERSION_STR = r".+"
+_CONVERSION_STR = r".*"
 _CONVERSION_MAP = {
     "%": r"%",
     # Integer conversions.
