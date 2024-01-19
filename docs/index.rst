@@ -9,5 +9,3 @@ Log-based testing
    :maxdepth: 1
 
    self
-   match
-   util

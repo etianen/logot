@@ -24,11 +24,6 @@ extensions = [
 ]
 
 autoclass_content = "both"
-autodoc_default_options = {
-    "members": True,
-    "undoc-members": True,
-}
-autodoc_member_order = "groupwise"
 autodoc_typehints = "both"
 
 intersphinx_mapping = {
