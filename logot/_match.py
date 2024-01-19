@@ -21,6 +21,8 @@ _CONVERSION_MAP = {
     "E": r"\-?(?:\d+.\d+E[\-\+]+\d{2,3}|INF|NAN)",
     "f": r"\-?(?:\d+.\d+|inf|nan)",
     "F": r"\-?(?:\d+.\d+|INF|NAN)",
+    "g": r"\-?(?:\d+(?:.\d+|)(?:e[\-\+]+\d{2,3}|)|inf|nan)",
+    "G": r"\-?(?:\d+(?:.\d+|)(?:E[\-\+]+\d{2,3}|)|INF|NAN)",
     # Character conversions.
     "c": r".",
     # String conversions.

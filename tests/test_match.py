@@ -30,6 +30,8 @@ def test_float_matches(value: float) -> None:
     assert_matches("foo %E bar", value)
     assert_matches("foo %f bar", value)
     assert_matches("foo %F bar", value)
+    assert_matches("foo %g bar", value)
+    assert_matches("foo %G bar", value)
 
 
 @given(st.characters())
