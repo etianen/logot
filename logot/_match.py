@@ -2,25 +2,29 @@ from __future__ import annotations
 
 import re
 
-_RE_FORMAT = re.compile(r"%(.)")
+# Regex matching a simplified conversion specifier.
+_RE_CONVERSION = re.compile(r"%(.)")
 
-_CONVERSION_INT = r"\-?\d+"
-_CONVERSION_STR = r".*"
+# Regex fragments for conversions.
+_RE_INT = r"\-?\d+"
+_RE_STR = r".*"
+
+# Mapping of simplified conversion specifiers to matching regex.
 _CONVERSION_MAP = {
     "%": r"%",
     # Integer conversions.
-    "d": _CONVERSION_INT,
-    "i": _CONVERSION_INT,
-    "u": _CONVERSION_INT,
+    "d": _RE_INT,
+    "i": _RE_INT,
+    "u": _RE_INT,
     # Float conversions.
     "f": r"\-?(?:\d+.\d+|inf|nan)",
     "F": r"\-?(?:\d+.\d+|INF|NAN)",
     # Character conversions.
     "c": r".",
     # String conversions.
-    "r": _CONVERSION_STR,
-    "s": _CONVERSION_STR,
-    "a": _CONVERSION_STR,
+    "r": _RE_STR,
+    "s": _RE_STR,
+    "a": _RE_STR,
 }
 
 
@@ -32,4 +36,4 @@ def _replace(match: re.Match[str]) -> str:
 
 
 def compile(pattern: str) -> re.Pattern[str]:
-    return re.compile(_RE_FORMAT.sub(_replace, re.escape(pattern)), re.DOTALL)
+    return re.compile(_RE_CONVERSION.sub(_replace, re.escape(pattern)), re.DOTALL)
