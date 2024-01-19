@@ -9,7 +9,9 @@ from logot._match import compile
 
 
 def assert_matches(pattern: str, *values: Any) -> None:
+    # Use Python printf-style formatting to make a string that *definitely* should match.
     expected = pattern % values
+    # Assert the matcher matches the expected string.
     assert compile(pattern).fullmatch(expected) is not None, f"{pattern} does not match {expected}"
 
 
