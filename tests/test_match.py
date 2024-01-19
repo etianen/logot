@@ -8,8 +8,10 @@ from logot._match import compile
 @pytest.mark.parametrize(
     ("pattern", "msg", "matches"),
     (
-        # Character matchers.
+        # Character matchers match a single character.
         ("foo %c baz", "foo b baz", True),
+        # Character matchers do not match multiple characters.
+        ("foo %c baz", "foo bar baz", False),
         # String matchers.
         ("foo %r baz", "foo bar baz", True),
         ("foo %s baz", "foo bar baz", True),
