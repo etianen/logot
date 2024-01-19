@@ -6,11 +6,12 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version:
+          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
@@ -21,14 +22,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     # Install toolchain.
+    - run: pipx install poetry
     - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - run: pipx install poetry
+        cache: poetry
     # Install dependencies.
     - run: poetry check
     - run: poetry check --lock
-    - run: poetry env use "python${{ matrix.python-version }}"
+    - run: poetry run python --version
     - run: poetry install
     # Run checks.
     - run: poetry run ruff check
@@ -36,5 +38,17 @@ jobs:
     - run: poetry run mypy
     # Run tests.
     - run: poetry run pytest
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    # Install toolchain.
+    - run: pipx install poetry
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+        cache: poetry
+    # Install dependencies.
+    - run: poetry install --without dev --with docs
     # Build docs.
     - run: poetry run sphinx-build -W docs docs/_build
