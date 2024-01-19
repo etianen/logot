@@ -5,7 +5,7 @@ import re
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.)")
 
-# Mapping of conversion types to matcher regex.
+# Mapping of conversion types to regex matchers.
 _CONVERSION_INT = r"\-?\d+"
 _CONVERSION_STR = r".*"
 _CONVERSION_MAP = {
@@ -42,4 +42,9 @@ def _compile_replace(match: re.Match[str]) -> str:
 
 
 def compile(pattern: str) -> re.Pattern[str]:
-    return re.compile(_RE_CONVERSION.sub(_compile_replace, re.escape(pattern)), re.DOTALL)
+    # Escape the pattern. This leaves simplified conversion specifiers intact.
+    pattern = re.escape(pattern)
+    # Substitute simplified conversion specifiers with regex matchers.
+    pattern = _RE_CONVERSION.sub(_compile_replace, pattern)
+    # Compile to regex.
+    return re.compile(pattern, re.DOTALL)
