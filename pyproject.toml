@@ -20,6 +20,7 @@ pytest = ["pytest"]
 
 [tool.poetry.group.dev.dependencies]
 furo = "*"
+hypothesis = "^6.96.1"
 mypy = "^1.8.0"
 ruff = "^0.1.11"
 pytest = "*"
