@@ -19,12 +19,12 @@ _CONVERSIONS = {
 }
 
 
-def _compile(pattern: str) -> re.Pattern[str]:
-    return re.compile(_RE_FORMAT.sub(_replace, re.escape(pattern)))
-
-
 def _replace(match: re.Match[str]) -> str:
     try:
         return _CONVERSIONS[match.group(1)]
     except KeyError:
         raise ValueError(f"Unsupported format: {match.group(0)}") from None
+
+
+def compile(pattern: str) -> re.Pattern[str]:
+    return re.compile(_RE_FORMAT.sub(_replace, re.escape(pattern)))

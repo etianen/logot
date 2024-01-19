@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 
-def _to_levelno(level: int | str) -> int:
+def to_levelno(level: int | str) -> int:
     # Handle `int` level.
     if isinstance(level, int):
         if logging.getLevelName(level).startswith("Level "):
