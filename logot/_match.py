@@ -9,7 +9,7 @@ _RE_CONVERSION = re.compile(r"%(.)")
 _RE_INT = r"\-?\d+"
 _RE_STR = r".*"
 
-# Mapping of simplified conversion specifiers to matcher regex.
+# Mapping of conversion types to matcher regex.
 _CONVERSION_MAP = {
     "%": r"%",
     # Integer conversions.
