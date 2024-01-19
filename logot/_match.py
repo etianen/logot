@@ -4,14 +4,13 @@ import re
 
 _RE_FORMAT = re.compile(r"%(.)")
 
-_CONVERSION_INT = r"\\d+"
+_CONVERSION_INT = r"\-?\d+"
 _CONVERSION_STR = r".+"
 _CONVERSION_MAP = {
     "%": r"%",
     # Integer conversions.
     "d": _CONVERSION_INT,
     "i": _CONVERSION_INT,
-    "o": _CONVERSION_INT,
     "u": _CONVERSION_INT,
     # Character conversions.
     "c": r".",

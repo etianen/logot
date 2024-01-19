@@ -8,6 +8,18 @@ from logot._match import compile
 @pytest.mark.parametrize(
     ("pattern", "msg", "matches"),
     (
+        # Integer conversions match multiple digits.
+        ("foo %d baz", "foo 123 baz", True),
+        ("foo %i baz", "foo 123 baz", True),
+        ("foo %u baz", "foo 123 baz", True),
+        # Integer conversions match signed digits.
+        ("foo %d baz", "foo -123 baz", True),
+        ("foo %i baz", "foo -123 baz", True),
+        ("foo %u baz", "foo -123 baz", True),
+        # Integer conversions no not match zero digits.
+        ("foo %d baz", "foo  baz", False),
+        ("foo %i baz", "foo  baz", False),
+        ("foo %u baz", "foo  baz", False),
         # Character conversions match a single character.
         ("foo %c baz", "foo b baz", True),
         # Character conversions do not match multiple characters.
