@@ -9,15 +9,15 @@ from logot._match import compile
 
 
 def matches(pattern: str, *values: Any) -> bool:
-    return compile(pattern).match(pattern % values) is not None
+    return compile(pattern).fullmatch(pattern % values) is not None
 
 
 def test_percent_matches() -> None:
-    assert compile("foo %% bar").match("foo % bar")
+    assert compile("foo %% bar").fullmatch("foo % bar")
 
 
 def test_percent_not_matches() -> None:
-    assert not compile("foo %% bar").match("foo baz bar")
+    assert not compile("foo %% bar").fullmatch("foo baz bar")
 
 
 @given(st.integers())
