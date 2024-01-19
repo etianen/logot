@@ -36,14 +36,7 @@ source = ["logot", "tests"]
 show_missing = true
 skip_covered = true
 fail_under = 100
-exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError",
-    "raise AssertionError",
-    "assert False",
-    "if TYPE_CHECKING:",
-    "@overload",
-]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 
 [tool.mypy]
 files = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
