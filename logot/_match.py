@@ -14,7 +14,7 @@ _CONVERSION_MAP = {
     # Integer conversion.
     "d": _RE_INT,
     "i": _RE_INT,
-    "o": _RE_INT,
+    "o": r"\-?[0-8]+",
     "u": _RE_INT,
     # Float conversion.
     "e": r"\-?(?:\d+.\d+e[\-\+]+\d{2,3}|inf|nan)",

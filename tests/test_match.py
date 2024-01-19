@@ -17,6 +17,7 @@ def assert_matches(pattern: str, *values: Any) -> None:
 def test_int_matches(value: int) -> None:
     assert_matches("foo %d bar", value)
     assert_matches("foo %i bar", value)
+    assert_matches("foo %o bar", value)
     assert_matches("foo %u bar", value)
 
 
