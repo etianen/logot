@@ -1,6 +1,7 @@
 **/__pycache__
 **/*.py[cod]
 /.coverage
+/.hypothesis
 /.mypy_cache
 /.venv
 /dist
