@@ -19,8 +19,13 @@ def _compile(pattern: str) -> re.Pattern[str]:
 
 def _replace(match: re.Match[str]) -> str:
     conversion = match["conversion"]
+    # Handle escape.
     if conversion == "%":
-        return "%"
-    if conversion in "sr":
-        return ".*?"
+        return r"%"
+    # Handle integer conversion.
+    if conversion in "diou":
+        return r"\\d+"
+    # Handle string conversion.
+    if conversion in "rsa":
+        return r".+?"
     raise ValueError(f"Unsupported format: {match.group(0)}")
