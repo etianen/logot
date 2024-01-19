@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,5 +37,16 @@ jobs:
     - run: poetry run mypy
     # Run tests.
     - run: poetry run pytest
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    # Install toolchain.
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+    - run: pipx install poetry
+    # Install dependencies.
+    - run: poetry install --without dev --with docs
     # Build docs.
     - run: poetry run sphinx-build -W docs docs/_build
