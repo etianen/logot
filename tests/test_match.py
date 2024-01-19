@@ -31,3 +31,8 @@ def test_int_matches(value: int) -> None:
 def test_float_matches(value: float) -> None:
     assert matches("foo %f bar", value)
     assert matches("foo %F bar", value)
+
+
+@given(st.characters())
+def test_char_matches(value: str) -> None:
+    assert matches("foo %c bar", value)
