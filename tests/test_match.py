@@ -21,3 +21,7 @@ def test_s_not_match() -> None:
 
 def test_percent_match() -> None:
     assert_matches("foo %% baz", "foo % baz")
+
+
+def test_percent_not_match() -> None:
+    assert_matches("foo %% baz", "foo bar baz")
