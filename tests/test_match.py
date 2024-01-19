@@ -13,10 +13,6 @@ def assert_matches(pattern: str, *values: Any) -> None:
     assert compile(pattern).fullmatch(expected) is not None, f"{pattern} does not match {expected}"
 
 
-def test_percent_matches() -> None:
-    assert_matches("foo %% bar")
-
-
 @given(st.integers())
 def test_int_matches(value: int) -> None:
     assert_matches("foo %d bar", value)
@@ -44,3 +40,7 @@ def test_str_matches(value: str) -> None:
     assert_matches("foo %r bar", value)
     assert_matches("foo %s bar", value)
     assert_matches("foo %a bar", value)
+
+
+def test_percent_matches() -> None:
+    assert_matches("foo %% bar")

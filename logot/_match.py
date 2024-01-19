@@ -11,24 +11,26 @@ _RE_STR = r".*"
 
 # Mapping of conversion types to matcher regex.
 _CONVERSION_MAP = {
-    "%": r"%",
-    # Integer conversions.
+    # Integer conversion.
     "d": _RE_INT,
     "i": _RE_INT,
+    "o": _RE_INT,
     "u": _RE_INT,
-    # Float conversions.
+    # Float conversion.
     "e": r"\-?(?:\d+.\d+e[\-\+]+\d{2,3}|inf|nan)",
     "E": r"\-?(?:\d+.\d+E[\-\+]+\d{2,3}|INF|NAN)",
     "f": r"\-?(?:\d+.\d+|inf|nan)",
     "F": r"\-?(?:\d+.\d+|INF|NAN)",
     "g": r"\-?(?:\d+(?:.\d+|)(?:e[\-\+]+\d{2,3}|)|inf|nan)",
     "G": r"\-?(?:\d+(?:.\d+|)(?:E[\-\+]+\d{2,3}|)|INF|NAN)",
-    # Character conversions.
+    # Character conversion.
     "c": r".",
-    # String conversions.
+    # String conversion.
     "r": _RE_STR,
     "s": _RE_STR,
     "a": _RE_STR,
+    # Percent conversion.
+    "%": r"%",
 }
 
 
