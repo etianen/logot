@@ -30,9 +30,9 @@ jobs:
     # Install dependencies.
     - run: poetry check
     - run: poetry check --lock
+    - run: poetry run python --version
     - run: poetry install
     # Run checks.
-    - run: poetry run python --version
     - run: poetry run ruff check
     - run: poetry run ruff format --check
     - run: poetry run mypy
