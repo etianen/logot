@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
@@ -49,3 +50,9 @@ def test_str_matches(value: str) -> None:
 
 def test_percent_matches() -> None:
     assert_matches("foo %% bar")
+
+
+def test_unsupported_format() -> None:
+    with pytest.raises(ValueError) as ex:
+        compile("%b")
+    assert str(ex.value) == "Unsupported format: 'b'"
