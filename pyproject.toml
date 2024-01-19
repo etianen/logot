@@ -29,9 +29,9 @@ pytest-cov = "^4.1.0"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-furo = "*"
-sphinx = "*"
-sphinx-autobuild = "*"
+furo = { version = "*", markers = "python_version >= '3.12'" }
+sphinx = { version = "7.2.6", markers = "python_version >= '3.12'" }
+sphinx-autobuild = { version = "*", markers = "python_version >= '3.12'" }
 
 [tool.coverage.run]
 source = ["logot", "tests"]
