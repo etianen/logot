@@ -5,17 +5,15 @@ import re
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.)")
 
-# Regex fragments for matchers.
-_RE_INT = r"\-?\d+"
-_RE_STR = r".*"
-
 # Mapping of conversion types to matcher regex.
+_CONVERSION_INT = r"\-?\d+"
+_CONVERSION_STR = r".*"
 _CONVERSION_MAP = {
     # Integer conversion.
-    "d": _RE_INT,
-    "i": _RE_INT,
+    "d": _CONVERSION_INT,
+    "i": _CONVERSION_INT,
     "o": r"\-?[0-8]+",
-    "u": _RE_INT,
+    "u": _CONVERSION_INT,
     "x": r"\-?[\da-f]+",
     "X": r"\-?[\dA-F]+",
     # Float conversion.
@@ -28,9 +26,9 @@ _CONVERSION_MAP = {
     # Character conversion.
     "c": r".",
     # String conversion.
-    "r": _RE_STR,
-    "s": _RE_STR,
-    "a": _RE_STR,
+    "r": _CONVERSION_STR,
+    "s": _CONVERSION_STR,
+    "a": _CONVERSION_STR,
     # Percent conversion.
     "%": r"%",
 }
