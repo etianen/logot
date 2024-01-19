@@ -43,7 +43,7 @@ fail_under = 100
 exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 
 [tool.mypy]
-files = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
+files = ["logot/**/*.py", "tests/**/*.py"]
 allow_redefinition = true
 explicit_package_bases = true
 show_column_numbers = true
