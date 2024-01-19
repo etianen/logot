@@ -12,6 +12,8 @@ from logot._match import compile
         ("foo %c baz", "foo b baz", True),
         # Character conversions do not match multiple characters.
         ("foo %c baz", "foo bar baz", False),
+        # Character conversions do not match zero characters.
+        ("foo %c baz", "foo  baz", False),
         # String conversions match multiple characters.
         ("foo %r baz", "foo bar baz", True),
         ("foo %s baz", "foo bar baz", True),
