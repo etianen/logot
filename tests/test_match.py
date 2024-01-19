@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
 from logot._match import compile
 
 
 @pytest.mark.parametrize(
-    ("pattern", "msg", "matches"),
+    ("pattern", "matches", "not_matches"),
     (
         # Integer conversions match multiple digits.
         ("foo %d baz", "foo 123 baz", True),
