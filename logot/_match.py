@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import re
 
-_RE_FORMAT = re.compile(
-    r"%"
-    r"(?P<key>\(.*?\)|)"
-    r"(?P<flag>[\#0\- \+]*)"
-    r"(?P<width>[0-9]+|\*|)"
-    r"(?P<precision>\.(?:[0-9]+|\*)|)"
-    r"(?P<length>[hlL]*)"
-    r"(?P<conversion>[diouxXeEfDFgGcrsa%]+)"
-)
+_RE_FORMAT = re.compile(r"%(.)")
+
+_CONVERSIONS = {
+    "%": r"%",
+    # Integer conversion.
+    "d": r"\\d+?",
+    "i": r"\\d+?",
+    "o": r"\\d+?",
+    "u": r"\\d+?",
+    # String conversion.
+    "c": r".",
+    "r": r".+?",
+    "s": r".+?",
+    "a": r".+?",
+}
 
 
 def _compile(pattern: str) -> re.Pattern[str]:
@@ -18,15 +24,7 @@ def _compile(pattern: str) -> re.Pattern[str]:
 
 
 def _replace(match: re.Match[str]) -> str:
-    conversion = match["conversion"]
-    # Handle escape.
-    if conversion == "%":
-        return r"%"
-    # Handle integer conversion.
-    if conversion in "diou":
-        return r"\\d+"
-    # Handle string conversion.
-    if conversion in "rsa":
-        return r".+?"
-    # Fail on any other conversions.
-    raise ValueError(f"Unsupported format: {match.group(0)}")
+    try:
+        return _CONVERSIONS[match.group(1)]
+    except KeyError:
+        raise ValueError(f"Unsupported format: {match.group(0)}") from None
