@@ -5,11 +5,11 @@ import re
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.)")
 
-# Regex fragments for conversions.
+# Regex fragments for matchers.
 _RE_INT = r"\-?\d+"
 _RE_STR = r".*"
 
-# Mapping of simplified conversion specifiers to matching regex.
+# Mapping of simplified conversion specifiers to matcher regex.
 _CONVERSION_MAP = {
     "%": r"%",
     # Integer conversions.
