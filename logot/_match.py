@@ -28,7 +28,7 @@ _CONVERSION_MAP = {
 }
 
 
-def _replace(match: re.Match[str]) -> str:
+def _compile_replace(match: re.Match[str]) -> str:
     try:
         return _CONVERSION_MAP[match.group(1)]
     except KeyError:
@@ -36,4 +36,4 @@ def _replace(match: re.Match[str]) -> str:
 
 
 def compile(pattern: str) -> re.Pattern[str]:
-    return re.compile(_RE_CONVERSION.sub(_replace, re.escape(pattern)), re.DOTALL)
+    return re.compile(_RE_CONVERSION.sub(_compile_replace, re.escape(pattern)), re.DOTALL)
