@@ -5,7 +5,6 @@ import re
 _RE_FORMAT = re.compile(r"%(.)")
 
 _CONVERSION_INT = r"\-?\d+"
-_CONVERSION_FLOAT = r"\-?\d+"
 _CONVERSION_STR = r".+"
 _CONVERSION_MAP = {
     "%": r"%",
@@ -14,8 +13,8 @@ _CONVERSION_MAP = {
     "i": _CONVERSION_INT,
     "u": _CONVERSION_INT,
     # Float conversions.
-    "f": _CONVERSION_FLOAT,
-    "F": _CONVERSION_FLOAT,
+    "f": r"\-?(?:\d+.\d+|inf|nan)",
+    "F": r"\-?(?:\d+.\d+|INF|NAN)",
     # Character conversions.
     "c": r".",
     # String conversions.
