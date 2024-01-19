@@ -32,4 +32,4 @@ def _replace(match: re.Match[str]) -> str:
 
 
 def compile(pattern: str) -> re.Pattern[str]:
-    return re.compile(_RE_FORMAT.sub(_replace, re.escape(pattern)), re.MULTILINE)
+    return re.compile(_RE_FORMAT.sub(_replace, re.escape(pattern)), re.DOTALL)
