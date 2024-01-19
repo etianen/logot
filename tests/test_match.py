@@ -9,3 +9,7 @@ def assert_matches(pattern: str, msg: str) -> None:
 
 def test_match_s() -> None:
     assert_matches("foo %s baz", "foo bar baz")
+
+
+def test_match_percent() -> None:
+    assert_matches("foo %% baz", "foo % baz")
