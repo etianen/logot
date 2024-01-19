@@ -7,9 +7,17 @@ def assert_matches(pattern: str, msg: str) -> None:
     assert _compile(pattern).match(msg) is not None
 
 
-def test_match_s() -> None:
+def assert_not_matches(pattern: str, msg: str) -> None:
+    assert _compile(pattern).fullmatch(msg) is None
+
+
+def test_s_match() -> None:
     assert_matches("foo %s baz", "foo bar baz")
 
 
-def test_match_percent() -> None:
+def test_s_not_match() -> None:
+    assert_not_matches("foo %s baz", "foo bar foo")
+
+
+def test_percent_match() -> None:
     assert_matches("foo %% baz", "foo % baz")
