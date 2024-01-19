@@ -18,6 +18,10 @@ from logot._match import compile
         ("foo %r baz", "foo bar baz", True),
         ("foo %s baz", "foo bar baz", True),
         ("foo %a baz", "foo bar baz", True),
+        # String conversions do not match zero characters.
+        ("foo %r baz", "foo  baz", False),
+        ("foo %s baz", "foo  baz", False),
+        ("foo %a baz", "foo  baz", False),
     ),
 )
 def test_match(pattern: str, msg: str, matches: bool) -> None:
