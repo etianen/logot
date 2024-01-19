@@ -28,4 +28,5 @@ def _replace(match: re.Match[str]) -> str:
     # Handle string conversion.
     if conversion in "rsa":
         return r".+?"
+    # Fail on any other conversions.
     raise ValueError(f"Unsupported format: {match.group(0)}")
