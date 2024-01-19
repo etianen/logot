@@ -7,16 +7,16 @@ _RE_FORMAT = re.compile(r"%(.)")
 _CONVERSIONS = {
     "%": r"%",
     # Integer conversions.
-    "d": r"\\d+?",
-    "i": r"\\d+?",
-    "o": r"\\d+?",
-    "u": r"\\d+?",
+    "d": r"\\d+",
+    "i": r"\\d+",
+    "o": r"\\d+",
+    "u": r"\\d+",
     # Character conversions.
     "c": r".",
     # String conversions.
-    "r": r".+?",
-    "s": r".+?",
-    "a": r".+?",
+    "r": r".+",
+    "s": r".+",
+    "a": r".+",
 }
 
 
