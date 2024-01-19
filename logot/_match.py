@@ -16,6 +16,8 @@ _CONVERSION_MAP = {
     "i": _RE_INT,
     "o": r"\-?[0-8]+",
     "u": _RE_INT,
+    "x": r"\-?[\da-f]+",
+    "X": r"\-?[\dA-F]+",
     # Float conversion.
     "e": r"\-?(?:\d+.\d+e[\-\+]+\d{2,3}|inf|nan)",
     "E": r"\-?(?:\d+.\d+E[\-\+]+\d{2,3}|INF|NAN)",

@@ -19,6 +19,8 @@ def test_int_matches(value: int) -> None:
     assert_matches("foo %i bar", value)
     assert_matches("foo %o bar", value)
     assert_matches("foo %u bar", value)
+    assert_matches("foo %x bar", value)
+    assert_matches("foo %X bar", value)
 
 
 @given(st.floats())
