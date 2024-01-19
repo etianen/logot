@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import date
 from pathlib import Path
 
-import tomli
+import tomllib
 
 _root = Path(__file__).parent.parent
-_poetry = tomli.loads((_root / "pyproject.toml").read_text())["tool"]["poetry"]
+_poetry = tomllib.loads((_root / "pyproject.toml").read_text())["tool"]["poetry"]
 
 project = _poetry["name"]
 release = version = _poetry["version"]

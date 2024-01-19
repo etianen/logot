@@ -32,7 +32,6 @@ optional = true
 furo = "*"
 sphinx = "*"
 sphinx-autobuild = "*"
-tomli = "^2.0.1"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
