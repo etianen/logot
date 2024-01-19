@@ -4,16 +4,16 @@ import re
 
 _RE_FORMAT = re.compile(r"%(.)")
 
-_MATCHERS = {
+_CONVERSIONS = {
     "%": r"%",
-    # Integer matchers.
+    # Integer conversions.
     "d": r"\\d+?",
     "i": r"\\d+?",
     "o": r"\\d+?",
     "u": r"\\d+?",
-    # Character matchers.
+    # Character conversions.
     "c": r".",
-    # String matchers.
+    # String conversions.
     "r": r".+?",
     "s": r".+?",
     "a": r".+?",
@@ -22,7 +22,7 @@ _MATCHERS = {
 
 def _replace(match: re.Match[str]) -> str:
     try:
-        return _MATCHERS[match.group(1)]
+        return _CONVERSIONS[match.group(1)]
     except KeyError:
         raise ValueError(f"Unsupported format: {match.group(0)}") from None
 
