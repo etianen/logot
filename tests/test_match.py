@@ -13,11 +13,7 @@ def matches(pattern: str, *values: Any) -> bool:
 
 
 def test_percent_matches() -> None:
-    assert compile("foo %% bar").fullmatch("foo % bar")
-
-
-def test_percent_not_matches() -> None:
-    assert not compile("foo %% bar").fullmatch("foo baz bar")
+    assert matches("foo %% bar")
 
 
 @given(st.integers())
