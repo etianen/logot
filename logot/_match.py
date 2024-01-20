@@ -4,7 +4,7 @@ import re
 from collections.abc import Callable
 from functools import partial
 
-# A compiled matcher callable.
+# Compiled matcher callable.
 Matcher = Callable[[str], bool]
 
 # Regex matching a simplified conversion specifier.
