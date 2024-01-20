@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import cast
 
 import pytest
 
@@ -29,5 +30,5 @@ def test_to_levelno_str_fail() -> None:
 
 def test_to_levelno_type_fail() -> None:
     with pytest.raises(TypeError) as ex:
-        to_levelno(1.5)  # type: ignore[arg-type]
+        to_levelno(cast(int, 1.5))
     assert str(ex.value) == "Invalid level: 1.5"
