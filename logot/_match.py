@@ -7,7 +7,7 @@ _RE_CONVERSION = re.compile(r"%(.)")
 
 # Mapping of conversion types to regex matchers.
 _CONVERSION_INT = r"\-?\d+"
-_CONVERSION_STR = r".*"
+_CONVERSION_STR = r".*?"
 _CONVERSION_MAP = {
     # Integer conversion.
     "d": _CONVERSION_INT,
@@ -17,12 +17,12 @@ _CONVERSION_MAP = {
     "x": r"\-?[\da-f]+",
     "X": r"\-?[\dA-F]+",
     # Float conversion.
-    "e": r"\-?(?:\d+.\d+e[\-\+]+\d{2,3}|inf|nan)",
-    "E": r"\-?(?:\d+.\d+E[\-\+]+\d{2,3}|INF|NAN)",
-    "f": r"\-?(?:\d+.\d+|inf|nan)",
-    "F": r"\-?(?:\d+.\d+|INF|NAN)",
-    "g": r"\-?(?:\d+(?:.\d+|)(?:e[\-\+]+\d{2,3}|)|inf|nan)",
-    "G": r"\-?(?:\d+(?:.\d+|)(?:E[\-\+]+\d{2,3}|)|INF|NAN)",
+    "e": r"\-?(?:\d+\.\d+e[\-\+]\d{2,3}|inf|nan)",
+    "E": r"\-?(?:\d+\.\d+E[\-\+]\d{2,3}|INF|NAN)",
+    "f": r"\-?(?:\d+\.\d+|inf|nan)",
+    "F": r"\-?(?:\d+\.\d+|INF|NAN)",
+    "g": r"\-?(?:\d+(?:\.\d+)?(?:e[\-\+]\d{2,3})?|inf|nan)",
+    "G": r"\-?(?:\d+(?:\.\d+)?(?:E[\-\+]\d{2,3})?|INF|NAN)",
     # Character conversion.
     "c": r".",
     # String conversion.
