@@ -69,6 +69,7 @@ class _ComposedLogged(Logged):
     __slots__ = ("_logs",)
 
     def __init__(self, logs: tuple[Logged, ...]) -> None:
+        assert len(logs) > 1, "Unreachable"
         self._logs = logs
 
     @classmethod
