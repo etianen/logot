@@ -137,5 +137,17 @@ class _UnorderedAllLogged(_ComposedLogged):
 class _AnyLogged(_ComposedLogged):
     __slots__ = ()
 
+    def _reduce(self, record: logging.LogRecord) -> Logged | None:
+        for n, log in enumerate(self._logs):
+            reduced_log = log._reduce(record)
+            # Handle full reduction.
+            if reduced_log is None:
+                return None
+            # Handle partial reduction.
+            if reduced_log is not log:
+                return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n:]))
+        # Handle no reduction.
+        return self
+
     def __repr__(self) -> str:
         return " | ".join(map(repr, self._logs))
