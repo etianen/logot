@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
 from functools import partial
+from typing import Callable
 
 # Compiled matcher callable.
 Matcher = Callable[[str], bool]
