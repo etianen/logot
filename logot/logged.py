@@ -54,3 +54,22 @@ def error(msg: str) -> Logged:
 
 def critical(msg: str) -> Logged:
     return log(logging.CRITICAL, msg)
+
+
+class _ComposedLogged(Logged):
+    __slots__ = ("_logs",)
+
+    def __init__(self, logs: tuple[Logged, ...]) -> None:
+        self._logs = logs
+
+    @classmethod
+    def from_compose(cls, log_a: Logged, log_b: Logged) -> Logged:
+        # If possible, flatten nested logs of the same type.
+        if isinstance(log_a, cls):
+            if isinstance(log_b, cls):
+                return cls((*log_a._logs, *log_b._logs))
+            return cls((*log_a._logs, log_b))
+        if isinstance(log_b, cls):
+            return cls((log_a, *log_b._logs))
+        # Wrap the logs without flattening.
+        return cls((log_a, log_b))
