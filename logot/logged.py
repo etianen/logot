@@ -10,6 +10,15 @@ from logot._util import to_levelno
 class Logged(ABC):
     __slots__ = ()
 
+    def __gt__(self, log: Logged) -> Logged:
+        return _OrderedAllLogged._from_compose(self, log)
+
+    def __and__(self, log: Logged) -> Logged:
+        return _UnorderedAllLogged._from_compose(self, log)
+
+    def __or__(self, log: Logged) -> Logged:
+        return _AnyLogged._from_compose(self, log)
+
     @abstractmethod
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         raise NotImplementedError
@@ -63,7 +72,7 @@ class _ComposedLogged(Logged):
         self._logs = logs
 
     @classmethod
-    def from_compose(cls, log_a: Logged, log_b: Logged) -> Logged:
+    def _from_compose(cls, log_a: Logged, log_b: Logged) -> Logged:
         # If possible, flatten nested logs of the same type.
         if isinstance(log_a, cls):
             if isinstance(log_b, cls):
@@ -75,7 +84,7 @@ class _ComposedLogged(Logged):
         return cls((log_a, log_b))
 
     @classmethod
-    def from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
+    def _from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
         # If all logs are reduced, signal the reduction as complete.
         if not logs:
             return None
@@ -84,3 +93,15 @@ class _ComposedLogged(Logged):
             return logs[0]
         # Wrap the logs.
         return cls(logs)
+
+
+class _OrderedAllLogged(_ComposedLogged):
+    __slots__ = ()
+
+
+class _UnorderedAllLogged(_ComposedLogged):
+    __slots__ = ()
+
+
+class _AnyLogged(_ComposedLogged):
+    __slots__ = ()
