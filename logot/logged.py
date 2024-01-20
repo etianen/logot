@@ -111,6 +111,9 @@ class _OrderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
+    def __repr__(self) -> str:
+        return " > ".join(map(repr, self._logs))
+
 
 class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
@@ -127,6 +130,12 @@ class _UnorderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
+    def __repr__(self) -> str:
+        return " & ".join(map(repr, self._logs))
+
 
 class _AnyLogged(_ComposedLogged):
     __slots__ = ()
+
+    def __repr__(self) -> str:
+        return " | ".join(map(repr, self._logs))
