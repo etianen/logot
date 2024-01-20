@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 # Regex matching a simplified conversion specifier.
-_RE_CONVERSION = re.compile(r"%(.)")
+_RE_CONVERSION = re.compile(r"%(.|$)")
 
 # Mapping of conversion types to regex matchers.
 _CONVERSION_INT = r"\-?\d+"
@@ -38,7 +38,7 @@ def _compile_replace(match: re.Match[str]) -> str:
     try:
         return _CONVERSION_MAP[match.group(1)]
     except KeyError:
-        raise ValueError(f"Unsupported format: {match.group(1)!r}") from None
+        raise ValueError(f"Unsupported format character {match.group(1)!r} at index {match.start(1)}") from None
 
 
 def compile(pattern: str) -> re.Pattern[str]:
