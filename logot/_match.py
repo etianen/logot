@@ -43,7 +43,7 @@ def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
     return pattern.fullmatch(value) is not None
 
 
-def compile(pattern: str) -> Matcher:
+def compile_matcher(pattern: str) -> Matcher:
     parts: list[str] = _RE_CONVERSION.split(pattern)
     is_regex = False
     # Replace conversion types with regex matchers.

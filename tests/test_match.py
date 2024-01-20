@@ -6,14 +6,14 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 
-from logot._match import compile
+from logot._match import compile_matcher
 
 
 def assert_matches(pattern: str, *values: Any) -> None:
     # Use Python printf-style formatting to make a string that *definitely* should match.
     expected = pattern % values
     # Assert the matcher matches the expected string.
-    matcher = compile(pattern)
+    matcher = compile_matcher(pattern)
     assert matcher(expected) is not None, f"{pattern} does not match {expected}"
 
 
@@ -55,11 +55,11 @@ def test_percent_matches() -> None:
 
 def test_unsupported_format() -> None:
     with pytest.raises(ValueError) as ex:
-        compile("%b")
+        compile_matcher("%b")
     assert str(ex.value) == "Unsupported format character 'b'"
 
 
 def test_truncated_format() -> None:
     with pytest.raises(ValueError) as ex:
-        compile("%")
+        compile_matcher("%")
     assert str(ex.value) == "Unsupported format character ''"
