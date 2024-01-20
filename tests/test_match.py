@@ -55,11 +55,11 @@ def test_percent_matches() -> None:
 
 def test_unsupported_format() -> None:
     with pytest.raises(ValueError) as ex:
-        compile_matcher("foo %b bar")
-    assert str(ex.value) == "Unsupported format character 'b' at index 5"
+        compile_matcher("foo %s %b")
+    assert str(ex.value) == "Unsupported format character 'b' at index 8"
 
 
 def test_truncated_format() -> None:
     with pytest.raises(ValueError) as ex:
-        compile_matcher("foo %")
-    assert str(ex.value) == "Unsupported format character '' at index 5"
+        compile_matcher("foo %s %")
+    assert str(ex.value) == "Unsupported format character '' at index 8"

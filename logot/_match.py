@@ -55,7 +55,7 @@ def compile_matcher(pattern: str) -> Matcher:
             try:
                 parts[n] = _CONVERSION_MAP[part]
             except KeyError:
-                part_index = sum(map(len, parts[:n:2])) + ((n - 1) * 2) + 1
+                part_index = sum(map(len, parts[:n:2])) + ((n // 2) * 2) + 1
                 raise ValueError(f"Unsupported format character {part!r} at index {part_index}") from None
             # A "%" is used as an escape sequence, and doesn't require a regex matcher. Anything else does.
             is_regex |= part != "%"
