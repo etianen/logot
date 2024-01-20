@@ -1,6 +1,11 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
+from functools import partial
+
+# A compiled matcher callable.
+Matcher = Callable[[str], bool]
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -41,10 +46,15 @@ def _compile_replace(match: re.Match[str]) -> str:
         raise ValueError(f"Unsupported format character {match.group(1)!r} at index {match.start(1)}") from None
 
 
-def compile(pattern: str) -> re.Pattern[str]:
+def _regex_matcher(pattern: re.Pattern[str], value: str) -> bool:
+    return pattern.fullmatch(value) is not None
+
+
+def compile(pattern: str) -> Matcher:
     # Escape the pattern. This leaves simplified conversion specifiers intact.
     pattern = re.escape(pattern)
     # Substitute simplified conversion specifiers with regex matchers.
     pattern = _RE_CONVERSION.sub(_compile_replace, pattern)
     # Compile to regex.
-    return re.compile(pattern, re.DOTALL)
+    pattern = re.compile(pattern, re.DOTALL)
+    return partial(_regex_matcher, pattern)
