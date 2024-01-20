@@ -46,23 +46,23 @@ def log(level: int | str, msg: str) -> Logged:
 
 
 def debug(msg: str) -> Logged:
-    return log(logging.DEBUG, msg)
+    return _LogRecordLogged(logging.DEBUG, msg)
 
 
 def info(msg: str) -> Logged:
-    return log(logging.INFO, msg)
+    return _LogRecordLogged(logging.INFO, msg)
 
 
 def warning(msg: str) -> Logged:
-    return log(logging.WARNING, msg)
+    return _LogRecordLogged(logging.WARNING, msg)
 
 
 def error(msg: str) -> Logged:
-    return log(logging.ERROR, msg)
+    return _LogRecordLogged(logging.ERROR, msg)
 
 
 def critical(msg: str) -> Logged:
-    return log(logging.CRITICAL, msg)
+    return _LogRecordLogged(logging.CRITICAL, msg)
 
 
 class _ComposedLogged(Logged):
