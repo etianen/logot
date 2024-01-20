@@ -16,7 +16,6 @@ copyright = f"{date.today().year} Dave Hall"
 exclude_patterns = ["_build"]
 
 html_theme = "furo"
-html_title = _poetry["name"]
 
 extensions = [
     "sphinx.ext.autodoc",
