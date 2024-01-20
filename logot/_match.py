@@ -45,23 +45,24 @@ def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
 
 def compile_matcher(pattern: str) -> Matcher:
     parts: list[str] = _RE_CONVERSION.split(pattern)
-    # If there is at least one matching conversion specifier, this might require a regex matcher.
-    if parts:
+    parts_len = len(parts)
+    # If there is more than one part, at least one conversion specifier was found and we might need a regex matcher.
+    if parts_len > 1:
         is_regex = False
         # Replace conversion types with regex matchers.
-        for n in range(1, len(parts), 2):
+        for n in range(1, parts_len, 2):
             part = parts[n]
             try:
                 parts[n] = _CONVERSION_MAP[part]
             except KeyError:
                 raise ValueError(f"Unsupported format character {part!r}") from None
-            # Possibly mark matcher as regex.
+            # A "%" is used as an escape sequence, and doesn't require a regex matcher. Anything else does.
             is_regex |= part != "%"
         # Create regex matcher.
         if is_regex:
-            # Escape all non-regex parts.
             parts[::2] = map(re.escape, parts[::2])
-            # Compile to regex.
             return partial(_match_regex, re.compile("".join(parts), re.DOTALL))
+        # Recreate the pattern with all escape sequences replaced.
+        pattern = "".join(parts)
     # Create simple matcher.
-    return "".join(parts).__eq__
+    return pattern.__eq__
