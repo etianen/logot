@@ -38,7 +38,7 @@ def _compile_replace(match: re.Match[str]) -> str:
     try:
         return _CONVERSION_MAP[match.group(1)]
     except KeyError:
-        raise ValueError(f"Unsupported format: {match.group(1)!r}") from None
+        raise ValueError(f"Unsupported format character {match.group(1)!r} at index {match.start(1)}") from None
 
 
 def compile(pattern: str) -> re.Pattern[str]:
