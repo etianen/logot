@@ -98,6 +98,18 @@ class _ComposedLogged(Logged):
 class _OrderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
+    def _reduce(self, record: logging.LogRecord) -> Logged | None:
+        log = self._logs[0]
+        reduced_log = log._reduce(record)
+        # Handle full reduction.
+        if reduced_log is None:
+            return _OrderedAllLogged._from_reduce(self._logs[1:])
+        # Handle partial reduction.
+        if reduced_log is not log:
+            return _OrderedAllLogged((reduced_log, *self._logs[1:]))
+        # Handle no reduction.
+        return self
+
 
 class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
