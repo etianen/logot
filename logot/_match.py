@@ -39,8 +39,8 @@ _CONVERSION_MAP = {
 }
 
 
-def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
-    return pattern.fullmatch(value) is not None
+def _match_regex(pattern: re.Pattern[str], msg: str) -> bool:
+    return pattern.fullmatch(msg) is not None
 
 
 def compile_matcher(pattern: str) -> Matcher:
