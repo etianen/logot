@@ -46,15 +46,28 @@ def _compile_replace(match: re.Match[str]) -> str:
         raise ValueError(f"Unsupported format character {match.group(1)!r} at index {match.start(1)}") from None
 
 
-def _regex_matcher(pattern: re.Pattern[str], value: str) -> bool:
+def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
     return pattern.fullmatch(value) is not None
 
 
 def compile(pattern: str) -> Matcher:
-    # Escape the pattern. This leaves simplified conversion specifiers intact.
-    pattern = re.escape(pattern)
-    # Substitute simplified conversion specifiers with regex matchers.
-    pattern = _RE_CONVERSION.sub(_compile_replace, pattern)
-    # Compile to regex.
-    pattern = re.compile(pattern, re.DOTALL)
-    return partial(_regex_matcher, pattern)
+    parts: list[str] = _RE_CONVERSION.split(pattern)
+    parts_len = len(parts)
+    is_regex = False
+    # Replace conversion types with regex matchers.
+    for n in range(1, parts_len, 2):
+        part = parts[n]
+        try:
+            parts[n] = _CONVERSION_MAP[part]
+        except KeyError:
+            raise ValueError(f"Unsupported format character {part!r}") from None
+        # Possibly mark matcher as regex.
+        is_regex |= part != "%"
+    # Create regex matcher.
+    if is_regex:
+        # Escape all non-regex parts.
+        parts[::2] = map(re.escape, parts[::2])
+        # Compile to regex.
+        return partial(_match_regex, re.compile("".join(parts), re.DOTALL))
+    # Create simple matcher.
+    return "".join(parts).__eq__
