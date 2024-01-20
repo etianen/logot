@@ -45,10 +45,9 @@ def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
 
 def compile(pattern: str) -> Matcher:
     parts: list[str] = _RE_CONVERSION.split(pattern)
-    parts_len = len(parts)
     is_regex = False
     # Replace conversion types with regex matchers.
-    for n in range(1, parts_len, 2):
+    for n in range(1, len(parts), 2):
         part = parts[n]
         try:
             parts[n] = _CONVERSION_MAP[part]
