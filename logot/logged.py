@@ -73,3 +73,14 @@ class _ComposedLogged(Logged):
             return cls((log_a, *log_b._logs))
         # Wrap the logs without flattening.
         return cls((log_a, log_b))
+
+    @classmethod
+    def from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
+        # If all logs are reduced, signal the reduction as complete.
+        if not logs:
+            return None
+        # If there is a single log, do not wrap it.
+        if len(logs) == 1:
+            return logs[0]
+        # Wrap the logs.
+        return cls(logs)
