@@ -1,6 +1,11 @@
 from __future__ import annotations
 
 import re
+from functools import partial
+from typing import Callable
+
+# Compiled matcher callable.
+Matcher = Callable[[str], bool]
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -34,17 +39,31 @@ _CONVERSION_MAP = {
 }
 
 
-def _compile_replace(match: re.Match[str]) -> str:
-    try:
-        return _CONVERSION_MAP[match.group(1)]
-    except KeyError:
-        raise ValueError(f"Unsupported format character {match.group(1)!r} at index {match.start(1)}") from None
+def _match_regex(pattern: re.Pattern[str], value: str) -> bool:
+    return pattern.fullmatch(value) is not None
 
 
-def compile(pattern: str) -> re.Pattern[str]:
-    # Escape the pattern. This leaves simplified conversion specifiers intact.
-    pattern = re.escape(pattern)
-    # Substitute simplified conversion specifiers with regex matchers.
-    pattern = _RE_CONVERSION.sub(_compile_replace, pattern)
-    # Compile to regex.
-    return re.compile(pattern, re.DOTALL)
+def compile_matcher(pattern: str) -> Matcher:
+    parts: list[str] = _RE_CONVERSION.split(pattern)
+    parts_len = len(parts)
+    # If there is more than one part, at least one conversion specifier was found and we might need a regex matcher.
+    if parts_len > 1:
+        is_regex = False
+        # Replace conversion types with regex matchers.
+        for n in range(1, parts_len, 2):
+            part = parts[n]
+            try:
+                parts[n] = _CONVERSION_MAP[part]
+            except KeyError:
+                part_index = sum(map(len, parts[:n:2])) + ((n // 2) * 2) + 1
+                raise ValueError(f"Unsupported format character {part!r} at index {part_index}") from None
+            # A "%" is used as an escape sequence, and doesn't require a regex matcher. Anything else does.
+            is_regex |= part != "%"
+        # Create regex matcher.
+        if is_regex:
+            parts[::2] = map(re.escape, parts[::2])
+            return partial(_match_regex, re.compile("".join(parts), re.DOTALL))
+        # Recreate the pattern with all escape sequences replaced.
+        pattern = "".join(parts)
+    # Create simple matcher.
+    return pattern.__eq__
