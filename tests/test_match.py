@@ -56,3 +56,9 @@ def test_unsupported_format() -> None:
     with pytest.raises(ValueError) as ex:
         compile("%b")
     assert str(ex.value) == "Unsupported format: 'b'"
+
+
+def test_truncated_format() -> None:
+    with pytest.raises(ValueError) as ex:
+        compile("%")
+    assert str(ex.value) == "Unsupported format: ''"

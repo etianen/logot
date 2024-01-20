@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 
 # Regex matching a simplified conversion specifier.
-_RE_CONVERSION = re.compile(r"%(.)")
+_RE_CONVERSION = re.compile(r"%(.|$)")
 
 # Mapping of conversion types to regex matchers.
 _CONVERSION_INT = r"\-?\d+"
