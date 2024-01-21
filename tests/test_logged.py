@@ -44,6 +44,13 @@ def test_log_record_logged_str() -> None:
 
 
 def test_log_record_logged_reduce() -> None:
-    assert_reduce(logged.info("foo bar"), record(logging.INFO, "foo bar"))
+    assert_reduce(
+        logged.info("foo bar"),
+        record(logging.INFO, "foo bar"),
+    )
     # Non-matching preceding logs are discarded.
-    assert_reduce(logged.info("foo bar"), record(logging.INFO, "boom!"), record(logging.INFO, "foo bar"))
+    assert_reduce(
+        logged.info("foo bar"),
+        record(logging.INFO, "boom!"),
+        record(logging.INFO, "foo bar"),
+    )
