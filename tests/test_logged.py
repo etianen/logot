@@ -46,13 +46,8 @@ def test_log_record_logged_str() -> None:
 def test_log_record_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo bar"),
-        record(logging.INFO, "foo bar"),
-    )
-    # Non-matching preceding logs are discarded.
-    assert_reduce(
-        logged.info("foo bar"),
-        record(logging.INFO, "boom!"),
-        record(logging.INFO, "foo bar"),
+        record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "foo bar"),  # Matching.
     )
 
 
@@ -70,3 +65,14 @@ def test_ordered_all_logged_repr() -> None:
 
 def test_ordered_all_logged_str() -> None:
     assert str(logged.info("foo") > logged.info("bar")) == "[INFO] foo\n[INFO] bar"
+
+
+def test_ordered_all_logged_reduce() -> None:
+    assert_reduce(
+        logged.info("foo") > logged.info("bar"),
+        record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "bar"),  # Non-matching.
+        record(logging.INFO, "foo"),  # Matching.
+        record(logging.INFO, "foo"),  # Non-matching.
+        record(logging.INFO, "bar"),  # Matching.
+    )
