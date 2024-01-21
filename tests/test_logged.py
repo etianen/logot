@@ -51,6 +51,7 @@ def test_log_record_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo bar"),
         record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.DEBUG, "foo bar"),  # Non-matching.
         record(logging.INFO, "foo bar"),  # Matching.
     )
 
