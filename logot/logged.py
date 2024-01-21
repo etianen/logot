@@ -154,10 +154,10 @@ class _UnorderedAllLogged(_ComposedLogged):
             reduced_log = log._reduce(record)
             # Handle full reduction.
             if reduced_log is None:
-                return _UnorderedAllLogged.from_reduce((*self._logs[:n], *self._logs[n:]))
+                return _UnorderedAllLogged.from_reduce((*self._logs[:n], *self._logs[n + 1 :]))
             # Handle partial reduction.
             if reduced_log is not log:
-                return _UnorderedAllLogged((*self._logs[:n], reduced_log, *self._logs[n:]))
+                return _UnorderedAllLogged((*self._logs[:n], reduced_log, *self._logs[n + 1 :]))
         # Handle no reduction.
         return self
 
