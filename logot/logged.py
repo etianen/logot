@@ -20,7 +20,7 @@ class Logged(ABC):
         return _AnyLogged.from_compose(self, log)
 
     def __str__(self) -> str:
-        return self._str(indent=0)
+        return self._str(indent="")
 
     @abstractmethod
     def __eq__(self, other: object) -> bool:
