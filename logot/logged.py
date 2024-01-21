@@ -139,7 +139,8 @@ class _OrderedAllLogged(_ComposedLogged):
         return self
 
     def _str(self, *, indent: str) -> str:
-        return f"\n{indent}".join(log._str(indent=indent + "  ") for log in self._logs)
+        nested_indent = indent + "  "
+        return f"\n{indent}".join(log._str(indent=nested_indent) for log in self._logs)
 
 
 class _UnorderedAllLogged(_ComposedLogged):
@@ -161,7 +162,8 @@ class _UnorderedAllLogged(_ComposedLogged):
         return self
 
     def _str(self, *, indent: str) -> str:
-        logs_str = f"\n{indent}- ".join(log._str(indent=indent + "  ") for log in self._logs)
+        nested_indent = indent + "  "
+        logs_str = f"\n{indent}".join(f"- {log._str(indent=nested_indent)}" for log in self._logs)
         return f"Unordered:\n{logs_str}"
 
 

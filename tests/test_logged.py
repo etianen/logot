@@ -64,7 +64,12 @@ def test_ordered_all_logged_repr() -> None:
 
 
 def test_ordered_all_logged_str() -> None:
-    assert str(logged.info("foo") > logged.info("bar")) == "[INFO] foo\n[INFO] bar"
+    assert str(logged.info("foo") > logged.info("bar")) == "\n".join(
+        (
+            "[INFO] foo",
+            "[INFO] bar",
+        )
+    )
 
 
 def test_ordered_all_logged_reduce() -> None:
@@ -91,8 +96,14 @@ def test_unordered_all_logged_repr() -> None:
     assert repr(logged.info("foo") & logged.info("bar")) == "log('INFO', 'foo') & log('INFO', 'bar')"
 
 
-# def test_ordered_all_logged_str() -> None:
-#     assert str(logged.info("foo") > logged.info("bar")) == "[INFO] foo\n[INFO] bar"
+def test_unordered_all_logged_str() -> None:
+    assert str(logged.info("foo") & logged.info("bar")) == "\n".join(
+        (
+            "Unordered:",
+            "- [INFO] foo",
+            "- [INFO] bar",
+        )
+    )
 
 
 # def test_ordered_all_logged_reduce() -> None:
