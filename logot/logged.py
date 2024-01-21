@@ -23,6 +23,14 @@ class Logged(ABC):
         return self._str(indent=0)
 
     @abstractmethod
+    def __eq__(self, other: object) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        raise NotImplementedError
+
+    @abstractmethod
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         raise NotImplementedError
 
