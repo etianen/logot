@@ -110,9 +110,7 @@ class _ComposedLogged(Logged):
 
     @classmethod
     def from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
-        # If all logs are reduced, signal the reduction as complete.
-        if not logs:
-            return None
+        assert logs, "Unreachable"
         # If there is a single log, do not wrap it.
         if len(logs) == 1:
             return logs[0]
