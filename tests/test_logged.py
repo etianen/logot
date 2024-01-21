@@ -196,3 +196,74 @@ def test_unordered_all_logged_reduce() -> None:
         record(logging.INFO, "foo2"),  # Matching.
         record(logging.INFO, "bar2"),  # Matching.
     )
+
+
+def test_any_logged_eq_pass() -> None:
+    assert (logged.info("foo") | logged.info("bar")) == (logged.info("foo") | logged.info("bar"))
+
+
+def test_any_logged_eq_fail() -> None:
+    # Different orderings are not equal.
+    assert (logged.info("foo") | logged.info("bar")) != (logged.info("bar") | logged.info("foo"))
+    # Different operators are not equal.
+    assert (logged.info("foo") | logged.info("bar")) != (logged.info("foo") >> logged.info("bar"))
+
+
+# def test_unordered_all_logged_repr() -> None:
+#     # Composed `Logged` are flattened from the left.
+#     assert (
+#         repr((logged.info("foo") & logged.info("bar")) & logged.info("baz"))
+#         == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz'))"
+#     )
+#     # Composed `Logged` are flattened from the right.
+#     assert (
+#         repr(logged.info("foo") & (logged.info("bar") & logged.info("baz")))
+#         == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz'))"
+#     )
+#     # Composed `Logged` are flattened from the left and right.
+#     assert (
+#         repr(logged.info("foo") & logged.info("bar") & logged.info("baz") & logged.info("bat"))
+#         == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz') & log('INFO', 'bat'))"
+#     )
+
+
+# def test_unordered_all_logged_str() -> None:
+#     assert str(logged.info("foo") & logged.info("bar")) == "\n".join(
+#         (
+#             "Unordered:",
+#             "- [INFO] foo",
+#             "- [INFO] bar",
+#         )
+#     )
+#     assert str(
+#         (logged.info("foo1") >> logged.info("foo2")) & (logged.info("bar1") >> logged.info("bar2"))
+#     ) == "\n".join(
+#         (
+#             "Unordered:",
+#             "- [INFO] foo1",
+#             "  [INFO] foo2",
+#             "- [INFO] bar1",
+#             "  [INFO] bar2",
+#         )
+#     )
+
+
+# def test_unordered_all_logged_reduce() -> None:
+#     assert_reduce(
+#         logged.info("foo") & logged.info("bar") & logged.info("baz"),
+#         record(logging.INFO, "boom!"),  # Non-matching.
+#         record(logging.INFO, "baz"),  # Matching.
+#         record(logging.INFO, "baz"),  # Non-matching.
+#         record(logging.INFO, "bar"),  # Matching.
+#         record(logging.INFO, "foo"),  # Matching.
+#     )
+#     assert_reduce(
+#         (logged.info("foo1") >> logged.info("foo2")) & (logged.info("bar1") >> logged.info("bar2")),
+#         record(logging.INFO, "boom!"),  # Non-matching.
+#         record(logging.INFO, "bar2"),  # Non-matching.
+#         record(logging.INFO, "foo2"),  # Non-matching.
+#         record(logging.INFO, "bar1"),  # Matching.
+#         record(logging.INFO, "foo1"),  # Matching.
+#         record(logging.INFO, "foo2"),  # Matching.
+#         record(logging.INFO, "bar2"),  # Matching.
+#     )

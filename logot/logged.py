@@ -178,7 +178,7 @@ class _AnyLogged(_ComposedLogged):
                 return None
             # Handle partial reduction.
             if reduced_log is not log:
-                return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n:]))
+                return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n + 1 :]))
         # Handle no reduction.
         return self
 
