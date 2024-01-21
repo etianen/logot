@@ -227,25 +227,25 @@ def test_any_logged_repr() -> None:
     )
 
 
-# def test_unordered_all_logged_str() -> None:
-#     assert str(logged.info("foo") & logged.info("bar")) == "\n".join(
-#         (
-#             "Unordered:",
-#             "- [INFO] foo",
-#             "- [INFO] bar",
-#         )
-#     )
-#     assert str(
-#         (logged.info("foo1") >> logged.info("foo2")) & (logged.info("bar1") >> logged.info("bar2"))
-#     ) == "\n".join(
-#         (
-#             "Unordered:",
-#             "- [INFO] foo1",
-#             "  [INFO] foo2",
-#             "- [INFO] bar1",
-#             "  [INFO] bar2",
-#         )
-#     )
+def test_any_logged_str() -> None:
+    assert str(logged.info("foo") | logged.info("bar")) == "\n".join(
+        (
+            "Any:",
+            "- [INFO] foo",
+            "- [INFO] bar",
+        )
+    )
+    assert str(
+        (logged.info("foo1") >> logged.info("foo2")) | (logged.info("bar1") >> logged.info("bar2"))
+    ) == "\n".join(
+        (
+            "Any:",
+            "- [INFO] foo1",
+            "  [INFO] foo2",
+            "- [INFO] bar1",
+            "  [INFO] bar2",
+        )
+    )
 
 
 # def test_unordered_all_logged_reduce() -> None:
