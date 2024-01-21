@@ -132,8 +132,9 @@ def test_unordered_all_logged_eq_pass() -> None:
 
 
 def test_unordered_all_logged_eq_fail() -> None:
+    # Different orderings are not equal.
     assert (logged.info("foo") & logged.info("bar")) != (logged.info("bar") & logged.info("foo"))
-    # Different composed types are not equal.
+    # Different operators are not equal.
     assert (logged.info("foo") & logged.info("bar")) != (logged.info("foo") >> logged.info("bar"))
 
 
