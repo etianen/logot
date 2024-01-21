@@ -14,3 +14,7 @@ def test_log_record_logged_eq_fail() -> None:
 
 def test_log_record_logged_repr() -> None:
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
+
+
+def test_log_record_logged_str() -> None:
+    assert str(logged.info("foo bar")) == "[INFO] foo bar"
