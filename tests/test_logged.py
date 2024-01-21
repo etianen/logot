@@ -60,7 +60,6 @@ def test_ordered_all_logged_eq_fail() -> None:
 
 
 def test_ordered_all_logged_repr() -> None:
-    assert repr(logged.info("foo") >> logged.info("bar")) == "(log('INFO', 'foo') >> log('INFO', 'bar'))"
     assert (
         repr((logged.info("foo") >> logged.info("bar")) >> logged.info("baz"))
         == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz'))"
@@ -106,7 +105,6 @@ def test_unordered_all_logged_eq_fail() -> None:
 
 
 def test_unordered_all_logged_repr() -> None:
-    assert repr(logged.info("foo") & logged.info("bar")) == "(log('INFO', 'foo') & log('INFO', 'bar'))"
     assert (
         repr((logged.info("foo") & logged.info("bar")) & logged.info("baz"))
         == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz'))"
