@@ -10,7 +10,7 @@ from logot._util import to_levelno
 class Logged(ABC):
     __slots__ = ()
 
-    def __gt__(self, log: Logged) -> Logged:
+    def __rshift__(self, log: Logged) -> Logged:
         return _OrderedAllLogged.from_compose(self, log)
 
     def __and__(self, log: Logged) -> Logged:
@@ -124,7 +124,7 @@ class _OrderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return " > ".join(map(repr, self._logs))
+        return " >> ".join(map(repr, self._logs))
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         log = self._logs[0]
