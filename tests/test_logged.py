@@ -105,7 +105,6 @@ def test_unordered_all_logged_str() -> None:
             "- [INFO] bar",
         )
     )
-
     assert str((logged.info("foo1") > logged.info("foo2")) & (logged.info("bar1") > logged.info("bar2"))) == "\n".join(
         (
             "Unordered:",
