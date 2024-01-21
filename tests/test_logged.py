@@ -58,3 +58,7 @@ def test_log_record_logged_reduce() -> None:
 
 def test_ordered_all_logged_eq_pass() -> None:
     assert (logged.info("foo") > logged.info("bar")) == (logged.info("foo") > logged.info("bar"))
+
+
+def test_ordered_all_logged_eq_fail() -> None:
+    assert (logged.info("foo") > logged.info("bar")) != (logged.info("bar") > logged.info("foo"))
