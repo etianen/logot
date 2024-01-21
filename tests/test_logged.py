@@ -65,6 +65,10 @@ def test_ordered_all_logged_repr() -> None:
         repr(logged.info("foo") >> logged.info("bar") >> logged.info("baz"))
         == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz'))"
     )
+    assert (
+        repr((logged.info("foo") >> logged.info("bar")) >> (logged.info("baz") >> logged.info("bat")))
+        == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz') >> log('INFO', 'bat'))"
+    )
 
 
 def test_ordered_all_logged_str() -> None:
@@ -102,6 +106,10 @@ def test_unordered_all_logged_repr() -> None:
     assert (
         repr(logged.info("foo") & logged.info("bar") & logged.info("baz"))
         == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz'))"
+    )
+    assert (
+        repr(logged.info("foo") & logged.info("bar") & logged.info("baz") & logged.info("bat"))
+        == "(log('INFO', 'foo') & log('INFO', 'bar') & log('INFO', 'baz') & log('INFO', 'bat'))"
     )
 
 
