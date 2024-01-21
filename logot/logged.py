@@ -19,8 +19,15 @@ class Logged(ABC):
     def __or__(self, log: Logged) -> Logged:
         return _AnyLogged.from_compose(self, log)
 
+    def __str__(self) -> str:
+        return self._str(indent=0)
+
     @abstractmethod
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def _str(self, *, indent: int) -> str:
         raise NotImplementedError
 
 
@@ -32,13 +39,19 @@ class _LogRecordLogged(Logged):
         self._msg = msg
         self._matcher = compile_matcher(msg)
 
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, _LogRecordLogged) and other._levelno == self._levelno and other._msg == self._msg
+
+    def __repr__(self) -> str:
+        return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
+
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         if self._levelno == record.levelno and self._matcher(record.getMessage()):
             return None
         return self
 
-    def __repr__(self) -> str:
-        return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
+    def _str(self, *, indent: int) -> str:
+        return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
 
 
 def log(level: int | str, msg: str) -> Logged:
@@ -72,6 +85,9 @@ class _ComposedLogged(Logged):
         assert len(logs) > 1, "Unreachable"
         self._logs = logs
 
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and other._logs == self._logs
+
     @classmethod
     def from_compose(cls, log_a: Logged, log_b: Logged) -> Logged:
         # If possible, flatten nested logs of the same type.
@@ -99,6 +115,9 @@ class _ComposedLogged(Logged):
 class _OrderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
+    def __repr__(self) -> str:
+        return " > ".join(map(repr, self._logs))
+
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         log = self._logs[0]
         reduced_log = log._reduce(record)
@@ -111,12 +130,12 @@ class _OrderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
-    def __repr__(self) -> str:
-        return " > ".join(map(repr, self._logs))
-
 
 class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
+
+    def __repr__(self) -> str:
+        return " & ".join(map(repr, self._logs))
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         for n, log in enumerate(self._logs):
@@ -130,12 +149,12 @@ class _UnorderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
-    def __repr__(self) -> str:
-        return " & ".join(map(repr, self._logs))
-
 
 class _AnyLogged(_ComposedLogged):
     __slots__ = ()
+
+    def __repr__(self) -> str:
+        return " | ".join(map(repr, self._logs))
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         for n, log in enumerate(self._logs):
@@ -148,6 +167,3 @@ class _AnyLogged(_ComposedLogged):
                 return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n:]))
         # Handle no reduction.
         return self
-
-    def __repr__(self) -> str:
-        return " | ".join(map(repr, self._logs))
