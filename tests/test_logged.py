@@ -9,8 +9,11 @@ def record(level: int, msg: str) -> logging.LogRecord:
     return logging.LogRecord(name="logot", level=level, pathname=__file__, lineno=0, msg=msg, args=(), exc_info=None)
 
 
-def assert_reduce(log: logged.Logged, *records: logging.LogRecord) -> None:
-    pass
+def assert_reduce(log: logged.Logged | None, *records: logging.LogRecord) -> None:
+    for record in records:
+        assert log is not None
+        log = log._reduce(record)
+    assert log is None
 
 
 def test_log_record_logged_eq_pass() -> None:
@@ -38,3 +41,7 @@ def test_log_record_logged_str() -> None:
     assert str(logged.warning("foo bar")) == "[WARNING] foo bar"
     assert str(logged.error("foo bar")) == "[ERROR] foo bar"
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
+
+
+def test_log_record_logged_reduce() -> None:
+    assert_reduce(logged.info("foo bar"), record(logging.INFO, "foo bar"))
