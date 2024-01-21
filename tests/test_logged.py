@@ -62,3 +62,7 @@ def test_ordered_all_logged_eq_pass() -> None:
 
 def test_ordered_all_logged_eq_fail() -> None:
     assert (logged.info("foo") > logged.info("bar")) != (logged.info("bar") > logged.info("foo"))
+
+
+def test_ordered_all_logged_repr() -> None:
+    assert repr(logged.info("foo") > logged.info("bar")) == "log('INFO', 'foo') > log('INFO', 'bar')"
