@@ -87,8 +87,8 @@ def test_unordered_all_logged_eq_fail() -> None:
     assert (logged.info("foo") & logged.info("bar")) != (logged.info("foo") > logged.info("bar"))
 
 
-# def test_ordered_all_logged_repr() -> None:
-#     assert repr(logged.info("foo") > logged.info("bar")) == "log('INFO', 'foo') > log('INFO', 'bar')"
+def test_unordered_all_logged_repr() -> None:
+    assert repr(logged.info("foo") & logged.info("bar")) == "log('INFO', 'foo') & log('INFO', 'bar')"
 
 
 # def test_ordered_all_logged_str() -> None:
