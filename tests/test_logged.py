@@ -248,22 +248,18 @@ def test_any_logged_str() -> None:
     )
 
 
-# def test_unordered_all_logged_reduce() -> None:
-#     assert_reduce(
-#         logged.info("foo") & logged.info("bar") & logged.info("baz"),
-#         record(logging.INFO, "boom!"),  # Non-matching.
-#         record(logging.INFO, "baz"),  # Matching.
-#         record(logging.INFO, "baz"),  # Non-matching.
-#         record(logging.INFO, "bar"),  # Matching.
-#         record(logging.INFO, "foo"),  # Matching.
-#     )
-#     assert_reduce(
-#         (logged.info("foo1") >> logged.info("foo2")) & (logged.info("bar1") >> logged.info("bar2")),
-#         record(logging.INFO, "boom!"),  # Non-matching.
-#         record(logging.INFO, "bar2"),  # Non-matching.
-#         record(logging.INFO, "foo2"),  # Non-matching.
-#         record(logging.INFO, "bar1"),  # Matching.
-#         record(logging.INFO, "foo1"),  # Matching.
-#         record(logging.INFO, "foo2"),  # Matching.
-#         record(logging.INFO, "bar2"),  # Matching.
-#     )
+def test_any_logged_reduce() -> None:
+    assert_reduce(
+        logged.info("foo") | logged.info("bar") | logged.info("baz"),
+        record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "bar"),  # Matching.
+    )
+    assert_reduce(
+        (logged.info("foo1") >> logged.info("foo2")) | (logged.info("bar1") >> logged.info("bar2")),
+        record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "bar2"),  # Non-matching.
+        record(logging.INFO, "foo2"),  # Non-matching.
+        record(logging.INFO, "bar1"),  # Matching.
+        record(logging.INFO, "foo1"),  # Matching.
+        record(logging.INFO, "foo2"),  # Matching.
+    )
