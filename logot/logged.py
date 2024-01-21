@@ -35,7 +35,7 @@ class Logged(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _str(self, *, indent: int) -> str:
+    def _str(self, *, indent: str) -> str:
         raise NotImplementedError
 
 
@@ -58,7 +58,7 @@ class _LogRecordLogged(Logged):
             return None
         return self
 
-    def _str(self, *, indent: int) -> str:
+    def _str(self, *, indent: str) -> str:
         return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
 
 
@@ -138,6 +138,9 @@ class _OrderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
+    def _str(self, *, indent: str) -> str:
+        return f"\n{indent}".join(log._str(indent=indent + "  ") for log in self._logs)
+
 
 class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
@@ -157,6 +160,10 @@ class _UnorderedAllLogged(_ComposedLogged):
         # Handle no reduction.
         return self
 
+    def _str(self, *, indent: str) -> str:
+        logs_str = f"\n{indent}- ".join(log._str(indent=indent + "  ") for log in self._logs)
+        return f"Unordered:\n{logs_str}"
+
 
 class _AnyLogged(_ComposedLogged):
     __slots__ = ()
@@ -175,3 +182,7 @@ class _AnyLogged(_ComposedLogged):
                 return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n:]))
         # Handle no reduction.
         return self
+
+    def _str(self, *, indent: str) -> str:
+        logs_str = f"\n{indent}- ".join(log._str(indent=indent + "  ") for log in self._logs)
+        return f"Any:\n{logs_str}"
