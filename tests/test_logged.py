@@ -68,14 +68,17 @@ def test_ordered_all_logged_eq_fail() -> None:
 
 
 def test_ordered_all_logged_repr() -> None:
+    # Composed `Logged` are flattened from the left.
     assert (
         repr((logged.info("foo") >> logged.info("bar")) >> logged.info("baz"))
         == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz'))"
     )
+    # Composed `Logged` are flattened from the right.
     assert (
         repr(logged.info("foo") >> (logged.info("bar") >> logged.info("baz")))
         == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz'))"
     )
+    # Composed `Logged` are flattened from the left and right.
     assert (
         repr((logged.info("foo") >> logged.info("bar")) >> (logged.info("baz") >> logged.info("bat")))
         == "(log('INFO', 'foo') >> log('INFO', 'bar') >> log('INFO', 'baz') >> log('INFO', 'bat'))"
