@@ -92,6 +92,7 @@ def test_ordered_all_logged_str() -> None:
             "[INFO] bar",
         )
     )
+    # Indentation is sane with multiple nested composed `Logged`.
     assert str(
         (logged.info("foo1") & logged.info("foo2"))
         >> (
@@ -176,6 +177,7 @@ def test_unordered_all_logged_str() -> None:
             "- [INFO] bar",
         )
     )
+    # Indentation is sane with multiple nested composed `Logged`.
     assert str(
         (logged.info("foo1") >> logged.info("foo2"))
         & (
@@ -257,6 +259,7 @@ def test_any_logged_str() -> None:
             "- [INFO] bar",
         )
     )
+    # Indentation is sane with multiple nested composed `Logged`.
     assert str(
         (logged.info("foo1") >> logged.info("foo2"))
         | (
