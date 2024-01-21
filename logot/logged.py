@@ -124,7 +124,7 @@ class _OrderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return " >> ".join(map(repr, self._logs))
+        return f"({' >> '.join(map(repr, self._logs))})"
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         log = self._logs[0]
@@ -147,7 +147,7 @@ class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return " & ".join(map(repr, self._logs))
+        return f"({' & '.join(map(repr, self._logs))})"
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         for n, log in enumerate(self._logs):
@@ -171,7 +171,7 @@ class _AnyLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return " | ".join(map(repr, self._logs))
+        return f"({' | '.join(map(repr, self._logs))})"
 
     def _reduce(self, record: logging.LogRecord) -> Logged | None:
         for n, log in enumerate(self._logs):
