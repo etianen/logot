@@ -11,8 +11,10 @@ def record(level: int, msg: str) -> logging.LogRecord:
 
 def assert_reduce(log: logged.Logged | None, *records: logging.LogRecord) -> None:
     for record in records:
+        # The `Logged` should not have been fully reduced.
         assert log is not None
         log = log._reduce(record)
+    # Once all log records are consumed, the `Logged` should have been fully-reduced.
     assert log is None
 
 
