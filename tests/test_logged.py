@@ -76,3 +76,31 @@ def test_ordered_all_logged_reduce() -> None:
         record(logging.INFO, "foo"),  # Non-matching.
         record(logging.INFO, "bar"),  # Matching.
     )
+
+
+def test_unordered_all_logged_eq_pass() -> None:
+    assert (logged.info("foo") & logged.info("bar")) == (logged.info("foo") & logged.info("bar"))
+
+
+def test_unordered_all_logged_eq_fail() -> None:
+    assert (logged.info("foo") & logged.info("bar")) != (logged.info("bar") & logged.info("foo"))
+    assert (logged.info("foo") & logged.info("bar")) != (logged.info("foo") > logged.info("bar"))
+
+
+# def test_ordered_all_logged_repr() -> None:
+#     assert repr(logged.info("foo") > logged.info("bar")) == "log('INFO', 'foo') > log('INFO', 'bar')"
+
+
+# def test_ordered_all_logged_str() -> None:
+#     assert str(logged.info("foo") > logged.info("bar")) == "[INFO] foo\n[INFO] bar"
+
+
+# def test_ordered_all_logged_reduce() -> None:
+#     assert_reduce(
+#         logged.info("foo") > logged.info("bar"),
+#         record(logging.INFO, "boom!"),  # Non-matching.
+#         record(logging.INFO, "bar"),  # Non-matching.
+#         record(logging.INFO, "foo"),  # Matching.
+#         record(logging.INFO, "foo"),  # Non-matching.
+#         record(logging.INFO, "bar"),  # Matching.
+#     )
