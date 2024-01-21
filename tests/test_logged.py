@@ -144,9 +144,11 @@ def test_unordered_all_logged_str() -> None:
 
 def test_unordered_all_logged_reduce() -> None:
     assert_reduce(
-        logged.info("foo") & logged.info("bar"),
+        logged.info("foo") & logged.info("bar") & logged.info("baz"),
         record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "baz"),  # Matching.
         record(logging.INFO, "bar"),  # Matching.
+        record(logging.INFO, "baz"),  # Non-matching.
         record(logging.INFO, "foo"),  # Matching.
     )
     assert_reduce(
