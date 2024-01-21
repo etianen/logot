@@ -92,14 +92,21 @@ def test_ordered_all_logged_str() -> None:
             "[INFO] bar",
         )
     )
-    assert str((logged.info("foo1") & logged.info("foo2")) >> (logged.info("bar1") & logged.info("bar2"))) == "\n".join(
+    assert str(
+        (logged.info("foo1") & logged.info("foo2"))
+        >> ((logged.info("bar1a") | logged.info("bar1b")) & (logged.info("bar2a") | logged.info("bar2b")))
+    ) == "\n".join(
         (
             "Unordered:",
             "- [INFO] foo1",
             "- [INFO] foo2",
             "Unordered:",
-            "- [INFO] bar1",
-            "- [INFO] bar2",
+            "- Any:",
+            "  - [INFO] bar1a",
+            "  - [INFO] bar1b",
+            "- Any:",
+            "  - [INFO] bar2a",
+            "  - [INFO] bar2b",
         )
     )
 
