@@ -23,7 +23,9 @@ def test_log_record_logged_eq_pass() -> None:
 
 
 def test_log_record_logged_eq_fail() -> None:
+    # Different levels are not equal.
     assert logged.info("foo bar") != logged.debug("foo bar")
+    # Different messages are not equal.
     assert logged.info("foo bar") != logged.info("foo")
 
 
