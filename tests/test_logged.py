@@ -94,6 +94,16 @@ def test_ordered_all_logged_reduce() -> None:
         record(logging.INFO, "bar"),  # Matching.
         record(logging.INFO, "baz"),  # Matching.
     )
+    assert_reduce(
+        (logged.info("foo1") & logged.info("foo2")) >> (logged.info("bar1") & logged.info("bar2")),
+        record(logging.INFO, "boom!"),  # Non-matching.
+        record(logging.INFO, "bar2"),  # Non-matching.
+        record(logging.INFO, "foo2"),  # Matching.
+        record(logging.INFO, "bar1"),  # Non-matching.
+        record(logging.INFO, "foo1"),  # Matching.
+        record(logging.INFO, "bar2"),  # Matching.
+        record(logging.INFO, "bar1"),  # Matching.
+    )
 
 
 def test_unordered_all_logged_eq_pass() -> None:
