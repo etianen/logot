@@ -23,6 +23,7 @@ def test_log_record_logged_eq_fail() -> None:
 
 
 def test_log_record_logged_repr() -> None:
+    assert repr(logged.log(logging.DEBUG, "foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
     assert repr(logged.warning("foo bar")) == "log('WARNING', 'foo bar')"
@@ -31,6 +32,7 @@ def test_log_record_logged_repr() -> None:
 
 
 def test_log_record_logged_str() -> None:
+    assert str(logged.log(logging.DEBUG, "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
     assert str(logged.warning("foo bar")) == "[WARNING] foo bar"
