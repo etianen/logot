@@ -48,13 +48,16 @@ class Logot:
             # Append the log to the waiter.
             self._waiter.append(record)
 
-    def _reduce(self, log: Logged) -> Logged:
-        with self._lock:
-            # Ensure no other waiters.
-            if not isinstance(self._waiter, deque):
-                raise RuntimeError("Multiple waiters are not supported")
-            # Drain the waiter.
-            raise NotImplementedError
+    def _reduce(self, log: Logged | None) -> Logged | None:
+        assert self._lock.locked()
+        # Ensure no other waiters.
+        if not isinstance(self._waiter, deque):
+            raise RuntimeError("Multiple waiters are not supported")
+        # Drain the waiter until the log is fully reduced.
+        while self._waiter and log is not None:
+            log = log._reduce(self._waiter.popleft())
+        # All done!
+        return log
 
 
 class _Capturing:

@@ -90,7 +90,7 @@ class _ComposedLogged(Logged):
     __slots__ = ("_logs",)
 
     def __init__(self, logs: tuple[Logged, ...]) -> None:
-        assert len(logs) > 1, "Unreachable"
+        assert len(logs) > 1
         self._logs = logs
 
     def __eq__(self, other: object) -> bool:
@@ -110,7 +110,7 @@ class _ComposedLogged(Logged):
 
     @classmethod
     def from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
-        assert logs, "Unreachable"
+        assert logs
         # If there is a single log, do not wrap it.
         if len(logs) == 1:
             return logs[0]
