@@ -48,6 +48,9 @@ class Logot:
             # Append the log to the waiter.
             self._waiter.append(record)
 
+    def _waiting(self, waiter: _Waiter) -> AbstractContextManager[None]:
+        return _Waiting(self, waiter)
+
 
 class _Capturing:
     __slots__ = ("_logot", "_logger", "_handler", "_prev_levelno")
@@ -88,6 +91,25 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         self._logot._emit(record)
+
+
+class _Waiting:
+    __slots__ = ("_logot", "_waiter")
+
+    def __init__(self, logot: Logot, waiter: _Waiter) -> None:
+        self._logot = logot
+        self._waiter = waiter
+
+    def __enter__(self) -> None:
+        pass
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        pass
 
 
 class _Waiter(ABC):
