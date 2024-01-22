@@ -15,5 +15,26 @@ def to_levelno(level: int | str) -> int:
         if not isinstance(levelno, int):
             raise ValueError(f"Unknown level: {level!r}")
         return levelno
-    # Fail on other types.
+    # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
+
+
+def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
+    # Handle `None` or `str` logger.
+    if logger is None or isinstance(logger, str):
+        return logging.getLogger(logger)
+    # Handle `Logger` logger.
+    if isinstance(logger, logging.Logger):
+        return logger
+    # Handle invalid logger.
+    raise TypeError(f"Invalid logger: {logger!r}")
+
+
+def to_timeout(timeout: float) -> float:
+    # Handle numeric timeout.
+    if isinstance(timeout, (float, int)):
+        if timeout >= 0.0:
+            return float(timeout)
+        raise ValueError(f"Invalid timeout: {timeout!r}")
+    # Handle invalid timeout.
+    raise TypeError(f"Invalid timeout: {timeout!r}")

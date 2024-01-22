@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import logging
 
-from logot import logged
+from logot import Logged, logged
+from tests import lines
 
 
 def record(level: int, msg: str) -> logging.LogRecord:
     return logging.LogRecord(name="logot", level=level, pathname=__file__, lineno=0, msg=msg, args=(), exc_info=None)
 
 
-def assert_reduce(log: logged.Logged | None, *records: logging.LogRecord) -> None:
+def assert_reduce(log: Logged | None, *records: logging.LogRecord) -> None:
     for record in records:
         # The `Logged` should not have been fully reduced.
         assert log is not None
@@ -86,11 +87,9 @@ def test_ordered_all_logged_repr() -> None:
 
 
 def test_ordered_all_logged_str() -> None:
-    assert str(logged.info("foo") >> logged.info("bar")) == "\n".join(
-        (
-            "[INFO] foo",
-            "[INFO] bar",
-        )
+    assert str(logged.info("foo") >> logged.info("bar")) == lines(
+        "[INFO] foo",
+        "[INFO] bar",
     )
     # Indentation is sane with multiple nested composed `Logged`.
     assert str(
@@ -99,21 +98,19 @@ def test_ordered_all_logged_str() -> None:
             (logged.info("bar1a") | logged.info("bar1b"))
             & ((logged.info("bar2a1") >> logged.info("bar2a2")) | (logged.info("bar2b1") >> logged.info("bar2b2")))
         )
-    ) == "\n".join(
-        (
-            "Unordered:",
-            "- [INFO] foo1",
-            "- [INFO] foo2",
-            "Unordered:",
-            "- Any:",
-            "  - [INFO] bar1a",
-            "  - [INFO] bar1b",
-            "- Any:",
-            "  - [INFO] bar2a1",
-            "    [INFO] bar2a2",
-            "  - [INFO] bar2b1",
-            "    [INFO] bar2b2",
-        )
+    ) == lines(
+        "Unordered:",
+        "- [INFO] foo1",
+        "- [INFO] foo2",
+        "Unordered:",
+        "- Any:",
+        "  - [INFO] bar1a",
+        "  - [INFO] bar1b",
+        "- Any:",
+        "  - [INFO] bar2a1",
+        "    [INFO] bar2a2",
+        "  - [INFO] bar2b1",
+        "    [INFO] bar2b2",
     )
 
 
@@ -170,12 +167,10 @@ def test_unordered_all_logged_repr() -> None:
 
 
 def test_unordered_all_logged_str() -> None:
-    assert str(logged.info("foo") & logged.info("bar")) == "\n".join(
-        (
-            "Unordered:",
-            "- [INFO] foo",
-            "- [INFO] bar",
-        )
+    assert str(logged.info("foo") & logged.info("bar")) == lines(
+        "Unordered:",
+        "- [INFO] foo",
+        "- [INFO] bar",
     )
     # Indentation is sane with multiple nested composed `Logged`.
     assert str(
@@ -184,20 +179,18 @@ def test_unordered_all_logged_str() -> None:
             (logged.info("bar1a") | logged.info("bar1b"))
             >> ((logged.info("bar2a1") >> logged.info("bar2a2")) | (logged.info("bar2b1") >> logged.info("bar2b2")))
         )
-    ) == "\n".join(
-        (
-            "Unordered:",
-            "- [INFO] foo1",
-            "  [INFO] foo2",
-            "- Any:",
-            "  - [INFO] bar1a",
-            "  - [INFO] bar1b",
-            "  Any:",
-            "  - [INFO] bar2a1",
-            "    [INFO] bar2a2",
-            "  - [INFO] bar2b1",
-            "    [INFO] bar2b2",
-        )
+    ) == lines(
+        "Unordered:",
+        "- [INFO] foo1",
+        "  [INFO] foo2",
+        "- Any:",
+        "  - [INFO] bar1a",
+        "  - [INFO] bar1b",
+        "  Any:",
+        "  - [INFO] bar2a1",
+        "    [INFO] bar2a2",
+        "  - [INFO] bar2b1",
+        "    [INFO] bar2b2",
     )
 
 
@@ -252,12 +245,10 @@ def test_any_logged_repr() -> None:
 
 
 def test_any_logged_str() -> None:
-    assert str(logged.info("foo") | logged.info("bar")) == "\n".join(
-        (
-            "Any:",
-            "- [INFO] foo",
-            "- [INFO] bar",
-        )
+    assert str(logged.info("foo") | logged.info("bar")) == lines(
+        "Any:",
+        "- [INFO] foo",
+        "- [INFO] bar",
     )
     # Indentation is sane with multiple nested composed `Logged`.
     assert str(
@@ -266,20 +257,18 @@ def test_any_logged_str() -> None:
             (logged.info("bar1a") & logged.info("bar1b"))
             >> ((logged.info("bar2a1") >> logged.info("bar2a2")) & (logged.info("bar2b1") >> logged.info("bar2b2")))
         )
-    ) == "\n".join(
-        (
-            "Any:",
-            "- [INFO] foo1",
-            "  [INFO] foo2",
-            "- Unordered:",
-            "  - [INFO] bar1a",
-            "  - [INFO] bar1b",
-            "  Unordered:",
-            "  - [INFO] bar2a1",
-            "    [INFO] bar2a2",
-            "  - [INFO] bar2b1",
-            "    [INFO] bar2b2",
-        )
+    ) == lines(
+        "Any:",
+        "- [INFO] foo1",
+        "  [INFO] foo2",
+        "- Unordered:",
+        "  - [INFO] bar1a",
+        "  - [INFO] bar1b",
+        "  Unordered:",
+        "  - [INFO] bar2a1",
+        "    [INFO] bar2a2",
+        "  - [INFO] bar2b1",
+        "    [INFO] bar2b2",
     )
 
 

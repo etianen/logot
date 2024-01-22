@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logot"
-version = "0.0.1a4"
+version = "0.0.1a5"
 description = "Log-based testing"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Software Development :: Testing :: Unit",
     "Topic :: System :: Logging",
 ]
-packages = [{ include = "logot" }]
+packages = [{ include = "logot" }, { include = "_logot_pytest.py" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -29,6 +29,7 @@ hypothesis = "^6.96.1"
 mypy = "^1.8.0"
 ruff = "^0.1.11"
 pytest = "*"
+pytest-asyncio = "^0.23.3"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.group.docs]
@@ -38,6 +39,9 @@ optional = true
 furo = { version = "*", markers = "python_version >= '3.12'" }
 sphinx = { version = "7.2.6", markers = "python_version >= '3.12'" }
 sphinx-autobuild = { version = "*", markers = "python_version >= '3.12'" }
+
+[tool.poetry.plugins.pytest11]
+logot = "_logot_pytest"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
@@ -59,6 +63,7 @@ strict = true
 testpaths = ["tests"]
 console_output_style = "classic"
 addopts = "--tb=native --cov"
+asyncio_mode = "auto"
 
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
