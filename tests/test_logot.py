@@ -29,7 +29,7 @@ def test_assert_logged_pass(logot: Logot) -> None:
     logot.assert_logged(logged.info("foo bar"))
 
 
-def test_asset_logged_fail(logot: Logot) -> None:
+def test_assert_logged_fail(logot: Logot) -> None:
     with pytest.raises(AssertionError) as ex:
         logot.assert_logged(logged.info("foo bar"))
     assert str(ex.value) == lines(
