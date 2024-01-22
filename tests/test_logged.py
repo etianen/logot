@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import logging
 
-from logot import logged
+from logot import Logged, logged
 
 
 def record(level: int, msg: str) -> logging.LogRecord:
     return logging.LogRecord(name="logot", level=level, pathname=__file__, lineno=0, msg=msg, args=(), exc_info=None)
 
 
-def assert_reduce(log: logged.Logged | None, *records: logging.LogRecord) -> None:
+def assert_reduce(log: Logged | None, *records: logging.LogRecord) -> None:
     for record in records:
         # The `Logged` should not have been fully reduced.
         assert log is not None

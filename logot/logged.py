@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logot._logged import Logged as Logged
 from logot._logged import critical as critical
 from logot._logged import debug as debug
 from logot._logged import error as error

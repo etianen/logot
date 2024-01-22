@@ -9,7 +9,7 @@ from types import TracebackType
 from typing import ClassVar
 from weakref import WeakValueDictionary
 
-from logot._logged import Logged
+from logot._logged import Logged as Logged
 from logot._util import to_levelno, to_logger
 
 
@@ -48,11 +48,13 @@ class Logot:
             # Append the log to the waiter.
             self._waiter.append(record)
 
-    def _reduce(self, log: Logged) -> None:
-        pass
-
-    def _waiting(self, waiter: _Waiter) -> AbstractContextManager[None]:
-        return _Waiting(self, waiter)
+    def _reduce(self, log: Logged) -> Logged:
+        with self._lock:
+            # Ensure no other waiters.
+            if not isinstance(self._waiter, deque):
+                raise RuntimeError("Multiple waiters are not supported")
+            # Drain the waiter.
+            raise NotImplementedError
 
 
 class _Capturing:
@@ -94,25 +96,6 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         self._logot._emit(record)
-
-
-class _Waiting:
-    __slots__ = ("_logot", "_waiter")
-
-    def __init__(self, logot: Logot, waiter: _Waiter) -> None:
-        self._logot = logot
-        self._waiter = waiter
-
-    def __enter__(self) -> None:
-        pass
-
-    def __exit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_value: BaseException | None,
-        traceback: TracebackType | None,
-    ) -> None:
-        pass
 
 
 class _Waiter(ABC):

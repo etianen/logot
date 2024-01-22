@@ -28,3 +28,11 @@ def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
         return logger
     # Handle invalid logger.
     raise TypeError(f"Invalid logger: {logger!r}")
+
+
+def to_timeout(timeout: float) -> float:
+    # Handle valid timeout.
+    if timeout >= 0.0:
+        return timeout
+    # Handle invalid timeout.
+    raise ValueError(f"Invalid timeout: {timeout!r}")
