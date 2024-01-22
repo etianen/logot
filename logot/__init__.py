@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from abc import ABC, abstractmethod
 from collections import deque
@@ -80,11 +81,32 @@ class Logot:
                 raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        timeout = self._to_timeout(timeout)
         with self._lock:
             reduced_log = self._reduce(log)
             # Exit early if we're already reduced.
             if reduced_log is None:
                 return
+            # Set a waiter.
+            waiter = self._waiter = _SyncWaiter(reduced_log)
+        # Wait for the log to be fully reduced.
+        if not waiter.lock.acquire(timeout=timeout):
+            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+
+    async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        timeout = self._to_timeout(timeout)
+        with self._lock:
+            reduced_log = self._reduce(log)
+            # Exit early if we're already reduced.
+            if reduced_log is None:
+                return
+            # Set a waiter.
+            waiter = self._waiter = _AsyncWaiter(reduced_log)
+        # Wait for the log to be fully reduced.
+        try:
+            await asyncio.wait_for(waiter.future, timeout=timeout)
+        except asyncio.TimeoutError:
+            raise AssertionError(f"Not logged:\n\n{reduced_log}")
 
 
 class _Capturing:
@@ -146,3 +168,27 @@ class _Waiter(ABC):
     @abstractmethod
     def _notify(self) -> None:
         raise NotImplementedError
+
+
+class _SyncWaiter(_Waiter):
+    __slots__ = ("lock",)
+
+    def __init__(self, log: Logged) -> None:
+        super().__init__(log)
+        self.lock = Lock()
+        self.lock.acquire()
+
+    def _notify(self) -> None:
+        self.lock.release()
+
+
+class _AsyncWaiter(_Waiter):
+    __slots__ = ("_loop", "future")
+
+    def __init__(self, log: Logged) -> None:
+        super().__init__(log)
+        self._loop = asyncio.get_running_loop()
+        self.future: asyncio.Future[None] = self._loop.create_future()
+
+    def _notify(self) -> None:
+        self._loop.call_soon_threadsafe(self.future.set_result, None)
