@@ -116,7 +116,7 @@ class Logot:
             # Clear the waiter.
             self._waiter = None
             # Another thread might have fully-reduced the log between the wait failing and the context exiting.
-            if waiter is not None and waiter.log is not None:
+            if waiter.log is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.log}")
 
 
