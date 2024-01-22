@@ -66,7 +66,7 @@ def test_wait_for_pass_soon(logot: Logot) -> None:
         logot.wait_for(logged.info("foo bar"))
 
 
-def test_wait_for_immediate_fail(logot: Logot) -> None:
+def test_wait_for_fail(logot: Logot) -> None:
     logger.info("boom!")
     with pytest.raises(AssertionError) as ex:
         logot.wait_for(logged.info("foo bar"), timeout=0.1)
