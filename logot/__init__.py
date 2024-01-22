@@ -5,13 +5,15 @@ from collections import deque
 from contextlib import AbstractContextManager, ExitStack
 from threading import Lock
 from types import TracebackType
-from typing import ClassVar
+from typing import Callable, ClassVar
+from weakref import WeakValueDictionary
 
 from logot._util import to_levelno, to_logger
+from logot.logged import Logged
 
 
 class Logot:
-    __slots__ = ("_timeout", "_stack", "_lock", "_queue")
+    __slots__ = ("_timeout", "_stack", "_lock", "_seen_records", "_queue", "_expected_logs", "_expected_logs_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -25,7 +27,10 @@ class Logot:
         self._timeout = timeout
         self._stack = ExitStack()
         self._lock = Lock()
+        self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
         self._queue: deque[logging.LogRecord] = deque()
+        self._expected_logs: Logged | None = None
+        self._expected_logs_waiter: Callable[[], None] | None = None
 
     def capturing(
         self,
@@ -45,6 +50,19 @@ class Logot:
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
+            # De-duplicate log records. Duplicate log records are possible if we have multiple active captures.
+            record_id = id(record)
+            if record_id in self._seen_records:
+                return
+            self._seen_records[record_id] = record
+            # If there are expected logs, reduce them.
+            if self._expected_logs is not None:
+                self._expected_logs = self._expected_logs._reduce(record)
+                # If the expected logs have been fully reduced, notify the waiter.
+                if self._expected_logs is None:
+                    assert self._expected_logs_waiter is not None, "Unreachable"
+                    self._expected_logs_waiter()
+            # Buffer the record in the queue.
             self._queue.append(record)
 
 
