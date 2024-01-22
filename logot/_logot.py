@@ -60,11 +60,8 @@ class Logot:
             self._queue.append(record)
 
     def _reduce(self, log: Logged | None) -> Logged | None:
-        assert self._lock.locked()
-        # Ensure no other waiters.
-        if self._waiter is not None:
-            raise RuntimeError("Multiple waiters are not supported")
         # Drain the queue until the log is fully reduced.
+        # This does not need a lock, since `deque.popleft()` is thread-safe.
         while self._queue and log is not None:
             log = log._reduce(self._queue.popleft())
         # All done!
@@ -78,6 +75,9 @@ class Logot:
                 timeout = self._timeout
             else:
                 timeout = to_timeout(timeout)
+            # Ensure no other waiters.
+            if self._waiter is not None:
+                raise RuntimeError("Multiple waiters are not supported")
             # Exit early if we're already reduced.
             reduced_log = self._reduce(log)
             if reduced_log is None:
@@ -96,16 +96,14 @@ class Logot:
                 raise AssertionError(f"Not logged:\n\n{waiter.log}")
 
     def assert_logged(self, log: Logged) -> None:
-        with self._lock:
-            reduced_log = self._reduce(log)
-            if reduced_log is not None:
-                raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        reduced_log = self._reduce(log)
+        if reduced_log is not None:
+            raise AssertionError(f"Not logged:\n\n{reduced_log}")
 
     def assert_not_logged(self, log: Logged) -> None:
-        with self._lock:
-            reduced_log = self._reduce(log)
-            if reduced_log is None:
-                raise AssertionError(f"Logged:\n\n{log}")
+        reduced_log = self._reduce(log)
+        if reduced_log is None:
+            raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
         waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
