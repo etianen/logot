@@ -39,7 +39,9 @@ class Logot:
         level: int | str = DEFAULT_LEVEL,
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
-        return _Capturing(self, _Handler(self, levelno=to_levelno(level)), logger=to_logger(logger))
+        levelno = to_levelno(level)
+        logger = to_logger(logger)
+        return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
     def assert_logged(self, log: Logged) -> None:
         reduced_log = self._reduce(log)
