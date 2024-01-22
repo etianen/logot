@@ -20,8 +20,6 @@ class Logot:
     def __init__(
         self,
         *,
-        level: int | str = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
         self._timeout = timeout
@@ -34,7 +32,7 @@ class Logot:
         *,
         level: int | str = DEFAULT_LEVEL,
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
-    ) -> AbstractContextManager[None]:
+    ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
     def capture(
@@ -42,20 +40,24 @@ class Logot:
         *,
         level: int | str = DEFAULT_LEVEL,
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
-    ) -> None:
-        self._stack.enter_context(self.capturing(level=level, logger=logger))
+    ) -> Logot:
+        return self._stack.enter_context(self.capturing(level=level, logger=logger))
+
+    def _emit(self, record: logging.LogRecord) -> None:
+        pass
 
 
 class _Capturing:
-    __slots__ = ("_logot", "_levelno", "_logger")
+    __slots__ = ("_logot", "_logger", "_handler")
 
     def __init__(self, logot: Logot, *, levelno: int, logger: logging.Logger) -> None:
         self._logot = logot
-        self._levelno = levelno
         self._logger = logger
+        self._handler = _Handler(logot, levelno=levelno)
 
-    def __enter__(self) -> None:
-        pass
+    def __enter__(self) -> Logot:
+        self._logger.addHandler(self._handler)
+        return self._logot
 
     def __exit__(
         self,
@@ -63,7 +65,7 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
-        pass
+        self._logger.removeHandler(self._handler)
 
 
 class _Handler(logging.Handler):
