@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import asyncio
 import logging
-from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
@@ -12,6 +10,7 @@ from weakref import WeakValueDictionary
 
 from logot._logged import Logged as Logged
 from logot._util import to_levelno, to_logger, to_timeout
+from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
 
 class Logot:
@@ -29,7 +28,7 @@ class Logot:
         self._timeout = to_timeout(timeout)
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
-        self._waiter: deque[logging.LogRecord] | _Waiter = deque()
+        self._waiter: Waiter = deque()
 
     def capturing(
         self,
@@ -88,10 +87,14 @@ class Logot:
             if reduced_log is None:
                 return
             # Set a waiter.
-            waiter = self._waiter = _SyncWaiter(reduced_log)
+            waiter = self._waiter = SyncWaiter(self._waiter, reduced_log)
         # Wait for the log to be fully reduced.
-        if not waiter.lock.acquire(timeout=timeout):
-            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        try:
+            if not waiter.wait(timeout=timeout):
+                raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        finally:
+            with self._lock:
+                self._waiter = waiter.parent
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
         timeout = self._to_timeout(timeout)
@@ -101,12 +104,14 @@ class Logot:
             if reduced_log is None:
                 return
             # Set a waiter.
-            waiter = self._waiter = _AsyncWaiter(reduced_log)
+            waiter = self._waiter = AsyncWaiter(self._waiter, reduced_log)
         # Wait for the log to be fully reduced.
         try:
-            await asyncio.wait_for(waiter.future, timeout=timeout)
-        except asyncio.TimeoutError:
-            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+            if not await waiter.wait(timeout=timeout):
+                raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        finally:
+            with self._lock:
+                self._waiter = waiter.parent
 
 
 class _Capturing:
@@ -148,47 +153,3 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         self._logot._emit(record)
-
-
-class _Waiter(ABC):
-    __slots__ = ("_log",)
-
-    def __init__(self, log: Logged) -> None:
-        self._log = log
-
-    def append(self, record: logging.LogRecord) -> None:
-        reduced_log = self._log._reduce(record)
-        # Handle full reduction.
-        if reduced_log is None:
-            self._notify()
-            return
-        # Handle partial or no reduction.
-        self._log = reduced_log
-
-    @abstractmethod
-    def _notify(self) -> None:
-        raise NotImplementedError
-
-
-class _SyncWaiter(_Waiter):
-    __slots__ = ("lock",)
-
-    def __init__(self, log: Logged) -> None:
-        super().__init__(log)
-        self.lock = Lock()
-        self.lock.acquire()
-
-    def _notify(self) -> None:
-        self.lock.release()
-
-
-class _AsyncWaiter(_Waiter):
-    __slots__ = ("_loop", "future")
-
-    def __init__(self, log: Logged) -> None:
-        super().__init__(log)
-        self._loop = asyncio.get_running_loop()
-        self.future: asyncio.Future[None] = self._loop.create_future()
-
-    def _notify(self) -> None:
-        self._loop.call_soon_threadsafe(self.future.set_result, None)
