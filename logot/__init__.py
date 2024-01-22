@@ -40,7 +40,8 @@ class Logot:
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
-            # De-duplicate log records. Duplicate log records are possible if we have multiple active captures.
+            # De-duplicate log records.
+            # Duplicate log records are possible if we have multiple active captures.
             record_id = id(record)
             if record_id in self._seen_records:
                 return
@@ -59,6 +60,13 @@ class Logot:
         # All done!
         return log
 
+    def _to_timeout(self, timeout: float | None) -> float:
+        # Use the default timeout.
+        if timeout is None:
+            return self._timeout
+        # Use the provided timeout.
+        return to_timeout(timeout)
+
     def assert_logged(self, log: Logged) -> None:
         with self._lock:
             reduced_log = self._reduce(log)
@@ -71,8 +79,12 @@ class Logot:
             if reduced_log is None:
                 raise AssertionError(f"Logged:\n\n{log}")
 
-    def wait_for(self, log: Logged) -> None:
-        pass
+    def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        with self._lock:
+            reduced_log = self._reduce(log)
+            # Exit early if we're already reduced.
+            if reduced_log is None:
+                return
 
 
 class _Capturing:
