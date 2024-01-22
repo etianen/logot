@@ -49,7 +49,7 @@ class Logot:
 
 
 class _Capturing:
-    __slots__ = ("_logot", "_logger", "_handler")
+    __slots__ = ("_logot", "_logger", "_handler", "_prev_levelno")
 
     def __init__(self, logot: Logot, *, levelno: int, logger: logging.Logger) -> None:
         self._logot = logot
@@ -57,6 +57,11 @@ class _Capturing:
         self._handler = _Handler(logot, levelno=levelno)
 
     def __enter__(self) -> Logot:
+        # If the logger is less verbose than the handler, force it to the necessary verboseness.
+        self._prev_levelno = self._logger.level
+        if self._handler.level < self._logger.level:
+            self._logger.setLevel(self._handler.level)
+        # Add the handler.
         self._logger.addHandler(self._handler)
         return self._logot
 
@@ -66,7 +71,11 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
+        # Remove the handler.
         self._logger.removeHandler(self._handler)
+        # If the logger was forced to a more verbose level, restore the previous level.
+        if self._handler.level < self._prev_levelno:
+            self._logger.setLevel(self._prev_levelno)
 
 
 class _Handler(logging.Handler):
