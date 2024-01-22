@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import re
-from functools import partial
 from typing import Callable
 
 # Compiled matcher callable.
-Matcher = Callable[[str], bool]
+# The returned `object` is truthy on successful match and falsy on failed match.
+Matcher = Callable[[str], object]
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -39,10 +39,6 @@ _CONVERSION_MAP = {
 }
 
 
-def _match_regex(pattern: re.Pattern[str], msg: str) -> bool:
-    return pattern.fullmatch(msg) is not None
-
-
 def compile_matcher(pattern: str) -> Matcher:
     parts: list[str] = _RE_CONVERSION.split(pattern)
     parts_len = len(parts)
@@ -62,7 +58,7 @@ def compile_matcher(pattern: str) -> Matcher:
         # Create regex matcher.
         if is_regex:
             parts[::2] = map(re.escape, parts[::2])
-            return partial(_match_regex, re.compile("".join(parts), re.DOTALL))
+            return re.compile("".join(parts), re.DOTALL).fullmatch
         # Recreate the pattern with all escape sequences replaced.
         pattern = "".join(parts)
     # Create simple matcher.
