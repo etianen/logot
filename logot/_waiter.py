@@ -7,11 +7,6 @@ from threading import Lock
 from logot._logged import Logged
 
 
-# Error thrown when a waiter fails to be notified within the given timeout.
-class WaitError(Exception):
-    pass
-
-
 # Abstract waiter.
 # In addition to the `notify()` method, the waiter must provide a `wait()` method that throws `WaitError` if `notify()`
 # is not called within `timeout` seconds.
@@ -40,9 +35,7 @@ class SyncWaiter(Waiter):
         self._lock.release()
 
     def wait(self) -> None:
-        # Wait for the lock to be released by `notify()`.
-        if not self._lock.acquire(timeout=self._timeout):
-            raise WaitError
+        self._lock.acquire(timeout=self._timeout)
 
 
 class AsyncWaiter(Waiter):
@@ -73,9 +66,8 @@ class AsyncioWaiter(AsyncWaiter):
             pass
 
     async def wait(self) -> None:
-        # Wait for the future to be resolved by `notify()`.
-        # TODO: Use `asyncio.timeout()` when we only need to support Python 3.11+.
+        timer = self._loop.call_later(self._timeout, self._anotify)
         try:
-            await asyncio.wait_for(self._future, timeout=self._timeout)
-        except asyncio.TimeoutError:
-            raise WaitError from None
+            await self._future
+        finally:
+            timer.cancel()
