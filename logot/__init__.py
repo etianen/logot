@@ -77,4 +77,4 @@ class _Handler(logging.Handler):
         self._logot = logot
 
     def emit(self, record: logging.LogRecord) -> None:
-        pass
+        self._logot._emit(record)
