@@ -8,8 +8,6 @@ from logot._logged import Logged
 
 
 # Abstract waiter.
-# In addition to the `notify()` method, the waiter must provide a `wait()` method that throws `WaitError` if `notify()`
-# is not called within `timeout` seconds.
 class Waiter(ABC):
     __slots__ = ("log", "_timeout")
 
@@ -19,6 +17,10 @@ class Waiter(ABC):
 
     @abstractmethod
     def notify(self) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def wait(self) -> object:
         raise NotImplementedError
 
 
@@ -38,15 +40,7 @@ class SyncWaiter(Waiter):
         self._lock.acquire(timeout=self._timeout)
 
 
-class AsyncWaiter(Waiter):
-    __slots__ = ()
-
-    @abstractmethod
-    async def wait(self) -> None:
-        raise NotImplementedError
-
-
-class AsyncioWaiter(AsyncWaiter):
+class AsyncioWaiter(Waiter):
     __slots__ = ("_loop", "_future")
 
     def __init__(self, log: Logged, *, timeout: float) -> None:
@@ -56,18 +50,18 @@ class AsyncioWaiter(AsyncWaiter):
         self._future: asyncio.Future[None] = self._loop.create_future()
 
     def notify(self) -> None:
-        self._loop.call_soon_threadsafe(self._anotify)
+        self._loop.call_soon_threadsafe(self._resolve)
 
-    def _anotify(self) -> None:
+    async def wait(self) -> None:
+        timer = self._loop.call_later(self._timeout, self._resolve)
+        try:
+            await self._future
+        finally:
+            timer.cancel()
+
+    def _resolve(self) -> None:
         try:
             self._future.set_result(None)
         except asyncio.InvalidStateError:
             # The future might have been cancelled by a failed timeout, so ignore this error.
             pass
-
-    async def wait(self) -> None:
-        timer = self._loop.call_later(self._timeout, self._anotify)
-        try:
-            await self._future
-        finally:
-            timer.cancel()
