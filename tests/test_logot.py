@@ -54,3 +54,8 @@ def test_assert_not_logged_fail(logot: Logot) -> None:
         "",
         "[INFO] foo bar",
     )
+
+
+def test_wait_for_sync_pass(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.wait_for(logged.info("foo bar"))
