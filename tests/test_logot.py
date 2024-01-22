@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 
+import pytest
+
 from logot import Logot, logged
 from tests import logger
 
@@ -25,3 +27,9 @@ def test_capturing() -> None:
 def test_assert_logged_pass(logot: Logot) -> None:
     logger.info("foo bar")
     logot.assert_logged(logged.info("foo bar"))
+
+
+def test_asset_logged_fail(logot: Logot) -> None:
+    with pytest.raises(AssertionError) as ex:
+        logot.assert_logged(logged.info("foo bar"))
+    assert str(ex.value) == "Not logged:\n\n[INFO] foo bar"
