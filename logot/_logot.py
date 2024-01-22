@@ -54,16 +54,14 @@ class Logot:
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
         waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
         try:
-            if waiter is not None:
-                waiter.wait()
+            waiter.wait()
         finally:
             self._close_waiter()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
         waiter = self._open_waiter(log, AsyncioWaiter, timeout=timeout)
         try:
-            if waiter is not None:
-                await waiter.wait()
+            await waiter.wait()
         finally:
             self._close_waiter()
 
@@ -93,7 +91,7 @@ class Logot:
         # All done!
         return log
 
-    def _open_waiter(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> W | None:
+    def _open_waiter(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -104,12 +102,12 @@ class Logot:
             # Ensure no other waiters.
             if self._waiter is not None:
                 raise RuntimeError("Multiple waiters are not supported")
-            # Exit early if we're already reduced.
-            reduced_log = self._reduce(log)
-            if reduced_log is None:
-                return None
             # Set a waiter.
+            reduced_log = self._reduce(log)
             waiter = self._waiter = waiter_cls(reduced_log, timeout=timeout)
+            if reduced_log is None:
+                waiter.notify()
+            # All done!
             return waiter
 
     def _close_waiter(self) -> None:
