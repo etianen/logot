@@ -42,6 +42,13 @@ class Logot:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
     def _waiting(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> AbstractContextManager[W | None]:
+        # If no timeout is provided, use the default timeout.
+        # Otherwise, validate and use the provided timeout.
+        if timeout is None:
+            timeout = self._timeout
+        else:
+            timeout = to_timeout(timeout)
+        # All done!
         return _Waiting(self, log, waiter_cls, timeout=timeout)
 
     def _emit(self, record: logging.LogRecord) -> None:
@@ -129,16 +136,11 @@ class _Capturing:
 class _Waiting(Generic[W]):
     __slots__ = ("_logot", "_log", "_waiter_cls", "_timeout", "_prev_waiter", "_waiter")
 
-    def __init__(self, logot: Logot, log: Logged, waiter_cls: type[W], *, timeout: float | None = None) -> None:
+    def __init__(self, logot: Logot, log: Logged, waiter_cls: type[W], *, timeout: float) -> None:
         self._logot = logot
         self._log = log
         self._waiter_cls = waiter_cls
-        # If no timeout is provided, use the default timeout.
-        # Otherwise, validate and use the provided timeout.
-        if timeout is None:
-            self._timeout = logot._timeout
-        else:
-            self._timeout = to_timeout(timeout)
+        self._timeout = timeout
 
     def __enter__(self) -> W | None:
         with self._logot._lock:
