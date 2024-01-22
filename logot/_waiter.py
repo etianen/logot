@@ -62,5 +62,5 @@ class AsyncioWaiter(Waiter):
         try:
             self._future.set_result(None)
         except asyncio.InvalidStateError:
-            # The future might have been cancelled by a failed timeout, so ignore this error.
+            # It's possible that the timeout and the `notify()` will both occur in the same tick of the event loop.
             pass
