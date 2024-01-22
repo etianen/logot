@@ -85,3 +85,14 @@ async def test_await_for_pass_immediate(logot: Logot) -> None:
 async def test_await_for_pass_soon(logot: Logot) -> None:
     with log_soon(logging.INFO, "foo bar"):
         await logot.await_for(logged.info("foo bar"))
+
+
+async def test_await_for_fail(logot: Logot) -> None:
+    logger.info("boom!")
+    with pytest.raises(AssertionError) as ex:
+        await logot.await_for(logged.info("foo bar"), timeout=0.1)
+    assert str(ex.value) == lines(
+        "Not logged:",
+        "",
+        "[INFO] foo bar",
+    )
