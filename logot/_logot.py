@@ -5,12 +5,12 @@ from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import ClassVar, Generic, TypeVar
+from typing import ClassVar, TypeVar
 from weakref import WeakValueDictionary
 
 from logot._logged import Logged
 from logot._util import to_levelno, to_logger, to_timeout
-from logot._waiter import AsyncioWaiter, SyncWaiter, Waiter, WaitError
+from logot._waiter import AsyncioWaiter, SyncWaiter, Waiter
 
 W = TypeVar("W", bound=Waiter)
 
@@ -41,16 +41,6 @@ class Logot:
     ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
-    def _waiting(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> AbstractContextManager[W | None]:
-        # If no timeout is provided, use the default timeout.
-        # Otherwise, validate and use the provided timeout.
-        if timeout is None:
-            timeout = self._timeout
-        else:
-            timeout = to_timeout(timeout)
-        # All done!
-        return _Waiting(self, log, waiter_cls, timeout=timeout)
-
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
             # De-duplicate log records.
@@ -80,6 +70,31 @@ class Logot:
         # All done!
         return log
 
+    def _open_waiter(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> W | None:
+        with self._lock:
+            # If no timeout is provided, use the default timeout.
+            # Otherwise, validate and use the provided timeout.
+            if timeout is None:
+                timeout = self._timeout
+            else:
+                timeout = to_timeout(timeout)
+            # Exit early if we're already reduced.
+            reduced_log = self._reduce(log)
+            if reduced_log is None:
+                return None
+            # Set a waiter.
+            waiter = self._waiter = waiter_cls(reduced_log, timeout=timeout)
+            return waiter
+
+    def _close_waiter(self) -> None:
+        with self._lock:
+            # Clear the waiter.
+            waiter = self._waiter
+            self._waiter = None
+            # Another thread might have fully-reduced the log between the wait failing and the context exiting.
+            if waiter is not None and waiter.log is not None:
+                raise AssertionError(f"Not logged:\n\n{waiter.log}")
+
     def assert_logged(self, log: Logged) -> None:
         with self._lock:
             reduced_log = self._reduce(log)
@@ -93,14 +108,20 @@ class Logot:
                 raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(log, SyncWaiter, timeout=timeout) as waiter:
+        waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
+        try:
             if waiter is not None:
                 waiter.wait()
+        finally:
+            self._close_waiter()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(log, AsyncioWaiter, timeout=timeout) as waiter:
+        waiter = self._open_waiter(log, AsyncioWaiter, timeout=timeout)
+        try:
             if waiter is not None:
                 await waiter.wait()
+        finally:
+            self._close_waiter()
 
 
 class _Capturing:
@@ -142,39 +163,3 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         self._logot._emit(record)
-
-
-class _Waiting(Generic[W]):
-    __slots__ = ("_logot", "_log", "_waiter_cls", "_timeout", "_prev_waiter", "_waiter")
-
-    def __init__(self, logot: Logot, log: Logged, waiter_cls: type[W], *, timeout: float) -> None:
-        self._logot = logot
-        self._log = log
-        self._waiter_cls = waiter_cls
-        self._timeout = timeout
-
-    def __enter__(self) -> W | None:
-        with self._logot._lock:
-            self._prev_waiter = self._logot._waiter
-            # Exit early if we're already reduced.
-            reduced_log = self._logot._reduce(self._log)
-            if reduced_log is None:
-                return None
-            # Set a waiter.
-            self._waiter = self._logot._waiter = self._waiter_cls(reduced_log, timeout=self._timeout)
-            return self._waiter
-
-    def __exit__(
-        self,
-        exc_type: type[BaseException] | None,
-        exc_value: BaseException | None,
-        traceback: TracebackType | None,
-    ) -> None:
-        with self._logot._lock:
-            # Restore the previous waiter.
-            self._logot._waiter = self._prev_waiter
-            # If the waiter failed, avoid a race condition by trying one last time with the lock.
-            # Another thread might have fully-reduced the log between the wait failing and the context exiting.
-            if exc_type is not None and issubclass(exc_type, WaitError):
-                if self._waiter.log is not None:
-                    raise AssertionError(f"Not logged:\n\n{self._waiter.log}")
