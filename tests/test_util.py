@@ -34,6 +34,10 @@ def test_to_levelno_type_fail() -> None:
     assert str(ex.value) == "Invalid level: 1.5"
 
 
+def test_to_logger_none() -> None:
+    assert to_logger(None) is logging.getLogger()
+
+
 def test_to_logger_str() -> None:
     assert to_logger("logot") is logging.getLogger("logot")
 
