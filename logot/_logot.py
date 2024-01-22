@@ -40,8 +40,8 @@ class Logot:
     ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
-    def _waiting(self, waiter_cls: type[W], *, timeout: float | None) -> AbstractContextManager[W | None]:
-        return _Waiting(self, waiter_cls, timeout=timeout)
+    def _waiting(self, waiter_cls: type[W], log: Logged, *, timeout: float | None) -> AbstractContextManager[W | None]:
+        return _Waiting(self, waiter_cls, log, timeout=timeout)
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
