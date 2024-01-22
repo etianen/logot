@@ -39,29 +39,6 @@ class Logged(ABC):
         raise NotImplementedError
 
 
-class _LogRecordLogged(Logged):
-    __slots__ = ("_levelno", "_msg", "_matcher")
-
-    def __init__(self, levelno: int, msg: str) -> None:
-        self._levelno = levelno
-        self._msg = msg
-        self._matcher = compile_matcher(msg)
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, _LogRecordLogged) and other._levelno == self._levelno and other._msg == self._msg
-
-    def __repr__(self) -> str:
-        return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
-
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
-        if self._levelno == record.levelno and self._matcher(record.getMessage()):
-            return None
-        return self
-
-    def _str(self, *, indent: str) -> str:
-        return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
-
-
 def log(level: int | str, msg: str) -> Logged:
     return _LogRecordLogged(to_levelno(level), msg)
 
@@ -84,6 +61,29 @@ def error(msg: str) -> Logged:
 
 def critical(msg: str) -> Logged:
     return _LogRecordLogged(logging.CRITICAL, msg)
+
+
+class _LogRecordLogged(Logged):
+    __slots__ = ("_levelno", "_msg", "_matcher")
+
+    def __init__(self, levelno: int, msg: str) -> None:
+        self._levelno = levelno
+        self._msg = msg
+        self._matcher = compile_matcher(msg)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, _LogRecordLogged) and other._levelno == self._levelno and other._msg == self._msg
+
+    def __repr__(self) -> str:
+        return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
+
+    def _reduce(self, record: logging.LogRecord) -> Logged | None:
+        if self._levelno == record.levelno and self._matcher(record.getMessage()):
+            return None
+        return self
+
+    def _str(self, *, indent: str) -> str:
+        return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
 
 
 class _ComposedLogged(Logged):
