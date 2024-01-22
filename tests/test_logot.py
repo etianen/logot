@@ -59,3 +59,14 @@ def test_assert_not_logged_fail(logot: Logot) -> None:
 def test_wait_for_sync_pass(logot: Logot) -> None:
     logger.info("foo bar")
     logot.wait_for(logged.info("foo bar"))
+
+
+def test_wait_for_sync_fail(logot: Logot) -> None:
+    logger.info("boom!")
+    with pytest.raises(AssertionError) as ex:
+        logot.wait_for(logged.info("foo bar"), timeout=0)
+    assert str(ex.value) == lines(
+        "Not logged:",
+        "",
+        "[INFO] foo bar",
+    )
