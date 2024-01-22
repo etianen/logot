@@ -64,9 +64,9 @@ class Logot:
         # Ensure no other waiters.
         if self._waiter is not None:
             raise RuntimeError("Multiple waiters are not supported")
-        # Drain the waiter until the log is fully reduced.
-        while self._waiter and log is not None:
-            log = log._reduce(self._waiter.popleft())
+        # Drain the queue until the log is fully reduced.
+        while self._queue and log is not None:
+            log = log._reduce(self._queue.popleft())
         # All done!
         return log
 
