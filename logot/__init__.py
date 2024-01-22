@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, ExitStack
 from types import TracebackType
 from typing import ClassVar
 
@@ -28,7 +28,7 @@ class _Capturing:
 
 
 class Logot:
-    __slots__ = ()
+    __slots__ = ("_stack", "_timeout")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -41,7 +41,8 @@ class Logot:
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        pass
+        self._stack = ExitStack()
+        self._timeout = timeout
 
     def capturing(
         self,
@@ -50,3 +51,11 @@ class Logot:
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[None]:
         return _Capturing(levelno=to_levelno(level), logger=to_logger(logger))
+
+    def capture(
+        self,
+        *,
+        level: int | str = DEFAULT_LEVEL,
+        logger: logging.Logger | str | None = DEFAULT_LOGGER,
+    ) -> None:
+        self._stack.enter_context(self.capturing(level=level, logger=logger))
