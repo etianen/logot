@@ -46,6 +46,14 @@ class SyncWaiter(Waiter):
 
 
 class AsyncWaiter(Waiter):
+    __slots__ = ()
+
+    @abstractmethod
+    async def wait(self) -> None:
+        raise NotImplementedError
+
+
+class AsyncioWaiter(AsyncWaiter):
     __slots__ = ("_loop", "_future")
 
     def __init__(self, log: Logged, *, timeout: float) -> None:

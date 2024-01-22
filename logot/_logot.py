@@ -10,7 +10,7 @@ from weakref import WeakValueDictionary
 
 from logot._logged import Logged
 from logot._util import to_levelno, to_logger, to_timeout
-from logot._waiter import AsyncWaiter, SyncWaiter, Waiter, WaitError
+from logot._waiter import AsyncioWaiter, SyncWaiter, Waiter, WaitError
 
 W = TypeVar("W", bound=Waiter)
 
@@ -98,7 +98,7 @@ class Logot:
                 waiter.wait()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(log, AsyncWaiter, timeout=timeout) as waiter:
+        with self._waiting(log, AsyncioWaiter, timeout=timeout) as waiter:
             if waiter is not None:
                 await waiter.wait()
 
