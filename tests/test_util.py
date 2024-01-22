@@ -6,6 +6,7 @@ from typing import cast
 import pytest
 
 from logot._util import to_levelno, to_logger, to_timeout
+from tests import logger
 
 
 def test_to_levelno_int_pass() -> None:
@@ -39,11 +40,11 @@ def test_to_logger_none_pass() -> None:
 
 
 def test_to_logger_str_pass() -> None:
-    assert to_logger("logot") is logging.getLogger("logot")
+    assert to_logger("logot") is logger
 
 
 def test_to_logger_logger_pass() -> None:
-    assert to_logger(logging.getLogger("logot")) is logging.getLogger("logot")
+    assert to_logger(logging.getLogger("logot")) is logger
 
 
 def test_to_logger_type_fail() -> None:

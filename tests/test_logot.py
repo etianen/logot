@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import logging
 
-from logot import Logot
+from logot import Logot, logged
+from tests import logger
 
 
 def test_capturing() -> None:
-    logger = logging.getLogger("logot")
     assert logger.level == logging.NOTSET
     # Set a fairly non-verbose log level.
     logger.setLevel(logging.WARNING)
@@ -20,3 +20,8 @@ def test_capturing() -> None:
     finally:
         # Whatever this test does, reset the logger to what it was!
         logger.setLevel(logging.NOTSET)
+
+
+def test_assert_logged_pass(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar"))

@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Software Development :: Testing :: Unit",
     "Topic :: System :: Logging",
 ]
-packages = [{ include = "logot" }]
+packages = [{ include = "logot" }, { include = "_logot_pytest.py" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -39,6 +39,9 @@ optional = true
 furo = { version = "*", markers = "python_version >= '3.12'" }
 sphinx = { version = "7.2.6", markers = "python_version >= '3.12'" }
 sphinx-autobuild = { version = "*", markers = "python_version >= '3.12'" }
+
+[tool.poetry.plugins.pytest11]
+logot = "_logot_pytest"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
