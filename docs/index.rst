@@ -1,6 +1,8 @@
 Log-based testing 🪵
 ====================
 
+.. currentmodule:: logot
+
 :mod:`logot` makes it easy to test your application is logging as expected:
 
 .. code:: python
@@ -10,6 +12,11 @@ Log-based testing 🪵
    def test_my_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(logged.info("App started"))
+
+.. note::
+
+   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`unittest` to learn about about using
+   :mod:`logot` with other testing frameworks.
 
 
 Why test logging? 🤔
@@ -36,10 +43,13 @@ For example, imagine the following code running in a thread:
          else:
             logger.debug("Poll finished")
 
-It's certainly *possible* to rewrite this code in a way that can be tested without :mod:`logot`, but that often makes
-the code less clear and more verbose. For complex threaded or async applications, this can quickly become burdensome. 👎
+.. note::
 
-Meanwhile, testing this code with :mod:`logot` is easy!
+   It's certainly *possible* to rewrite this code in a way that can be tested without :mod:`logot`, but that often makes
+   the code less clear or more verbose. For complex threaded or async applications, this can quickly become burdensome.
+   👎
+
+Testing this code with :mod:`logot` is easy!
 
 .. code:: python
 
@@ -53,7 +63,7 @@ Meanwhile, testing this code with :mod:`logot` is easy!
 Testing threaded code 🧵
 ------------------------
 
-Use :func:`logot.`
+Use :meth:`Logot.wait_for`
 
 
 .. toctree::

@@ -8,6 +8,16 @@ API reference
 
 .. autoclass:: logot.Logot
 
+   .. automethod:: capturing
+
+   .. automethod:: assert_logged
+
+   .. automethod:: assert_not_logged
+
+   .. automethod:: wait_for
+
+   .. automethod:: await_for
+
 .. autoclass:: logot.Logged
 
 
