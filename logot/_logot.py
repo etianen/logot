@@ -86,12 +86,12 @@ class Logot:
                 raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(SyncWaiter, log, timeout=timeout) as waiter:
+        with self._waiting(log, SyncWaiter, timeout=timeout) as waiter:
             if waiter is not None:
                 waiter.wait()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(AsyncWaiter, log, timeout=timeout) as waiter:
+        with self._waiting(log, AsyncWaiter, timeout=timeout) as waiter:
             if waiter is not None:
                 await waiter.wait()
 
