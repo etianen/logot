@@ -22,6 +22,9 @@ def to_levelno(level: int | str) -> int:
 def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
     # Handle `None` or `str` logger.
     if logger is None or isinstance(logger, str):
-        logger = logging.getLogger(logger)
+        return logging.getLogger(logger)
+    # Handle `Logger` logger.
+    if isinstance(logger, logging.Logger):
+        return logger
     # All done!
-    return logger
+    raise TypeError(f"Invalid logger: {logger!r}")

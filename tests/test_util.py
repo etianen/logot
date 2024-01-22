@@ -44,3 +44,9 @@ def test_to_logger_str() -> None:
 
 def test_to_logger_logger() -> None:
     assert to_logger(logging.getLogger("logot")) is logging.getLogger("logot")
+
+
+def test_to_logger_type_fail() -> None:
+    with pytest.raises(TypeError) as ex:
+        to_logger(cast(str, 1.5))
+    assert str(ex.value) == "Invalid logger: 1.5"
