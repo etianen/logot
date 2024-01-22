@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 
 
-def to_levelno(level: int | str) -> int:
+def validate_levelno(level: int | str) -> int:
     # Handle `int` level.
     if isinstance(level, int):
         if logging.getLevelName(level).startswith("Level "):
@@ -19,7 +19,7 @@ def to_levelno(level: int | str) -> int:
     raise TypeError(f"Invalid level: {level!r}")
 
 
-def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
+def validate_logger(logger: logging.Logger | str | None) -> logging.Logger:
     # Handle `None` or `str` logger.
     if logger is None or isinstance(logger, str):
         return logging.getLogger(logger)
@@ -30,7 +30,7 @@ def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
     raise TypeError(f"Invalid logger: {logger!r}")
 
 
-def to_timeout(timeout: float) -> float:
+def validate_timeout(timeout: float) -> float:
     # Handle numeric timeout.
     if isinstance(timeout, (float, int)):
         if timeout >= 0.0:

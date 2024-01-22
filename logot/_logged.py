@@ -4,7 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 
 from logot._match import compile_matcher
-from logot._util import to_levelno
+from logot._validate import validate_levelno
 
 
 class Logged(ABC):
@@ -40,7 +40,7 @@ class Logged(ABC):
 
 
 def log(level: int | str, msg: str) -> Logged:
-    return _LogRecordLogged(to_levelno(level), msg)
+    return _LogRecordLogged(validate_levelno(level), msg)
 
 
 def debug(msg: str) -> Logged:

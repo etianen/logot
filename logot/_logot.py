@@ -9,7 +9,7 @@ from typing import ClassVar, TypeVar
 from weakref import WeakValueDictionary
 
 from logot._logged import Logged
-from logot._util import to_levelno, to_logger, to_timeout
+from logot._validate import validate_levelno, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
 W = TypeVar("W", bound=Waiter)
@@ -27,7 +27,7 @@ class Logot:
         *,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._timeout = to_timeout(timeout)
+        self._timeout = validate_timeout(timeout)
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
         self._queue: deque[logging.LogRecord] = deque()
@@ -39,8 +39,8 @@ class Logot:
         level: int | str = DEFAULT_LEVEL,
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
-        levelno = to_levelno(level)
-        logger = to_logger(logger)
+        levelno = validate_levelno(level)
+        logger = validate_logger(logger)
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
     def assert_logged(self, log: Logged) -> None:
@@ -100,7 +100,7 @@ class Logot:
             if timeout is None:
                 timeout = self._timeout
             else:
-                timeout = to_timeout(timeout)
+                timeout = validate_timeout(timeout)
             # Ensure no other waiters.
             if self._waiter is not None:  # pragma: no cover
                 raise RuntimeError("Multiple waiters are not supported")
