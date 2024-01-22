@@ -5,7 +5,7 @@ import logging
 import pytest
 
 from logot import Logot, logged
-from tests import lines, logger
+from tests import lines, log_soon, logger
 
 
 def test_capturing() -> None:
@@ -56,12 +56,17 @@ def test_assert_not_logged_fail(logot: Logot) -> None:
     )
 
 
-def test_wait_for_sync_pass(logot: Logot) -> None:
+def test_wait_for_pass_immediate(logot: Logot) -> None:
     logger.info("foo bar")
     logot.wait_for(logged.info("foo bar"))
 
 
-def test_wait_for_sync_fail(logot: Logot) -> None:
+def test_wait_for_pass_soon(logot: Logot) -> None:
+    with log_soon(logging.INFO, "foo bar"):
+        logot.wait_for(logged.info("foo bar"))
+
+
+def test_wait_for_immediate_fail(logot: Logot) -> None:
     logger.info("boom!")
     with pytest.raises(AssertionError) as ex:
         logot.wait_for(logged.info("foo bar"), timeout=0.1)
