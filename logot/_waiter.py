@@ -39,7 +39,7 @@ class SyncWaiter(Waiter):
         self._lock.acquire(timeout=self._timeout)
 
 
-class AsyncioWaiter(Waiter):
+class AsyncWaiter(Waiter):
     __slots__ = ("_loop", "_future")
 
     def __init__(self, log: Logged, *, timeout: float) -> None:
