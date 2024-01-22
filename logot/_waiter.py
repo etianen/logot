@@ -10,21 +10,23 @@ from typing import Union
 from logot._logged import Logged
 
 # A log record waiter.
-# This is effectively a protocol type with one `.append(LogRecord)` method.
-Waiter = Union[deque[logging.LogRecord], "_Waiter"]
+# This is effectively a protocol type with a single `append(LogRecord)` method.
+Waiter = Union[deque[logging.LogRecord], "LoggedWaiter"]
 
 
-class _Waiter(ABC):
-    __slots__ = ("parent", "_log")
+class LoggedWaiter(ABC):
+    __slots__ = ("_parent", "_log", "_timeout")
 
-    def __init__(self, parent: Waiter, log: Logged) -> None:
-        self.parent = parent
+    def __init__(self, parent: Waiter, log: Logged, *, timeout: float) -> None:
+        self._parent = parent
         self._log: Logged | None = log
+        self._timeout = timeout
 
     def append(self, record: logging.LogRecord) -> None:
-        # If the log has already been fully-reduced, but not yet cleaned up, add it to the parent waiter.
+        # If the log has already been fully-reduced, but the waiter is not yet cleaned up, add the record to the parent
+        # waiter. The avoids any race condition that could lose log records.
         if self._log is None:
-            self.parent.append(record)
+            self._parent.append(record)
             return
         # Reduce the log.
         self._log = self._log._reduce(record)
@@ -37,35 +39,35 @@ class _Waiter(ABC):
         raise NotImplementedError
 
 
-class SyncWaiter(_Waiter):
+class SyncLoggedWaiter(LoggedWaiter):
     __slots__ = ("_lock",)
 
-    def __init__(self, parent: Waiter, log: Logged) -> None:
-        super().__init__(parent, log)
+    def __init__(self, parent: Waiter, log: Logged, *, timeout: float) -> None:
+        super().__init__(parent, log, timeout=timeout)
         self._lock = Lock()
         self._lock.acquire()
 
     def _notify(self) -> None:
         self._lock.release()
 
-    def wait(self, *, timeout: float) -> bool:
-        return self._lock.acquire(timeout=timeout)
+    def wait(self) -> bool:
+        return self._lock.acquire(timeout=self._timeout)
 
 
-class AsyncWaiter(_Waiter):
+class AsyncLoggedWaiter(LoggedWaiter):
     __slots__ = ("_loop", "_future")
 
-    def __init__(self, parent: Waiter, log: Logged) -> None:
-        super().__init__(parent, log)
+    def __init__(self, parent: Waiter, log: Logged, *, timeout: float) -> None:
+        super().__init__(parent, log, timeout=timeout)
         self._loop = asyncio.get_running_loop()
         self._future: asyncio.Future[None] = self._loop.create_future()
 
     def _notify(self) -> None:
         self._loop.call_soon_threadsafe(self._future.set_result, None)
 
-    async def wait(self, *, timeout: float) -> bool:
+    async def wait(self) -> bool:
         try:
-            await asyncio.wait_for(self._future, timeout=timeout)
+            await asyncio.wait_for(self._future, timeout=self._timeout)
         except asyncio.TimeoutError:
             return False
         return True
