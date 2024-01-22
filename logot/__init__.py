@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from collections import deque
-from contextlib import AbstractContextManager, ExitStack
+from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
 from typing import Callable, ClassVar
@@ -13,7 +13,7 @@ from logot.logged import Logged
 
 
 class Logot:
-    __slots__ = ("_timeout", "_stack", "_lock", "_seen_records", "_queue", "_expected_logs", "_expected_logs_waiter")
+    __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_expected_logs", "_expected_logs_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -25,7 +25,6 @@ class Logot:
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
         self._timeout = timeout
-        self._stack = ExitStack()
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
         self._queue: deque[logging.LogRecord] = deque()
@@ -39,14 +38,6 @@ class Logot:
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
-
-    def capture(
-        self,
-        *,
-        level: int | str = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
-    ) -> Logot:
-        return self._stack.enter_context(self.capturing(level=level, logger=logger))
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
