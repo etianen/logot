@@ -59,14 +59,14 @@ class Logot:
         # All done!
         return log
 
-    def _fail(self, log: Logged) -> AssertionError:
+    def _error(self, log: Logged) -> AssertionError:
         return AssertionError(f"Expected logs:\n\n{log}")
 
     def assert_logged(self, log: Logged) -> None:
         with self._lock:
             reduced_log = self._reduce(log)
             if reduced_log is not None:
-                raise self._fail(reduced_log)
+                raise self._error(reduced_log)
 
 
 class _Capturing:
