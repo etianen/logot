@@ -80,3 +80,8 @@ def test_wait_for_fail(logot: Logot) -> None:
 async def test_await_for_pass_immediate(logot: Logot) -> None:
     logger.info("foo bar")
     await logot.await_for(logged.info("foo bar"))
+
+
+async def test_await_for_pass_soon(logot: Logot) -> None:
+    with log_soon(logging.INFO, "foo bar"):
+        await logot.await_for(logged.info("foo bar"))
