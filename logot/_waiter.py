@@ -7,7 +7,6 @@ from threading import Lock
 from logot._logged import Logged
 
 
-# Abstract waiter.
 class Waiter(ABC):
     __slots__ = ("log", "_timeout")
 
