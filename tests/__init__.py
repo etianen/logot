@@ -12,7 +12,7 @@ def lines(*lines: str) -> str:
 
 
 def log_soon(level: int, msg: str) -> None:
-    thread = threading.Thread(target=_log_soon, args=(level, msg))
+    thread = threading.Thread(target=_log_soon, args=(level, msg), daemon=True)
     thread.start()
 
 

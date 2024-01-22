@@ -63,6 +63,7 @@ strict = true
 testpaths = ["tests"]
 console_output_style = "classic"
 addopts = "--tb=native --cov"
+asyncio_mode = "auto"
 
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
