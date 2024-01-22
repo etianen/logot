@@ -1,8 +1,6 @@
 Log-based testing 🪵
 ====================
 
-.. automodule:: logot
-
 :mod:`logot` makes it easy to test your application is logging as expected:
 
 .. code:: python
@@ -52,6 +50,12 @@ Meanwhile, testing this code with :mod:`logot` is easy!
          logot.wait_for(logged.info("Poll finished"))
 
 
+Testing threaded code 🧵
+------------------------
+
+Use :func:`logot.`
+
+
 .. toctree::
    :caption: Contents
    :hidden:
@@ -60,3 +64,6 @@ Meanwhile, testing this code with :mod:`logot` is easy!
    self
    match
    logged
+   pytest
+   unittest
+   api
