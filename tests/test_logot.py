@@ -75,3 +75,8 @@ def test_wait_for_fail(logot: Logot) -> None:
         "",
         "[INFO] foo bar",
     )
+
+
+async def test_await_for_pass_immediate(logot: Logot) -> None:
+    logger.info("foo bar")
+    await logot.await_for(logged.info("foo bar"))
