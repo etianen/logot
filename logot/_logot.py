@@ -41,6 +41,32 @@ class Logot:
     ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
+    def assert_logged(self, log: Logged) -> None:
+        reduced_log = self._reduce(log)
+        if reduced_log is not None:
+            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+
+    def assert_not_logged(self, log: Logged) -> None:
+        reduced_log = self._reduce(log)
+        if reduced_log is None:
+            raise AssertionError(f"Logged:\n\n{log}")
+
+    def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
+        try:
+            if waiter is not None:
+                waiter.wait()
+        finally:
+            self._close_waiter()
+
+    async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        waiter = self._open_waiter(log, AsyncioWaiter, timeout=timeout)
+        try:
+            if waiter is not None:
+                await waiter.wait()
+        finally:
+            self._close_waiter()
+
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
             # De-duplicate log records.
@@ -94,32 +120,6 @@ class Logot:
             # Another thread might have fully-reduced the log between the wait failing and the context exiting.
             if waiter is not None and waiter.log is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.log}")
-
-    def assert_logged(self, log: Logged) -> None:
-        reduced_log = self._reduce(log)
-        if reduced_log is not None:
-            raise AssertionError(f"Not logged:\n\n{reduced_log}")
-
-    def assert_not_logged(self, log: Logged) -> None:
-        reduced_log = self._reduce(log)
-        if reduced_log is None:
-            raise AssertionError(f"Logged:\n\n{log}")
-
-    def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
-        try:
-            if waiter is not None:
-                waiter.wait()
-        finally:
-            self._close_waiter()
-
-    async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        waiter = self._open_waiter(log, AsyncioWaiter, timeout=timeout)
-        try:
-            if waiter is not None:
-                await waiter.wait()
-        finally:
-            self._close_waiter()
 
 
 class _Capturing:
