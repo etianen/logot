@@ -156,6 +156,7 @@ class _Waiting(Generic[W]):
             # Restore the previous waiter.
             self._logot._waiter = self._prev_waiter
             # If the waiter failed, avoid a race condition by trying one last time with the lock.
+            # Another thread might have fully-reduced the log between the wait failing and the context exiting.
             if exc_type is not None and issubclass(exc_type, WaitError):
                 if self._waiter.log is not None:
                     raise AssertionError(f"Not logged:\n\n{self._waiter.log}")
