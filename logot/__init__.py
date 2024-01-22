@@ -44,7 +44,8 @@ class Logot:
         return self._stack.enter_context(self.capturing(level=level, logger=logger))
 
     def _emit(self, record: logging.LogRecord) -> None:
-        pass
+        with self._lock:
+            self._queue.append(record)
 
 
 class _Capturing:
