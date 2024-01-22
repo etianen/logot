@@ -17,3 +17,11 @@ def to_levelno(level: int | str) -> int:
         return levelno
     # Fail on other types.
     raise TypeError(f"Invalid level: {level!r}")
+
+
+def to_logger(logger: logging.Logger | str) -> logging.Logger:
+    # Handle `str` logger.
+    if isinstance(logger, str):
+        logger = logging.getLogger(logger)
+    # All done!
+    return logger
