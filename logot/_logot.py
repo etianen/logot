@@ -115,7 +115,7 @@ class Logot:
         with self._lock:
             # Clear the waiter.
             self._waiter = None
-            # Error if the waiter's logs are not fully reduced.
+            # Error if the waiter logs are not fully reduced.
             if waiter.log is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.log}")
 
