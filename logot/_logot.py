@@ -133,6 +133,17 @@ class _Capturing:
         self._logger.setLevel(self._prev_levelno)
 
 
+class _Handler(logging.Handler):
+    __slots__ = ("_logot",)
+
+    def __init__(self, logot: Logot, *, levelno: int) -> None:
+        super().__init__(levelno)
+        self._logot = logot
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self._logot._emit(record)
+
+
 class _Waiting(Generic[W]):
     __slots__ = ("_logot", "_log", "_waiter_cls", "_timeout", "_prev_waiter", "_waiter")
 
@@ -167,14 +178,3 @@ class _Waiting(Generic[W]):
             if exc_type is not None and issubclass(exc_type, WaitError):
                 if self._waiter.log is not None:
                     raise AssertionError(f"Not logged:\n\n{self._waiter.log}")
-
-
-class _Handler(logging.Handler):
-    __slots__ = ("_logot",)
-
-    def __init__(self, logot: Logot, *, levelno: int) -> None:
-        super().__init__(levelno)
-        self._logot = logot
-
-    def emit(self, record: logging.LogRecord) -> None:
-        self._logot._emit(record)
