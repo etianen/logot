@@ -10,7 +10,7 @@ from weakref import WeakValueDictionary
 
 from logot._logged import Logged
 from logot._util import to_levelno, to_logger, to_timeout
-from logot._waiter import AsyncLoggedWaiter, LoggedWaiter, SyncLoggedWaiter, Waiter
+from logot._waiter import AsyncLoggedWaiter, LoggedWaiter, SyncLoggedWaiter, Waiter, WaitError
 
 W = TypeVar("W", bound=LoggedWaiter)
 
@@ -78,14 +78,14 @@ class Logot:
                 raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(SyncLoggedWaiter, timeout=timeout) as waiter:
-            if waiter is not None and not waiter.wait():
-                raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        with self._waiting(SyncLoggedWaiter, log, timeout=timeout) as waiter:
+            if waiter is not None:
+                waiter.wait()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(AsyncLoggedWaiter, timeout=timeout) as waiter:
-            if waiter is not None and not await waiter.wait():
-                raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        with self._waiting(AsyncLoggedWaiter, log, timeout=timeout) as waiter:
+            if waiter is not None:
+                await waiter.wait()
 
 
 class _Capturing:
@@ -97,8 +97,8 @@ class _Capturing:
         self._handler = _Handler(logot, levelno=levelno)
 
     def __enter__(self) -> Logot:
-        # If the logger is less verbose than the handler, force it to the necessary verboseness.
         self._prev_levelno = self._logger.level
+        # If the logger is less verbose than the handler, force it to the necessary verboseness.
         if self._handler.level < self._logger.level:
             self._logger.setLevel(self._handler.level)
         # Add the handler.
@@ -113,9 +113,8 @@ class _Capturing:
     ) -> None:
         # Remove the handler.
         self._logger.removeHandler(self._handler)
-        # If the logger was forced to a more verbose level, restore the previous level.
-        if self._handler.level < self._prev_levelno:
-            self._logger.setLevel(self._prev_levelno)
+        # Restore the previous level.
+        self._logger.setLevel(self._prev_levelno)
 
 
 class _Waiting(Generic[W]):
@@ -134,12 +133,12 @@ class _Waiting(Generic[W]):
 
     def __enter__(self) -> W | None:
         with self._logot._lock:
-            reduced_log = self._logot._reduce(self._log)
+            self._prev_waiter = self._logot._waiter
             # Exit early if we're already reduced.
+            reduced_log = self._logot._reduce(self._log)
             if reduced_log is None:
                 return None
             # Set a waiter.
-            self._prev_waiter = self._logot._waiter
             waiter = self._logot._waiter = self._waiter_cls(self._logot._waiter, reduced_log, timeout=self._timeout)
             return waiter
 
@@ -150,7 +149,11 @@ class _Waiting(Generic[W]):
         traceback: TracebackType | None,
     ) -> None:
         with self._logot._lock:
+            # Restore the previous waiter.
             self._logot._waiter = self._prev_waiter
+            # If the waiter failed, avoid a race condition by trying one last time with the lock.
+            if issubclass(exc_type, WaitError):
+                pass
 
 
 class _Handler(logging.Handler):

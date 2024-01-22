@@ -14,6 +14,10 @@ from logot._logged import Logged
 Waiter = Union[deque[logging.LogRecord], "LoggedWaiter"]
 
 
+class WaitError(Exception):
+    pass
+
+
 class LoggedWaiter(ABC):
     __slots__ = ("_parent", "_log", "_timeout")
 
@@ -50,8 +54,9 @@ class SyncLoggedWaiter(LoggedWaiter):
     def _notify(self) -> None:
         self._lock.release()
 
-    def wait(self) -> bool:
-        return self._lock.acquire(timeout=self._timeout)
+    def wait(self) -> None:
+        if not self._lock.acquire(timeout=self._timeout):
+            raise WaitError
 
 
 class AsyncLoggedWaiter(LoggedWaiter):
@@ -63,11 +68,16 @@ class AsyncLoggedWaiter(LoggedWaiter):
         self._future: asyncio.Future[None] = self._loop.create_future()
 
     def _notify(self) -> None:
-        self._loop.call_soon_threadsafe(self._future.set_result, None)
+        self._loop.call_soon_threadsafe(self._anotify)
 
-    async def wait(self) -> bool:
+    def _anotify(self) -> None:
+        try:
+            self._future.set_result(None)
+        except asyncio.InvalidStateError:
+            pass
+
+    async def wait(self) -> None:
         try:
             await asyncio.wait_for(self._future, timeout=self._timeout)
         except asyncio.TimeoutError:
-            return False
-        return True
+            raise WaitError from None
