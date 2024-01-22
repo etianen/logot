@@ -5,7 +5,7 @@ import logging
 import pytest
 
 from logot import Logot, logged
-from tests import logger
+from tests import lines, logger
 
 
 def test_capturing() -> None:
@@ -32,4 +32,8 @@ def test_assert_logged_pass(logot: Logot) -> None:
 def test_asset_logged_fail(logot: Logot) -> None:
     with pytest.raises(AssertionError) as ex:
         logot.assert_logged(logged.info("foo bar"))
-    assert str(ex.value) == "Not logged:\n\n[INFO] foo bar"
+    assert str(ex.value) == lines(
+        "Not logged:",
+        "",
+        "[INFO] foo bar",
+    )
