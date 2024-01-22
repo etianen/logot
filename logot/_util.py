@@ -15,7 +15,7 @@ def to_levelno(level: int | str) -> int:
         if not isinstance(levelno, int):
             raise ValueError(f"Unknown level: {level!r}")
         return levelno
-    # Fail on other types.
+    # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
 
 
@@ -26,5 +26,5 @@ def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
     # Handle `Logger` logger.
     if isinstance(logger, logging.Logger):
         return logger
-    # All done!
+    # Handle invalid logger.
     raise TypeError(f"Invalid logger: {logger!r}")
