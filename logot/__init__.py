@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import Callable, ClassVar
+from typing import ClassVar
 from weakref import WeakValueDictionary
 
 from logot._util import to_levelno, to_logger
@@ -13,7 +14,7 @@ from logot.logged import Logged
 
 
 class Logot:
-    __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_expected_logs", "_expected_logs_waiter")
+    __slots__ = ("_timeout", "_lock", "_seen_records", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -27,9 +28,7 @@ class Logot:
         self._timeout = timeout
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
-        self._queue: deque[logging.LogRecord] = deque()
-        self._expected_logs: Logged | None = None
-        self._expected_logs_waiter: Callable[[], None] | None = None
+        self._waiter: deque[logging.LogRecord] | _Waiter = deque()
 
     def capturing(
         self,
@@ -46,15 +45,8 @@ class Logot:
             if record_id in self._seen_records:
                 return
             self._seen_records[record_id] = record
-            # If there are expected logs, reduce them.
-            if self._expected_logs is not None:
-                self._expected_logs = self._expected_logs._reduce(record)
-                # If the expected logs have been fully reduced, notify the waiter.
-                if self._expected_logs is None:
-                    assert self._expected_logs_waiter is not None, "Unreachable"
-                    self._expected_logs_waiter()
-            # Buffer the record in the queue.
-            self._queue.append(record)
+            # Append the log to the waiter.
+            self._waiter.append(record)
 
 
 class _Capturing:
@@ -96,3 +88,23 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         self._logot._emit(record)
+
+
+class _Waiter(ABC):
+    __slots__ = ("_log",)
+
+    def __init__(self, log: Logged) -> None:
+        self._log = log
+
+    def append(self, record: logging.LogRecord) -> None:
+        reduced_log = self._log._reduce(record)
+        # Handle full reduction.
+        if reduced_log is None:
+            self._notify()
+            return
+        # Handle partial or no reduction.
+        self._log = reduced_log
+
+    @abstractmethod
+    def _notify(self) -> None:
+        raise NotImplementedError
