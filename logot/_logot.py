@@ -118,7 +118,7 @@ class _Capturing:
 
 
 class _Waiting(Generic[W]):
-    __slots__ = ("_logot", "_waiter_cls", "_log", "_timeout", "_prev_waiter")
+    __slots__ = ("_logot", "_waiter_cls", "_log", "_timeout", "_prev_waiter", "_waiter")
 
     def __init__(self, logot: Logot, waiter_cls: type[W], log: Logged, *, timeout: float | None = None) -> None:
         self._logot = logot
@@ -139,8 +139,12 @@ class _Waiting(Generic[W]):
             if reduced_log is None:
                 return None
             # Set a waiter.
-            waiter = self._logot._waiter = self._waiter_cls(self._logot._waiter, reduced_log, timeout=self._timeout)
-            return waiter
+            self._waiter = self._logot._waiter = self._waiter_cls(
+                self._logot._waiter,
+                reduced_log,
+                timeout=self._timeout,
+            )
+            return self._waiter
 
     def __exit__(
         self,
@@ -152,8 +156,9 @@ class _Waiting(Generic[W]):
             # Restore the previous waiter.
             self._logot._waiter = self._prev_waiter
             # If the waiter failed, avoid a race condition by trying one last time with the lock.
-            if issubclass(exc_type, WaitError):
-                pass
+            if exc_type is not None and issubclass(exc_type, WaitError):
+                if self._waiter.log is not None:
+                    raise AssertionError(f"Not logged:\n\n{self._waiter.log}")
 
 
 class _Handler(logging.Handler):

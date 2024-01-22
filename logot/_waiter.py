@@ -19,23 +19,23 @@ class WaitError(Exception):
 
 
 class LoggedWaiter(ABC):
-    __slots__ = ("_parent", "_log", "_timeout")
+    __slots__ = ("_parent", "log", "_timeout")
 
     def __init__(self, parent: Waiter, log: Logged, *, timeout: float) -> None:
         self._parent = parent
-        self._log: Logged | None = log
+        self.log: Logged | None = log
         self._timeout = timeout
 
     def append(self, record: logging.LogRecord) -> None:
         # If the log has already been fully-reduced, but the waiter is not yet cleaned up, add the record to the parent
         # waiter. The avoids any race condition that could lose log records.
-        if self._log is None:
+        if self.log is None:
             self._parent.append(record)
             return
         # Reduce the log.
-        self._log = self._log._reduce(record)
+        self.log = self.log._reduce(record)
         # Handle full reduction.
-        if self._log is None:
+        if self.log is None:
             self._notify()
 
     @abstractmethod
@@ -74,6 +74,7 @@ class AsyncLoggedWaiter(LoggedWaiter):
         try:
             self._future.set_result(None)
         except asyncio.InvalidStateError:
+            # The future might have been cancelled by a failed timeout, so ignore this error.
             pass
 
     async def wait(self) -> None:
