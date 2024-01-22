@@ -10,13 +10,13 @@ from weakref import WeakValueDictionary
 
 from logot._logged import Logged
 from logot._util import to_levelno, to_logger, to_timeout
-from logot._waiter import AsyncLoggedWaiter, LoggedWaiter, SyncLoggedWaiter, Waiter, WaitError
+from logot._waiter import AsyncWaiter, SyncWaiter, Waiter, WaitError
 
-W = TypeVar("W", bound=LoggedWaiter)
+W = TypeVar("W", bound=Waiter)
 
 
 class Logot:
-    __slots__ = ("_timeout", "_lock", "_seen_records", "_waiter")
+    __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -30,7 +30,8 @@ class Logot:
         self._timeout = to_timeout(timeout)
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
-        self._waiter: Waiter = deque()
+        self._queue: deque[logging.LogRecord] = deque()
+        self._waiter: Waiter | None = None
 
     def capturing(
         self,
@@ -40,8 +41,8 @@ class Logot:
     ) -> AbstractContextManager[Logot]:
         return _Capturing(self, levelno=to_levelno(level), logger=to_logger(logger))
 
-    def _waiting(self, waiter_cls: type[W], log: Logged, *, timeout: float | None) -> AbstractContextManager[W | None]:
-        return _Waiting(self, waiter_cls, log, timeout=timeout)
+    def _waiting(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> AbstractContextManager[W | None]:
+        return _Waiting(self, log, waiter_cls, timeout=timeout)
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
@@ -51,13 +52,20 @@ class Logot:
             if record_id in self._seen_records:
                 return
             self._seen_records[record_id] = record
-            # Append the log to the waiter.
-            self._waiter.append(record)
+            # If there is a waiter that has not been fully reduced, attempt to reduce it.
+            if self._waiter is not None and self._waiter.log is not None:
+                self._waiter.log = self._waiter.log._reduce(record)
+                # If the waiter has fully reduced, notify the blocked caller.
+                if self._waiter.log is None:
+                    self._waiter.notify()
+                return
+            # Otherwise, buffer the log record.
+            self._queue.append(record)
 
     def _reduce(self, log: Logged | None) -> Logged | None:
         assert self._lock.locked()
         # Ensure no other waiters.
-        if not isinstance(self._waiter, deque):
+        if self._waiter is not None:
             raise RuntimeError("Multiple waiters are not supported")
         # Drain the waiter until the log is fully reduced.
         while self._waiter and log is not None:
@@ -78,30 +86,31 @@ class Logot:
                 raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(SyncLoggedWaiter, log, timeout=timeout) as waiter:
+        with self._waiting(SyncWaiter, log, timeout=timeout) as waiter:
             if waiter is not None:
                 waiter.wait()
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
-        with self._waiting(AsyncLoggedWaiter, log, timeout=timeout) as waiter:
+        with self._waiting(AsyncWaiter, log, timeout=timeout) as waiter:
             if waiter is not None:
                 await waiter.wait()
 
 
 class _Capturing:
-    __slots__ = ("_logot", "_logger", "_handler", "_prev_levelno")
+    __slots__ = ("_logot", "_levelno", "_logger", "_prev_levelno", "_handler")
 
     def __init__(self, logot: Logot, *, levelno: int, logger: logging.Logger) -> None:
         self._logot = logot
+        self._levelno = levelno
         self._logger = logger
-        self._handler = _Handler(logot, levelno=levelno)
 
     def __enter__(self) -> Logot:
-        self._prev_levelno = self._logger.level
         # If the logger is less verbose than the handler, force it to the necessary verboseness.
-        if self._handler.level < self._logger.level:
-            self._logger.setLevel(self._handler.level)
+        self._prev_levelno = self._logger.level
+        if self._levelno < self._logger.level:
+            self._logger.setLevel(self._levelno)
         # Add the handler.
+        self._handler = _Handler(self._logot, levelno=self._levelno)
         self._logger.addHandler(self._handler)
         return self._logot
 
@@ -118,12 +127,12 @@ class _Capturing:
 
 
 class _Waiting(Generic[W]):
-    __slots__ = ("_logot", "_waiter_cls", "_log", "_timeout", "_prev_waiter", "_waiter")
+    __slots__ = ("_logot", "_log", "_waiter_cls", "_timeout", "_prev_waiter", "_waiter")
 
-    def __init__(self, logot: Logot, waiter_cls: type[W], log: Logged, *, timeout: float | None = None) -> None:
+    def __init__(self, logot: Logot, log: Logged, waiter_cls: type[W], *, timeout: float | None = None) -> None:
         self._logot = logot
-        self._waiter_cls = waiter_cls
         self._log = log
+        self._waiter_cls = waiter_cls
         # If no timeout is provided, use the default timeout.
         # Otherwise, validate and use the provided timeout.
         if timeout is None:
@@ -139,11 +148,7 @@ class _Waiting(Generic[W]):
             if reduced_log is None:
                 return None
             # Set a waiter.
-            self._waiter = self._logot._waiter = self._waiter_cls(
-                self._logot._waiter,
-                reduced_log,
-                timeout=self._timeout,
-            )
+            self._waiter = self._logot._waiter = self._waiter_cls(reduced_log, timeout=self._timeout)
             return self._waiter
 
     def __exit__(
