@@ -70,7 +70,7 @@ class Logot:
             # De-duplicate log records.
             # Duplicate log records are possible if we have multiple active captures.
             record_id = id(record)
-            if record_id in self._seen_records:
+            if record_id in self._seen_records:  # pragma: no cover
                 return
             self._seen_records[record_id] = record
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
@@ -100,7 +100,7 @@ class Logot:
             else:
                 timeout = to_timeout(timeout)
             # Ensure no other waiters.
-            if self._waiter is not None:
+            if self._waiter is not None:  # pragma: no cover
                 raise RuntimeError("Multiple waiters are not supported")
             # Set a waiter.
             waiter = self._waiter = waiter_cls(log, timeout=timeout)

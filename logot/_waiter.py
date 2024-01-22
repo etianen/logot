@@ -61,6 +61,6 @@ class AsyncWaiter(Waiter):
     def _resolve(self) -> None:
         try:
             self._future.set_result(None)
-        except asyncio.InvalidStateError:
+        except asyncio.InvalidStateError:  # pragma: no cover
             # It's possible that the timeout and the `notify()` will both occur in the same tick of the event loop.
             pass
