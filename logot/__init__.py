@@ -10,7 +10,7 @@ from typing import ClassVar
 from weakref import WeakValueDictionary
 
 from logot._logged import Logged as Logged
-from logot._util import to_levelno, to_logger
+from logot._util import to_levelno, to_logger, to_timeout
 
 
 class Logot:
@@ -25,7 +25,7 @@ class Logot:
         *,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._timeout = timeout
+        self._timeout = to_timeout(timeout)
         self._lock = Lock()
         self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
         self._waiter: deque[logging.LogRecord] | _Waiter = deque()
@@ -70,6 +70,9 @@ class Logot:
             reduced_log = self._reduce(log)
             if reduced_log is None:
                 raise AssertionError(f"Logged:\n\n{log}")
+
+    def wait_for(self, log: Logged) -> None:
+        pass
 
 
 class _Capturing:

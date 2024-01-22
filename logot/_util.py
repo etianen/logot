@@ -34,7 +34,7 @@ def to_timeout(timeout: float) -> float:
     # Handle numeric timeout.
     if isinstance(timeout, (float, int)):
         if timeout >= 0.0:
-            return timeout
+            return float(timeout)
         raise ValueError(f"Invalid timeout: {timeout!r}")
     # Handle invalid timeout.
     raise TypeError(f"Invalid timeout: {timeout!r}")
