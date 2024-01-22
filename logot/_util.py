@@ -31,8 +31,10 @@ def to_logger(logger: logging.Logger | str | None) -> logging.Logger:
 
 
 def to_timeout(timeout: float) -> float:
-    # Handle valid timeout.
-    if timeout >= 0.0:
-        return timeout
+    # Handle numeric timeout.
+    if isinstance(timeout, (float, int)):
+        if timeout >= 0.0:
+            return timeout
+        raise ValueError(f"Invalid timeout: {timeout!r}")
     # Handle invalid timeout.
-    raise ValueError(f"Invalid timeout: {timeout!r}")
+    raise TypeError(f"Invalid timeout: {timeout!r}")
