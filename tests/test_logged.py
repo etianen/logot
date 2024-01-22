@@ -18,18 +18,18 @@ def assert_reduce(log: logged.Logged | None, *records: logging.LogRecord) -> Non
     assert log is None
 
 
-def test_log_record_logged_eq_pass() -> None:
+def test_log_recordlogged_eq_pass() -> None:
     assert logged.info("foo bar") == logged.info("foo bar")
 
 
-def test_log_record_logged_eq_fail() -> None:
+def test_log_recordlogged_eq_fail() -> None:
     # Different levels are not equal.
     assert logged.info("foo bar") != logged.debug("foo bar")
     # Different messages are not equal.
     assert logged.info("foo bar") != logged.info("foo")
 
 
-def test_log_record_logged_repr() -> None:
+def test_log_recordlogged_repr() -> None:
     assert repr(logged.log(logging.DEBUG, "foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
@@ -38,7 +38,7 @@ def test_log_record_logged_repr() -> None:
     assert repr(logged.critical("foo bar")) == "log('CRITICAL', 'foo bar')"
 
 
-def test_log_record_logged_str() -> None:
+def test_log_recordlogged_str() -> None:
     assert str(logged.log(logging.DEBUG, "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
@@ -47,7 +47,7 @@ def test_log_record_logged_str() -> None:
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
 
 
-def test_log_record_logged_reduce() -> None:
+def test_log_recordlogged_reduce() -> None:
     assert_reduce(
         logged.info("foo bar"),
         record(logging.INFO, "boom!"),  # Non-matching.
@@ -56,18 +56,18 @@ def test_log_record_logged_reduce() -> None:
     )
 
 
-def test_ordered_all_logged_eq_pass() -> None:
+def test_ordered_alllogged_eq_pass() -> None:
     assert (logged.info("foo") >> logged.info("bar")) == (logged.info("foo") >> logged.info("bar"))
 
 
-def test_ordered_all_logged_eq_fail() -> None:
+def test_ordered_alllogged_eq_fail() -> None:
     # Different orderings are not equal.
     assert (logged.info("foo") >> logged.info("bar")) != (logged.info("bar") >> logged.info("foo"))
     # Different operators are not equal.
     assert (logged.info("foo") >> logged.info("bar")) != (logged.info("foo") & logged.info("bar"))
 
 
-def test_ordered_all_logged_repr() -> None:
+def test_ordered_alllogged_repr() -> None:
     # Composed `Logged` are flattened from the left.
     assert (
         repr((logged.info("foo") >> logged.info("bar")) >> logged.info("baz"))
@@ -85,7 +85,7 @@ def test_ordered_all_logged_repr() -> None:
     )
 
 
-def test_ordered_all_logged_str() -> None:
+def test_ordered_alllogged_str() -> None:
     assert str(logged.info("foo") >> logged.info("bar")) == "\n".join(
         (
             "[INFO] foo",
@@ -117,7 +117,7 @@ def test_ordered_all_logged_str() -> None:
     )
 
 
-def test_ordered_all_logged_reduce() -> None:
+def test_ordered_alllogged_reduce() -> None:
     assert_reduce(
         logged.info("foo") >> logged.info("bar") >> logged.info("baz"),
         record(logging.INFO, "boom!"),  # Non-matching.
@@ -140,18 +140,18 @@ def test_ordered_all_logged_reduce() -> None:
     )
 
 
-def test_unordered_all_logged_eq_pass() -> None:
+def test_unordered_alllogged_eq_pass() -> None:
     assert (logged.info("foo") & logged.info("bar")) == (logged.info("foo") & logged.info("bar"))
 
 
-def test_unordered_all_logged_eq_fail() -> None:
+def test_unordered_alllogged_eq_fail() -> None:
     # Different orderings are not equal.
     assert (logged.info("foo") & logged.info("bar")) != (logged.info("bar") & logged.info("foo"))
     # Different operators are not equal.
     assert (logged.info("foo") & logged.info("bar")) != (logged.info("foo") >> logged.info("bar"))
 
 
-def test_unordered_all_logged_repr() -> None:
+def test_unordered_alllogged_repr() -> None:
     # Composed `Logged` are flattened from the left.
     assert (
         repr((logged.info("foo") & logged.info("bar")) & logged.info("baz"))
@@ -169,7 +169,7 @@ def test_unordered_all_logged_repr() -> None:
     )
 
 
-def test_unordered_all_logged_str() -> None:
+def test_unordered_alllogged_str() -> None:
     assert str(logged.info("foo") & logged.info("bar")) == "\n".join(
         (
             "Unordered:",
@@ -201,7 +201,7 @@ def test_unordered_all_logged_str() -> None:
     )
 
 
-def test_unordered_all_logged_reduce() -> None:
+def test_unordered_alllogged_reduce() -> None:
     assert_reduce(
         logged.info("foo") & logged.info("bar") & logged.info("baz"),
         record(logging.INFO, "boom!"),  # Non-matching.
@@ -222,18 +222,18 @@ def test_unordered_all_logged_reduce() -> None:
     )
 
 
-def test_any_logged_eq_pass() -> None:
+def test_anylogged_eq_pass() -> None:
     assert (logged.info("foo") | logged.info("bar")) == (logged.info("foo") | logged.info("bar"))
 
 
-def test_any_logged_eq_fail() -> None:
+def test_anylogged_eq_fail() -> None:
     # Different orderings are not equal.
     assert (logged.info("foo") | logged.info("bar")) != (logged.info("bar") | logged.info("foo"))
     # Different operators are not equal.
     assert (logged.info("foo") | logged.info("bar")) != (logged.info("foo") >> logged.info("bar"))
 
 
-def test_any_logged_repr() -> None:
+def test_anylogged_repr() -> None:
     # Composed `Logged` are flattened from the left.
     assert (
         repr((logged.info("foo") | logged.info("bar")) | logged.info("baz"))
@@ -251,7 +251,7 @@ def test_any_logged_repr() -> None:
     )
 
 
-def test_any_logged_str() -> None:
+def test_anylogged_str() -> None:
     assert str(logged.info("foo") | logged.info("bar")) == "\n".join(
         (
             "Any:",
@@ -283,7 +283,7 @@ def test_any_logged_str() -> None:
     )
 
 
-def test_any_logged_reduce() -> None:
+def test_anylogged_reduce() -> None:
     assert_reduce(
         logged.info("foo") | logged.info("bar") | logged.info("baz"),
         record(logging.INFO, "boom!"),  # Non-matching.

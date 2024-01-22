@@ -9,8 +9,8 @@ from types import TracebackType
 from typing import ClassVar
 from weakref import WeakValueDictionary
 
+from logot._logged import Logged
 from logot._util import to_levelno, to_logger
-from logot.logged import Logged
 
 
 class Logot:
@@ -47,6 +47,9 @@ class Logot:
             self._seen_records[record_id] = record
             # Append the log to the waiter.
             self._waiter.append(record)
+
+    def _reduce(self, log: Logged) -> None:
+        pass
 
     def _waiting(self, waiter: _Waiter) -> AbstractContextManager[None]:
         return _Waiting(self, waiter)
