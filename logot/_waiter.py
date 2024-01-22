@@ -10,8 +10,8 @@ from logot._logged import Logged
 class Waiter(ABC):
     __slots__ = ("log", "_timeout")
 
-    def __init__(self, log: Logged | None, *, timeout: float) -> None:
-        self.log = log
+    def __init__(self, log: Logged, *, timeout: float) -> None:
+        self.log: Logged | None = log
         self._timeout = timeout
 
     @abstractmethod

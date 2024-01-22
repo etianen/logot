@@ -56,14 +56,14 @@ class Logot:
         try:
             waiter.wait()
         finally:
-            self._close_waiter()
+            self._close_waiter(waiter)
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
         waiter = self._open_waiter(log, AsyncioWaiter, timeout=timeout)
         try:
             await waiter.wait()
         finally:
-            self._close_waiter()
+            self._close_waiter(waiter)
 
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
@@ -103,17 +103,17 @@ class Logot:
             if self._waiter is not None:
                 raise RuntimeError("Multiple waiters are not supported")
             # Set a waiter.
-            reduced_log = self._reduce(log)
-            waiter = self._waiter = waiter_cls(reduced_log, timeout=timeout)
-            if reduced_log is None:
+            waiter = self._waiter = waiter_cls(log, timeout=timeout)
+            # Apply an immediate reduction.
+            waiter.log = self._reduce(waiter.log)
+            if waiter.log is None:
                 waiter.notify()
             # All done!
             return waiter
 
-    def _close_waiter(self) -> None:
+    def _close_waiter(self, waiter: Waiter) -> None:
         with self._lock:
             # Clear the waiter.
-            waiter = self._waiter
             self._waiter = None
             # Another thread might have fully-reduced the log between the wait failing and the context exiting.
             if waiter is not None and waiter.log is not None:
