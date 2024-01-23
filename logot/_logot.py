@@ -30,10 +30,25 @@ class Logot:
     __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
+    """
+    The default ``level`` used by :meth:`capturing`.
+
+    This is ``logging.NOTSET``, specifying that all logs are captured.
+    """
 
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
+    """
+    The default ``logger`` used by :meth:`capturing`.
+
+    This is the root logger.
+    """
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
+    """
+    The default ``timeout`` used by :meth:`wait_for` and :meth:`await_for`.
+
+    This is 3 seconds.
+    """
 
     def __init__(
         self,
@@ -59,7 +74,7 @@ class Logot:
         the requested ``level`` for the duration of the context.
 
         :param level: A log level (e.g. ``logging.DEBUG``) or string name (e.g. ``"DEBUG"``). Defaults to
-            ``logging.NOTSET``.
+            ``logging.NOTSET``, specifying that all logs are captured.
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
         """
         levelno = validate_levelno(level)
