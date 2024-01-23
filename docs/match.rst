@@ -3,11 +3,9 @@ Log message matching
 
 .. currentmodule:: logot
 
-:mod:`logot` makes it easy to match log messages using ``%`` placeholders:
+:mod:`logot` makes it easy to match log messages using ``%``-style placeholders:
 
 .. code:: python
-
-   .. code:: python
 
    from logot import Logot, logged
 
@@ -21,8 +19,8 @@ In this case, the ``%s`` placeholder will match *any* string!
 Available placeholders
 ----------------------
 
-The following placeholders are available, corresponding to the formatting options available in the :mod:`logging`
-module:
+The following placeholders are available, each corresponding to a formatting option available in the stdlib
+:mod:`logging` module:
 
 ===========  ===========================================================================================================
 Placeholder  Matches
