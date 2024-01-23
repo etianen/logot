@@ -53,26 +53,57 @@ class Logged(ABC):
 
 
 def log(level: int | str, msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at the given ``level`` with the given ``msg``.
+
+    :param level: A log level (e.g. ``logging.DEBUG``) or string name (e.g. ``"DEBUG"``).
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(validate_levelno(level), msg)
 
 
 def debug(msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at ``DEBUG`` level with the given ``msg``.
+
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(logging.DEBUG, msg)
 
 
 def info(msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at ``INFO`` level with the given ``msg``.
+
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(logging.INFO, msg)
 
 
 def warning(msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at ``WARNING`` level with the given ``msg``.
+
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(logging.WARNING, msg)
 
 
 def error(msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at ``ERROR`` level with the given ``msg``.
+
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(logging.ERROR, msg)
 
 
 def critical(msg: str) -> Logged:
+    """
+    Creates a :doc:`log pattern <logged>` representing a log record at ``CRITICAL`` level with the given ``msg``.
+
+    :param msg: A log :doc:`message pattern <match>`.
+    """
     return _LogRecordLogged(logging.CRITICAL, msg)
 
 
