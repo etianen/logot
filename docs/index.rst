@@ -3,7 +3,7 @@ Log-based testing 🪵
 
 .. currentmodule:: logot
 
-:mod:`logot` makes it easy to test your application is logging as expected:
+:mod:`logot` makes it easy to test your application is logging correctly:
 
 .. code:: python
 
