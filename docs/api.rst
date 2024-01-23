@@ -3,6 +3,13 @@ API reference
 
 .. currentmodule:: logot
 
+Import the :mod:`logot` API in your tests:
+
+.. code:: python
+
+   from logot import Logot, logged
+
+
 :mod:`logot`
 ------------
 
