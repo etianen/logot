@@ -132,6 +132,7 @@ Use :meth:`Logot.assert_logged` to fail *immediately* if the expected logs have 
 
    Use :meth:`Logot.assert_not_logged` to fail *immediately* if the expected logs *do* arrive.
 
+
 .. toctree::
    :caption: Contents
    :hidden:
