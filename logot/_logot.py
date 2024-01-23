@@ -19,7 +19,9 @@ class Logot:
     __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
+
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
+
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
 
     def __init__(

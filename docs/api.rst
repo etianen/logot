@@ -18,6 +18,12 @@ API reference
 
    .. automethod:: await_for
 
+   .. autoattribute:: DEFAULT_LEVEL
+
+   .. autoattribute:: DEFAULT_LOGGER
+
+   .. autoattribute:: DEFAULT_TIMEOUT
+
 .. autoclass:: logot.Logged
 
 
