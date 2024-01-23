@@ -3,6 +3,16 @@
 [![Build](https://github.com/etianen/logot/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logot/actions/workflows/build.yml)
 [![Docs](https://readthedocs.org/projects/logot/badge/)](https://logot.readthedocs.io)
 
+`logot` makes it easy to test your application is logging as expected:
+
+``` python
+from logot import Logot, logged
+
+def test_my_app(logot: Logot) -> None:
+    app.start()
+    logot.wait_for(logged.info("App started"))
+```
+
 
 ## Documentation 📖
 
