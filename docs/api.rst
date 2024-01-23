@@ -19,13 +19,13 @@ Import the :mod:`logot` API in your tests:
 
    .. automethod:: capturing
 
-   .. automethod:: assert_logged
-
-   .. automethod:: assert_not_logged
-
    .. automethod:: wait_for
 
    .. automethod:: await_for
+
+   .. automethod:: assert_logged
+
+   .. automethod:: assert_not_logged
 
    .. autoattribute:: DEFAULT_LEVEL
 

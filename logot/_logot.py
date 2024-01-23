@@ -23,7 +23,8 @@ class Logot:
 
         See :doc:`index` usage guide.
 
-    :param timeout: The default timeout for calls to :meth:`wait_for` and :meth:`await_for`.
+    :param timeout: The default timeout (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`. Defaults to
+        :attr:`DEFAULT_TIMEOUT`.
     """
 
     __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_waiter")
@@ -76,6 +77,14 @@ class Logot:
             raise AssertionError(f"Logged:\n\n{log}")
 
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        """
+        Waits for the expected ``log`` to arrive or the ``timeout`` to expire.
+
+        :param log: The expected :doc:`log pattern <logged>`.
+        :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
+            :class:`Logot`.
+        :raises AssertionError: If the expected ``log`` does not arrive within ``timeout`` seconds.
+        """
         waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
         try:
             waiter.wait()
@@ -83,6 +92,14 @@ class Logot:
             self._close_waiter(waiter)
 
     async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
+        """
+        Waits *asynchronously* for the expected ``log`` to arrive or the ``timeout`` to expire.
+
+        :param log: The expected :doc:`log pattern <logged>`.
+        :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
+            :class:`Logot`.
+        :raises AssertionError: If the expected ``log`` does not arrive within ``timeout`` seconds.
+        """
         waiter = self._open_waiter(log, AsyncWaiter, timeout=timeout)
         try:
             await waiter.wait()
