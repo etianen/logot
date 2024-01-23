@@ -16,3 +16,7 @@ Using with :mod:`unittest`
          with Logot().capture() as logot:
             app.start()
             logot.wait_for(logged.info("App started"))
+
+.. seealso::
+
+   See :class:`Logot` and :meth:`Logot.capturing` API reference.
