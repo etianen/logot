@@ -11,10 +11,14 @@ class Logged(ABC):
     """
     A :doc:`log pattern <logged>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and similar APIs.
 
+    .. important::
+
+        :class:`Logged` instances are immutable and can be reused between tests.
+
     .. note::
 
-        This is an abstract class and cannot be instantiated directly. Use the helpers in :mod:`logot.logged` to create
-        log patterns.
+        This is an abstract class and cannot be instantiated. Use the helpers in :mod:`logot.logged` to create log
+        patterns.
 
     .. seealso::
 
