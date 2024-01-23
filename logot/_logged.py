@@ -8,6 +8,19 @@ from logot._validate import validate_levelno
 
 
 class Logged(ABC):
+    """
+    A :doc:`log pattern <logged>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and similar APIs.
+
+    .. note::
+
+        This is an abstract class and cannot be instantiated directly. Use the helpers in :mod:`logot.logged` to create
+        log patterns.
+
+    .. seealso::
+
+        See :doc:`logged` usage guide.
+    """
+
     __slots__ = ()
 
     def __rshift__(self, log: Logged) -> Logged:
