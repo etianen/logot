@@ -1,6 +1,8 @@
 Log pattern matching
 ====================
 
+.. currentmodule:: logot
+
 :mod:`logot` makes it easy to match logs that may arrive in an unpredictable order. This is especially useful in
 *threaded* or *asynchronous* applications!
 
@@ -33,7 +35,7 @@ Available operators
 Sequential logs
 ~~~~~~~~~~~~~~~
 
-Use the ``>>`` operator to wait for logs that arrive in a *sequential* order:
+Use the ``>>`` operator to wait for logs that must arrive in a *sequential* order:
 
 .. code:: python
 
@@ -50,7 +52,7 @@ Use the ``>>`` operator to wait for logs that arrive in a *sequential* order:
 Parallel logs
 ~~~~~~~~~~~~~
 
-Use the ``&`` operator to wait for logs that arrive in *any* order:
+Use the ``&`` operator to wait for logs that must arrive in *any* order:
 
 .. code:: python
 

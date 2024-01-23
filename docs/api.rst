@@ -1,6 +1,8 @@
 API reference
 =============
 
+.. currentmodule:: logot
+
 :mod:`logot`
 ------------
 
