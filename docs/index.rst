@@ -133,12 +133,21 @@ Use :meth:`Logot.assert_logged` to fail *immediately* if the expected logs have 
    Use :meth:`Logot.assert_not_logged` to fail *immediately* if the expected logs *do* arrive.
 
 
+Further reading
+---------------
+
+Learn more about :mod:`logot` with the following guides:
+
 .. toctree::
-   :caption: Contents
    :hidden:
    :maxdepth: 1
 
    self
+
+
+.. toctree::
+   :maxdepth: 1
+
    match
    logged
    pytest
