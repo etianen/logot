@@ -2,6 +2,8 @@
 
 [![Build](https://github.com/etianen/logot/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logot/actions/workflows/build.yml)
 [![Docs](https://readthedocs.org/projects/logot/badge/)](https://logot.readthedocs.io)
+[![PyPi version](https://img.shields.io/pypi/v/logot.svg)]()
+[![Supported Python versions](https://img.shields.io/pypi/pyversions/logot.svg)](https://pypi.org/project/logot/)
 
 `logot` makes it easy to test your application is logging correctly:
 
