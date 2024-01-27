@@ -1,0 +1,21 @@
+inputs:
+  python-version:
+    type: string
+    default: "3.x"
+runs:
+  using: composite
+  steps:
+    # Install toolchain.
+    - run: pipx install poetry
+      shell: bash
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: poetry
+    # Run pre-install checks.
+    - run: poetry check
+      shell: bash
+    - run: poetry check --lock
+      shell: bash
+    - run: poetry run python --version
+      shell: bash

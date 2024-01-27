@@ -20,17 +20,12 @@ jobs:
     env:
       PYTHONDEVMODE: 1
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
       with:
         python-version: ${{ matrix.python-version }}
-        cache: poetry
-    # Run pre-install checks.
-    - run: poetry check
-    - run: poetry check --lock
-    - run: poetry run python --version
     # Install dependencies.
     - name: Install dependencies
       run: poetry install
@@ -51,13 +46,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
-        cache: poetry
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
       run: poetry install --without dev --with docs
@@ -72,13 +64,10 @@ jobs:
     - docs
     if: always()
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
-        cache: poetry
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
       run: poetry install
