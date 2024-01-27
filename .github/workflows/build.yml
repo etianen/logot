@@ -37,7 +37,7 @@ jobs:
     - run: poetry run ruff format --check
     - run: poetry run mypy
     # Run tests.
-    - name: Run pytest
+    - name: Run tests
       run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
     - name: Upload coverage
