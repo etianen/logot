@@ -189,8 +189,12 @@ class Logot:
     def _reduce(self, log: Logged | None) -> Logged | None:
         # Drain the queue until the log is fully reduced.
         # This does not need a lock, since `deque.popleft()` is thread-safe.
-        while self._queue and log is not None:
-            log = log._reduce(self._queue.popleft())
+        while log is not None:
+            try:
+                record = self._queue.popleft()
+            except IndexError:
+                break
+            log = log._reduce(record)
         # All done!
         return log
 
