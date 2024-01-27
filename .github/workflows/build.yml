@@ -38,7 +38,7 @@ jobs:
     - run: poetry run mypy
     # Run tests.
     - name: Run pytest
-    - run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
+      run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
     - name: Upload coverage
       uses: actions/upload-artifact@v4
