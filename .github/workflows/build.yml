@@ -76,6 +76,7 @@ jobs:
       with:
         pattern: coverage-*
         merge-multiple: true
+    - run: ls -a
     # Install toolchain.
     - run: pipx install poetry
     - uses: actions/setup-python@v5
