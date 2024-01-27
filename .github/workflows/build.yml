@@ -27,18 +27,27 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: poetry
-    # Install dependencies.
+    # Run pre-install checks.
     - run: poetry check
     - run: poetry check --lock
     - run: poetry run python --version
-    - run: poetry install
+    # Install dependencies.
+    - name: Install dependencies
+      run: poetry install
     # Run checks.
     - run: poetry run ruff check
     - run: poetry run ruff format --check
     - run: poetry run mypy
     # Run tests.
-    - run: poetry run coverage run -m pytest
-    - run: poetry run coverage report
+    - name: Run tests
+      run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
+    # Upload coverage.
+    - name: Upload coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-${{ matrix.python-version }}
+        path: .coverage-${{ matrix.python-version }}
+
   docs:
     runs-on: ubuntu-latest
     steps:
@@ -50,6 +59,41 @@ jobs:
         python-version: "3.x"
         cache: poetry
     # Install dependencies.
-    - run: poetry install --without dev --with docs
+    - name: Install dependencies
+      run: poetry install --without dev --with docs
     # Build docs.
-    - run: poetry run sphinx-build -W docs docs/_build
+    - name: Build docs
+      run: poetry run sphinx-build -W docs docs/_build
+
+  report:
+    runs-on: ubuntu-latest
+    needs:
+    - test
+    - docs
+    if: always()
+    steps:
+    - uses: actions/checkout@v4
+    # Install toolchain.
+    - run: pipx install poetry
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+        cache: poetry
+    # Install dependencies.
+    - name: Install dependencies
+      run: poetry install
+    # Report coverage.
+    - name: Download coverage
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverage-*
+        merge-multiple: true
+    - name: Combine coverage
+      run: poetry run coverage combine .coverage-*
+    - name: Report coverage
+      run: poetry run coverage report
+    # Fail if any `needs` job was not a success.
+    # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
+    - name: Fail if workflow error
+      run: exit 1
+      if: needs.test.result != 'success' || needs.docs.result != 'success'
