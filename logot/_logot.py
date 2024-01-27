@@ -81,6 +81,13 @@ class Logot:
         logger = validate_logger(logger)
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
+    def clear(self) -> None:
+        """
+        Clears any captured logs.
+        """
+        with self._lock:
+            self._queue.clear()
+
     def assert_logged(self, log: Logged) -> None:
         """
         Fails *immediately* if the expected ``log`` pattern has not arrived.

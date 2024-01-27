@@ -24,6 +24,12 @@ def test_capturing() -> None:
         logger.setLevel(logging.NOTSET)
 
 
+def test_clear(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.clear()
+    logot.assert_not_logged(logged.info("foo bar"))
+
+
 def test_assert_logged_pass(logot: Logot) -> None:
     logger.info("foo bar")
     logot.assert_logged(logged.info("foo bar"))

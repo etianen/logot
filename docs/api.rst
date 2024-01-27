@@ -27,6 +27,8 @@ Import the :mod:`logot` API in your tests:
 
    .. automethod:: assert_not_logged
 
+   .. automethod:: clear
+
    .. autoattribute:: DEFAULT_LEVEL
 
    .. autoattribute:: DEFAULT_LOGGER
