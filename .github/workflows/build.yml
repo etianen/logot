@@ -64,8 +64,18 @@ jobs:
     needs:
     - test
     - docs
+    if: always()
     steps:
     - uses: actions/checkout@v4
+    # Fail if any needed jobs fail.
+    # This, along with `if: always()`, allows this job to act as the single required status check for the workflow.
+    - run: exit 1
+    - if: needs.test.result != "success" || needs.docs.result != "success"
+    # Download coverage.
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: coverage-*
+        merge-multiple: true
     # Install toolchain.
     - run: pipx install poetry
     - uses: actions/setup-python@v5
@@ -74,11 +84,6 @@ jobs:
         cache: poetry
     # Install dependencies.
     - run: poetry install
-    # Download coverage.
-    - uses: actions/download-artifact@v4
-      with:
-        pattern: coverage-*
-        merge-multiple: true
     # Report coverage.
-    - run: coverage combine
-    - run: coverage report
+    - run: poetry run coverage combine
+    - run: poetry run coverage report
