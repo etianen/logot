@@ -17,5 +17,3 @@ runs:
       shell: bash
     - run: poetry check --lock
       shell: bash
-    - run: poetry run python --version
-      shell: bash
