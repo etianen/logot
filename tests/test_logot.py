@@ -24,44 +24,6 @@ def test_capturing() -> None:
         logger.setLevel(logging.NOTSET)
 
 
-def test_clear(logot: Logot) -> None:
-    logger.info("foo bar")
-    logot.clear()
-    logot.assert_not_logged(logged.info("foo bar"))
-
-
-def test_assert_logged_pass(logot: Logot) -> None:
-    logger.info("foo bar")
-    logot.assert_logged(logged.info("foo bar"))
-
-
-def test_assert_logged_fail(logot: Logot) -> None:
-    logger.info("boom!")
-    with pytest.raises(AssertionError) as ex:
-        logot.assert_logged(logged.info("foo bar"))
-    assert str(ex.value) == lines(
-        "Not logged:",
-        "",
-        "[INFO] foo bar",
-    )
-
-
-def test_assert_not_logged_pass(logot: Logot) -> None:
-    logger.info("boom!")
-    logot.assert_not_logged(logged.info("foo bar"))
-
-
-def test_assert_not_logged_fail(logot: Logot) -> None:
-    logger.info("foo bar")
-    with pytest.raises(AssertionError) as ex:
-        logot.assert_not_logged(logged.info("foo bar"))
-    assert str(ex.value) == lines(
-        "Logged:",
-        "",
-        "[INFO] foo bar",
-    )
-
-
 def test_wait_for_pass_immediate(logot: Logot) -> None:
     logger.info("foo bar")
     logot.wait_for(logged.info("foo bar"))
@@ -102,3 +64,41 @@ async def test_await_for_fail(logot: Logot) -> None:
         "",
         "[INFO] foo bar",
     )
+
+
+def test_assert_logged_pass(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar"))
+
+
+def test_assert_logged_fail(logot: Logot) -> None:
+    logger.info("boom!")
+    with pytest.raises(AssertionError) as ex:
+        logot.assert_logged(logged.info("foo bar"))
+    assert str(ex.value) == lines(
+        "Not logged:",
+        "",
+        "[INFO] foo bar",
+    )
+
+
+def test_assert_not_logged_pass(logot: Logot) -> None:
+    logger.info("boom!")
+    logot.assert_not_logged(logged.info("foo bar"))
+
+
+def test_assert_not_logged_fail(logot: Logot) -> None:
+    logger.info("foo bar")
+    with pytest.raises(AssertionError) as ex:
+        logot.assert_not_logged(logged.info("foo bar"))
+    assert str(ex.value) == lines(
+        "Logged:",
+        "",
+        "[INFO] foo bar",
+    )
+
+
+def test_clear(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.clear()
+    logot.assert_not_logged(logged.info("foo bar"))
