@@ -33,7 +33,7 @@ class Logot:
     """
     The default ``level`` used by :meth:`capturing`.
 
-    This is ``logging.NOTSET``, specifying that all logs are captured.
+    This is :data:`logging.NOTSET`, specifying that all logs are captured.
     """
 
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -73,8 +73,8 @@ class Logot:
         If the given ``logger`` level is less verbose than the requested ``level``, it will be temporarily adjusted to
         the requested ``level`` for the duration of the context.
 
-        :param level: A log level (e.g. ``logging.DEBUG``) or string name (e.g. ``"DEBUG"``). Defaults to
-            ``logging.NOTSET``, specifying that all logs are captured.
+        :param level: A log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``). Defaults to
+            :data:`logging.NOTSET`, specifying that all logs are captured.
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
         """
         levelno = validate_levelno(level)
