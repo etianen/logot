@@ -20,26 +20,24 @@ jobs:
     env:
       PYTHONDEVMODE: 1
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
       with:
         python-version: ${{ matrix.python-version }}
-        cache: poetry
-    # Run pre-install checks.
-    - run: poetry check
-    - run: poetry check --lock
-    - run: poetry run python --version
     # Install dependencies.
     - name: Install dependencies
       run: poetry install
     # Run checks.
-    - run: poetry run ruff check
-    - run: poetry run ruff format --check
-    - run: poetry run mypy
+    - name: Check (ruff)
+      run: poetry run ruff check
+    - name: Check (ruff format)
+      run: poetry run ruff format --check
+    - name: Check (mypy)
+      run: poetry run mypy
     # Run tests.
-    - name: Run tests
+    - name: Test
       run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
     - name: Upload coverage
@@ -51,13 +49,10 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
-        cache: poetry
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
       run: poetry install --without dev --with docs
@@ -72,13 +67,10 @@ jobs:
     - docs
     if: always()
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
-        cache: poetry
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
       run: poetry install
@@ -94,6 +86,6 @@ jobs:
       run: poetry run coverage report
     # Fail if any `needs` job was not a success.
     # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
-    - name: Fail if workflow error
+    - name: Fail on workflow error
       run: exit 1
       if: needs.test.result != 'success' || needs.docs.result != 'success'

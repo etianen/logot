@@ -12,12 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: PyPI
     steps:
-    - uses: actions/checkout@v4
-    # Install toolchain.
-    - run: pipx install poetry
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.x"
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
     # Build.
     - run: poetry build
     # Release.
