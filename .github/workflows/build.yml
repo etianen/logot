@@ -37,6 +37,7 @@ jobs:
     - run: poetry run ruff format --check
     - run: poetry run mypy
     # Run tests.
+    - name: Run pytest
     - run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
     - name: Upload coverage
@@ -58,7 +59,8 @@ jobs:
     # Install dependencies.
     - run: poetry install --without dev --with docs
     # Build docs.
-    - run: poetry run sphinx-build -W docs docs/_build
+    - name: Build docs
+      run: poetry run sphinx-build -W docs docs/_build
 
   report:
     runs-on: ubuntu-latest
