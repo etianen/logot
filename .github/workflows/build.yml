@@ -70,7 +70,7 @@ jobs:
     # Fail if any needed jobs fail.
     # This, along with `if: always()`, allows this job to act as the single required status check for the workflow.
     - run: exit 1
-      if: needs.test.result != "success" || needs.docs.result != "success"
+      if: ${{ needs.test.result != "success" || needs.docs.result != "success" }}
     # Download coverage.
     - uses: actions/download-artifact@v4
       with:
