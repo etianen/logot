@@ -27,11 +27,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         cache: poetry
-    # Install dependencies.
+    # Run pre-install checks.
     - run: poetry check
     - run: poetry check --lock
     - run: poetry run python --version
-    - run: poetry install
+    # Install dependencies.
+    - name: Install dependencies
+      run: poetry install
     # Run checks.
     - run: poetry run ruff check
     - run: poetry run ruff format --check
@@ -57,7 +59,8 @@ jobs:
         python-version: "3.x"
         cache: poetry
     # Install dependencies.
-    - run: poetry install --without dev --with docs
+    - name: Install dependencies
+      run: poetry install --without dev --with docs
     # Build docs.
     - name: Build docs
       run: poetry run sphinx-build -W docs docs/_build
@@ -77,7 +80,8 @@ jobs:
         python-version: "3.x"
         cache: poetry
     # Install dependencies.
-    - run: poetry install
+    - name: Install dependencies
+      run: poetry install
     # Report coverage.
     - name: Download coverage
       uses: actions/download-artifact@v4
