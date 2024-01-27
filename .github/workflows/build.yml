@@ -39,7 +39,8 @@ jobs:
     # Run tests.
     - run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
-    - uses: actions/upload-artifact@v4
+    - name: Upload coverage
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-${{ matrix.python-version }}
         path: .coverage-${{ matrix.python-version }}
@@ -67,11 +68,6 @@ jobs:
     if: always()
     steps:
     - uses: actions/checkout@v4
-    # Download coverage.
-    - uses: actions/download-artifact@v4
-      with:
-        pattern: coverage-*
-        merge-multiple: true
     # Install toolchain.
     - run: pipx install poetry
     - uses: actions/setup-python@v5
@@ -81,6 +77,11 @@ jobs:
     # Install dependencies.
     - run: poetry install
     # Report coverage.
+    - name: Download coverage
+      uses: actions/download-artifact@v4
+      with:
+        pattern: coverage-*
+        merge-multiple: true
     - name: Combine coverage
       run: poetry run coverage combine .coverage-*
     - name: Report coverage
