@@ -81,35 +81,6 @@ class Logot:
         logger = validate_logger(logger)
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
-    def clear(self) -> None:
-        """
-        Clears any captured logs.
-        """
-        with self._lock:
-            self._queue.clear()
-
-    def assert_logged(self, log: Logged) -> None:
-        """
-        Fails *immediately* if the expected ``log`` pattern has not arrived.
-
-        :param log: The expected :doc:`log pattern <logged>`.
-        :raises AssertionError: If the expected ``log`` pattern has not arrived.
-        """
-        reduced_log = self._reduce(log)
-        if reduced_log is not None:
-            raise AssertionError(f"Not logged:\n\n{reduced_log}")
-
-    def assert_not_logged(self, log: Logged) -> None:
-        """
-        Fails *immediately* if the expected ``log`` pattern **has** arrived.
-
-        :param log: The expected :doc:`log pattern <logged>`.
-        :raises AssertionError: If the expected ``log`` pattern **has** arrived.
-        """
-        reduced_log = self._reduce(log)
-        if reduced_log is None:
-            raise AssertionError(f"Logged:\n\n{log}")
-
     def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
@@ -140,6 +111,35 @@ class Logot:
         finally:
             self._close_waiter(waiter)
 
+    def assert_logged(self, log: Logged) -> None:
+        """
+        Fails *immediately* if the expected ``log`` pattern has not arrived.
+
+        :param log: The expected :doc:`log pattern <logged>`.
+        :raises AssertionError: If the expected ``log`` pattern has not arrived.
+        """
+        reduced_log = self._reduce(log)
+        if reduced_log is not None:
+            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+
+    def assert_not_logged(self, log: Logged) -> None:
+        """
+        Fails *immediately* if the expected ``log`` pattern **has** arrived.
+
+        :param log: The expected :doc:`log pattern <logged>`.
+        :raises AssertionError: If the expected ``log`` pattern **has** arrived.
+        """
+        reduced_log = self._reduce(log)
+        if reduced_log is None:
+            raise AssertionError(f"Logged:\n\n{log}")
+
+    def clear(self) -> None:
+        """
+        Clears any captured logs.
+        """
+        with self._lock:
+            self._queue.clear()
+
     def _emit(self, record: logging.LogRecord) -> None:
         with self._lock:
             # De-duplicate log records.
@@ -157,14 +157,6 @@ class Logot:
                 return
             # Otherwise, buffer the log record.
             self._queue.append(record)
-
-    def _reduce(self, log: Logged | None) -> Logged | None:
-        # Drain the queue until the log is fully reduced.
-        # This does not need a lock, since `deque.popleft()` is thread-safe.
-        while self._queue and log is not None:
-            log = log._reduce(self._queue.popleft())
-        # All done!
-        return log
 
     def _open_waiter(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
         with self._lock:
@@ -193,6 +185,14 @@ class Logot:
             # Error if the waiter logs are not fully reduced.
             if waiter.log is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.log}")
+
+    def _reduce(self, log: Logged | None) -> Logged | None:
+        # Drain the queue until the log is fully reduced.
+        # This does not need a lock, since `deque.popleft()` is thread-safe.
+        while self._queue and log is not None:
+            log = log._reduce(self._queue.popleft())
+        # All done!
+        return log
 
 
 class _Capturing:
