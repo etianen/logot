@@ -37,7 +37,8 @@ jobs:
     - run: poetry run ruff format --check
     - run: poetry run mypy
     # Run tests.
-    - run: poetry run pytest
+    - run: poetry run coverage run -m pytest
+    - run: poetry run coverage report
   docs:
     runs-on: ubuntu-latest
     steps:
