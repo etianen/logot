@@ -33,4 +33,4 @@ Release notes are published on [GitHub](https://github.com/etianen/logot/release
 
 ## License ⚖️
 
-``logot`` is published as open-source software under the [MIT license](https://github.com/etianen/logot/blob/main/LICENSE).
+`logot` is published as open-source software under the [MIT license](https://github.com/etianen/logot/blob/main/LICENSE).
