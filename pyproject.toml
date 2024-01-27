@@ -17,7 +17,7 @@ classifiers = [
     "Topic :: System :: Logging",
     "Typing :: Typed",
 ]
-packages = [{ include = "logot" }, { include = "_logot_pytest.py" }]
+packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -43,7 +43,7 @@ sphinx = { version = "7.2.6", markers = "python_version >= '3.12'" }
 sphinx-autobuild = { version = "*", markers = "python_version >= '3.12'" }
 
 [tool.poetry.plugins.pytest11]
-logot = "_logot_pytest"
+logot = "logot._pytest"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
