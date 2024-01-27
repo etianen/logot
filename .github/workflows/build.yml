@@ -90,6 +90,6 @@ jobs:
       run: poetry run coverage report
     # Fail if any `needs` job was not a success.
     # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
-    - name: Fail on workflow error
+    - name: Fail if workflow error
       run: exit 1
       if: needs.test.result != 'success' || needs.docs.result != 'success'
