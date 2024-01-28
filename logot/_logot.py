@@ -86,7 +86,7 @@ class Logot:
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
         """
         if capture_cls is None:
-            capture: Capture = LoggingCapture(*args, **kwargs)
+            capture: Capture = LoggingCapture(*args, **kwargs)  # type: ignore[arg-type]
         else:
             capture = capture_cls(*args, **kwargs)
         return _Capturing(self, capture)
