@@ -161,7 +161,7 @@ class _ComposedLogged(Logged):
     @classmethod
     def from_reduce(cls, logged_items: tuple[Logged, ...]) -> Logged | None:
         assert logged_items
-        # If there is a single log, do not wrap it.
+        # If there is a single `Logged`, do not wrap it.
         if len(logged_items) == 1:
             return logged_items[0]
         # Wrap the logged items.
