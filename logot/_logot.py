@@ -80,6 +80,18 @@ class Logot:
         logger = validate_logger(logger)
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
+    def capture(self, captured: Captured) -> None:
+        with self._lock:
+            # If there is a waiter that has not been fully reduced, attempt to reduce it.
+            if self._waiter is not None and self._waiter.logged is not None:
+                self._waiter.logged = self._waiter.logged._reduce(captured)
+                # If the waiter has fully reduced, notify the blocked caller.
+                if self._waiter.logged is None:
+                    self._waiter.notify()
+                return
+            # Otherwise, buffer the captured log.
+            self._queue.append(captured)
+
     def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
@@ -138,18 +150,6 @@ class Logot:
         """
         with self._lock:
             self._queue.clear()
-
-    def _emit(self, captured: Captured) -> None:
-        with self._lock:
-            # If there is a waiter that has not been fully reduced, attempt to reduce it.
-            if self._waiter is not None and self._waiter.logged is not None:
-                self._waiter.logged = self._waiter.logged._reduce(captured)
-                # If the waiter has fully reduced, notify the blocked caller.
-                if self._waiter.logged is None:
-                    self._waiter.notify()
-                return
-            # Otherwise, buffer the captured log.
-            self._queue.append(captured)
 
     def _open_waiter(self, logged: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
         with self._lock:
