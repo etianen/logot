@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
@@ -8,6 +9,7 @@ from types import TracebackType
 from typing import ClassVar, TypeVar
 from weakref import WeakValueDictionary
 
+from logot._captured import Captured
 from logot._logged import Logged
 from logot._validate import validate_levelno, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
@@ -27,7 +29,7 @@ class Logot:
         :attr:`DEFAULT_TIMEOUT`.
     """
 
-    __slots__ = ("_timeout", "_lock", "_seen_records", "_queue", "_waiter")
+    __slots__ = ("_timeout", "_lock", "_seen_src_items", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
     """
@@ -57,8 +59,8 @@ class Logot:
     ) -> None:
         self._timeout = validate_timeout(timeout)
         self._lock = Lock()
-        self._seen_records: WeakValueDictionary[int, logging.LogRecord] = WeakValueDictionary()
-        self._queue: deque[logging.LogRecord] = deque()
+        self._seen_src_items: WeakValueDictionary[int, object] = WeakValueDictionary()
+        self._queue: deque[Captured] = deque()
         self._waiter: Waiter | None = None
 
     def capturing(
@@ -81,57 +83,57 @@ class Logot:
         logger = validate_logger(logger)
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
-    def wait_for(self, log: Logged, *, timeout: float | None = None) -> None:
+    def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
-        :param log: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <logged>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
             :class:`Logot`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._open_waiter(log, SyncWaiter, timeout=timeout)
+        waiter = self._start_waiter(logged, SyncWaiter, timeout=timeout)
         try:
             waiter.wait()
         finally:
-            self._close_waiter(waiter)
+            self._stop_waiter(waiter)
 
-    async def await_for(self, log: Logged, *, timeout: float | None = None) -> None:
+    async def await_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
-        :param log: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <logged>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
             :class:`Logot`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._open_waiter(log, AsyncWaiter, timeout=timeout)
+        waiter = self._start_waiter(logged, AsyncWaiter, timeout=timeout)
         try:
             await waiter.wait()
         finally:
-            self._close_waiter(waiter)
+            self._stop_waiter(waiter)
 
-    def assert_logged(self, log: Logged) -> None:
+    def assert_logged(self, logged: Logged) -> None:
         """
         Fails *immediately* if the expected ``log`` pattern has not arrived.
 
-        :param log: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <logged>`.
         :raises AssertionError: If the expected ``log`` pattern has not arrived.
         """
-        reduced_log = self._reduce(log)
-        if reduced_log is not None:
-            raise AssertionError(f"Not logged:\n\n{reduced_log}")
+        reduced = self._reduce(logged)
+        if reduced is not None:
+            raise AssertionError(f"Not logged:\n\n{reduced}")
 
-    def assert_not_logged(self, log: Logged) -> None:
+    def assert_not_logged(self, logged: Logged) -> None:
         """
         Fails *immediately* if the expected ``log`` pattern **has** arrived.
 
-        :param log: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <logged>`.
         :raises AssertionError: If the expected ``log`` pattern **has** arrived.
         """
-        reduced_log = self._reduce(log)
-        if reduced_log is None:
-            raise AssertionError(f"Logged:\n\n{log}")
+        reduced = self._reduce(logged)
+        if reduced is None:
+            raise AssertionError(f"Logged:\n\n{logged}")
 
     def clear(self) -> None:
         """
@@ -140,25 +142,25 @@ class Logot:
         with self._lock:
             self._queue.clear()
 
-    def _emit(self, record: logging.LogRecord) -> None:
+    def _capture(self, captured: Captured, src: object) -> None:
         with self._lock:
-            # De-duplicate log records.
-            # Duplicate log records are possible if we have multiple active captures.
-            record_id = id(record)
-            if record_id in self._seen_records:  # pragma: no cover
+            # De-duplicate source records.
+            # Duplicate source records are possible if we have multiple active captures.
+            src_id = id(src)
+            if src_id in self._seen_src_items:  # pragma: no cover
                 return
-            self._seen_records[record_id] = record
+            self._seen_src_items[src_id] = src
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
-            if self._waiter is not None and self._waiter.log is not None:
-                self._waiter.log = self._waiter.log._reduce(record)
+            if self._waiter is not None and self._waiter.logged is not None:
+                self._waiter.logged = self._waiter.logged._reduce(captured)
                 # If the waiter has fully reduced, notify the blocked caller.
-                if self._waiter.log is None:
+                if self._waiter.logged is None:
                     self._waiter.notify()
                 return
-            # Otherwise, buffer the log record.
-            self._queue.append(record)
+            # Otherwise, buffer the capture.
+            self._queue.append(captured)
 
-    def _open_waiter(self, log: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
+    def _start_waiter(self, logged: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -170,33 +172,61 @@ class Logot:
             if self._waiter is not None:  # pragma: no cover
                 raise RuntimeError("Multiple waiters are not supported")
             # Set a waiter.
-            waiter = self._waiter = waiter_cls(log, timeout=timeout)
+            waiter = self._waiter = waiter_cls(logged, timeout=timeout)
             # Apply an immediate reduction.
-            waiter.log = self._reduce(waiter.log)
-            if waiter.log is None:
+            waiter.logged = self._reduce(waiter.logged)
+            if waiter.logged is None:
                 waiter.notify()
             # All done!
             return waiter
 
-    def _close_waiter(self, waiter: Waiter) -> None:
+    def _stop_waiter(self, waiter: Waiter) -> None:
         with self._lock:
             # Clear the waiter.
             self._waiter = None
-            # Error if the waiter logs are not fully reduced.
-            if waiter.log is not None:
-                raise AssertionError(f"Not logged:\n\n{waiter.log}")
+            # Error if the waiter logged is not fully reduced.
+            if waiter.logged is not None:
+                raise AssertionError(f"Not logged:\n\n{waiter.logged}")
 
-    def _reduce(self, log: Logged | None) -> Logged | None:
-        # Drain the queue until the log is fully reduced.
+    def _reduce(self, logged: Logged | None) -> Logged | None:
+        # Drain the queue until the logged is fully reduced.
         # This does not need a lock, since `deque.popleft()` is thread-safe.
-        while log is not None:
+        while logged is not None:
             try:
-                record = self._queue.popleft()
+                captured = self._queue.popleft()
             except IndexError:
                 break
-            log = log._reduce(record)
+            logged = logged._reduce(captured)
         # All done!
-        return log
+        return logged
+
+
+class Capture(ABC):
+    __slots__ = ("_logot",)
+
+    _logot: Logot
+
+    @property
+    def is_capturing(self) -> bool:
+        return hasattr(self, "_logot")
+
+    def capture(self, captured: Captured, src: object = None) -> None:
+        if not self.is_capturing:
+            raise RuntimeError(f"{self!r}: Not capturing")
+        # Delegate to the capture impl.
+        self._logot._capture(captured, src)
+
+    @abstractmethod
+    def start_capturing(self) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stop_capturing(self) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def __repr__(self) -> str:
+        raise NotImplementedError
 
 
 class _Capturing:

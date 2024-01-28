@@ -8,10 +8,10 @@ from logot._logged import Logged
 
 
 class Waiter(ABC):
-    __slots__ = ("log", "_timeout")
+    __slots__ = ("logged", "_timeout")
 
-    def __init__(self, log: Logged, *, timeout: float) -> None:
-        self.log: Logged | None = log
+    def __init__(self, logged: Logged, *, timeout: float) -> None:
+        self.logged: Logged | None = logged
         self._timeout = timeout
 
     @abstractmethod
@@ -26,8 +26,8 @@ class Waiter(ABC):
 class SyncWaiter(Waiter):
     __slots__ = ("_lock",)
 
-    def __init__(self, log: Logged, *, timeout: float) -> None:
-        super().__init__(log, timeout=timeout)
+    def __init__(self, logged: Logged, *, timeout: float) -> None:
+        super().__init__(logged, timeout=timeout)
         # Create an already-acquired lock. This will be released by `notify()`.
         self._lock = Lock()
         self._lock.acquire()
@@ -42,8 +42,8 @@ class SyncWaiter(Waiter):
 class AsyncWaiter(Waiter):
     __slots__ = ("_loop", "_future")
 
-    def __init__(self, log: Logged, *, timeout: float) -> None:
-        super().__init__(log, timeout=timeout)
+    def __init__(self, logged: Logged, *, timeout: float) -> None:
+        super().__init__(logged, timeout=timeout)
         # Create an unresolved `asyncio.Future`. This will be resolved by `notify()`.
         self._loop = asyncio.get_running_loop()
         self._future: asyncio.Future[None] = self._loop.create_future()

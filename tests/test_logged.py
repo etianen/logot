@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from logot import Logged, logged
+from logot import Captured, Logged, logged
 from tests import lines
 
 
@@ -10,13 +10,13 @@ def record(level: int, msg: str) -> logging.LogRecord:
     return logging.LogRecord(name="logot", level=level, pathname=__file__, lineno=0, msg=msg, args=(), exc_info=None)
 
 
-def assert_reduce(log: Logged | None, *records: logging.LogRecord) -> None:
-    for record in records:
+def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
+    for captured in captured_items:
         # The `Logged` should not have been fully reduced.
-        assert log is not None
-        log = log._reduce(record)
-    # Once all log records are consumed, the `Logged` should have been fully-reduced.
-    assert log is None
+        assert logged is not None
+        logged = logged._reduce(captured)
+    # Once captured items are consumed, the `Logged` should have been fully-reduced.
+    assert logged is None
 
 
 def test_log_record_logged_eq_pass() -> None:
