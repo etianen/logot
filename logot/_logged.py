@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
+from logot._format import format_log
 from logot._match import compile_matcher
 from logot._validate import validate_levelno
 
@@ -131,7 +132,7 @@ class _LogRecordLogged(Logged):
         return self
 
     def _str(self, *, indent: str) -> str:
-        return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
+        return format_log(self._levelno, self._msg)
 
 
 class _ComposedLogged(Logged):
