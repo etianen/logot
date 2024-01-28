@@ -6,8 +6,6 @@ import logging
 def validate_levelno(level: int | str) -> int:
     # Handle `int` level.
     if isinstance(level, int):
-        if logging.getLevelName(level).startswith("Level "):
-            raise ValueError(f"Unknown level: {level!r}")
         return level
     # Handle `str` level.
     if isinstance(level, str):
