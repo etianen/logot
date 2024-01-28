@@ -13,7 +13,7 @@ Using with :mod:`unittest`
    class MyAppTest(unittest.TestCase):
 
       def test_my_app(self) -> None:
-         with Logot().capture() as logot:
+         with Logot().capturing() as logot:
             app.start()
             logot.wait_for(logged.info("App started"))
 

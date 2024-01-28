@@ -72,6 +72,10 @@ class Logot:
         If the given ``logger`` level is less verbose than the requested ``level``, it will be temporarily adjusted to
         the requested ``level`` for the duration of the context.
 
+        .. seealso::
+
+            See :doc:`captured` usage guide.
+
         :param level: A log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``). Defaults to
             :data:`logging.NOTSET`, specifying that all logs are captured.
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
@@ -81,6 +85,23 @@ class Logot:
         return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
 
     def capture(self, captured: Captured) -> None:
+        """
+        Adds the given captured log record to the internal capture queue.
+
+        Any waiters blocked on :meth:`wait_for` to :meth:`await_for` will be notified and wake up if their
+        :doc:`log pattern <logged>` is satisfied.
+
+        .. note::
+
+            This method is for integration with :ref:`3rd-party logging frameworks <captured-3rd-party>`. It is not
+            generally used when writing tests.
+
+        .. seealso::
+
+            See :ref:`captured-3rd-party` usage guide.
+
+        :param captured: The captured log.
+        """
         with self._lock:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
             if self._waiter is not None and self._waiter.logged is not None:
