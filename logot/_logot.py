@@ -230,4 +230,4 @@ class _Handler(logging.Handler):
 
     def emit(self, record: logging.LogRecord) -> None:
         captured = Captured(record.levelno, record.getMessage())
-        self._logot._emit(captured)
+        self._logot.capture(captured)
