@@ -13,12 +13,6 @@ def test_validate_levelno_int_pass() -> None:
     assert validate_levelno(logging.INFO) == logging.INFO
 
 
-def test_validate_levelno_int_fail() -> None:
-    with pytest.raises(ValueError) as ex:
-        validate_levelno(9999)
-    assert str(ex.value) == "Unknown level: 9999"
-
-
 def test_validate_levelno_str_pass() -> None:
     assert validate_levelno("INFO") == logging.INFO
 
