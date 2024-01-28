@@ -14,3 +14,7 @@ def test_eq_fail() -> None:
     assert Captured(logging.INFO, "foo bar") != Captured(logging.DEBUG, "foo bar")
     # Different messages are not equal.
     assert Captured(logging.INFO, "foo bar") != Captured(logging.INFO, "foo")
+
+
+def test_repr() -> None:
+    assert repr(Captured(logging.INFO, "foo bar")) == "Captured('INFO', 'foo bar')"
