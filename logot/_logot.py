@@ -86,9 +86,8 @@ class Logot:
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
         """
         if capture_cls is None:
-            capture: Capture = LoggingCapture(*args, **kwargs)  # type: ignore[arg-type]
-        else:
-            capture = capture_cls(*args, **kwargs)
+            capture_cls = LoggingCapture  # type: ignore[assignment]
+        capture = capture_cls(*args, **kwargs)  # type: ignore[misc]
         return _Capturing(self, capture)
 
     def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
