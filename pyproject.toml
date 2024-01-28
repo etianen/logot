@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logot"
-version = "0.2.0"
+version = "0.1.1"
 description = "Log-based testing"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
@@ -33,7 +33,6 @@ mypy = "^1.8.0"
 ruff = "^0.1.11"
 pytest = "*"
 pytest-asyncio = "^0.23.3"
-typing-extensions = "^4.9.0"
 
 [tool.poetry.group.docs]
 optional = true
@@ -53,12 +52,7 @@ source = ["logot", "tests"]
 show_missing = true
 skip_covered = true
 fail_under = 100
-exclude_lines = [
-    "pragma: no cover",
-    "raise NotImplementedError",
-    "if TYPE_CHECKING:",
-    "@overload",
-]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 
 [tool.mypy]
 files = ["logot/**/*.py", "tests/**/*.py"]
