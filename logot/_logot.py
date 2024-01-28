@@ -6,15 +6,18 @@ from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import ClassVar, TypeVar
-from weakref import WeakValueDictionary
+from typing import TYPE_CHECKING, Callable, ClassVar, TypeVar, overload
 
 from logot._captured import Captured
 from logot._logged import Logged
 from logot._validate import validate_levelno, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
-W = TypeVar("W", bound=Waiter)
+if TYPE_CHECKING:
+    from typing_extensions import ParamSpec
+
+    P = ParamSpec("P")
+    W = TypeVar("W", bound=Waiter)
 
 
 class Logot:
@@ -29,21 +32,7 @@ class Logot:
         :attr:`DEFAULT_TIMEOUT`.
     """
 
-    __slots__ = ("_timeout", "_lock", "_seen_src_items", "_queue", "_waiter")
-
-    DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
-    """
-    The default ``level`` used by :meth:`capturing`.
-
-    This is :data:`logging.NOTSET`, specifying that all logs are captured.
-    """
-
-    DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
-    """
-    The default ``logger`` used by :meth:`capturing`.
-
-    This is the root logger.
-    """
+    __slots__ = ("_timeout", "_lock", "_queue", "_waiter")
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
@@ -59,15 +48,32 @@ class Logot:
     ) -> None:
         self._timeout = validate_timeout(timeout)
         self._lock = Lock()
-        self._seen_src_items: WeakValueDictionary[int, object] = WeakValueDictionary()
         self._queue: deque[Captured] = deque()
         self._waiter: Waiter | None = None
 
+    @overload
+    def capturing(
+        self,
+        capture_cls: Callable[P, Capture],
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> AbstractContextManager[Logot]:
+        ...
+
+    @overload
     def capturing(
         self,
         *,
-        level: int | str = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
+        level: int | str = ...,
+        logger: logging.Logger | str | None = ...,
+    ) -> AbstractContextManager[Logot]:
+        ...
+
+    def capturing(
+        self,
+        capture_cls: Callable[P, Capture] | None = None,
+        *args: P.args,
+        **kwargs: P.kwargs,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
@@ -79,9 +85,11 @@ class Logot:
             :data:`logging.NOTSET`, specifying that all logs are captured.
         :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
         """
-        levelno = validate_levelno(level)
-        logger = validate_logger(logger)
-        return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
+        if capture_cls is None:
+            capture: Capture = LoggingCapture(*args, **kwargs)
+        else:
+            capture = capture_cls(*args, **kwargs)
+        return _Capturing(self, capture)
 
     def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
@@ -142,14 +150,8 @@ class Logot:
         with self._lock:
             self._queue.clear()
 
-    def _capture(self, captured: Captured, src: object) -> None:
+    def _capture(self, captured: Captured) -> None:
         with self._lock:
-            # De-duplicate source records.
-            # Duplicate source records are possible if we have multiple active captures.
-            src_id = id(src)
-            if src_id in self._seen_src_items:  # pragma: no cover
-                return
-            self._seen_src_items[src_id] = src
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
             if self._waiter is not None and self._waiter.logged is not None:
                 self._waiter.logged = self._waiter.logged._reduce(captured)
@@ -210,11 +212,11 @@ class Capture(ABC):
     def is_capturing(self) -> bool:
         return hasattr(self, "_logot")
 
-    def capture(self, captured: Captured, src: object = None) -> None:
+    def capture(self, captured: Captured) -> None:
         if not self.is_capturing:
             raise RuntimeError(f"{self!r}: Not capturing")
         # Delegate to the capture impl.
-        self._logot._capture(captured, src)
+        self._logot._capture(captured)
 
     @abstractmethod
     def start_capturing(self) -> None:
@@ -229,21 +231,48 @@ class Capture(ABC):
         raise NotImplementedError
 
 
-class _Capturing:
-    __slots__ = ("_logot", "_handler", "_logger", "_prev_levelno")
+class LoggingCapture(Capture):
+    __slots__ = ("_handler", "_logger", "_prev_levelno")
 
-    def __init__(self, logot: Logot, handler: logging.Handler, *, logger: logging.Logger) -> None:
-        self._logot = logot
-        self._handler = handler
-        self._logger = logger
+    def __init__(
+        self,
+        *,
+        level: int | str = logging.NOTSET,
+        logger: logging.Logger | str | None = None,
+    ) -> None:
+        self._handler = _Handler(self, levelno=validate_levelno(level))
+        self._logger = validate_logger(logger)
 
-    def __enter__(self) -> Logot:
+    def start_capturing(self) -> None:
         # If the logger is less verbose than the handler, force it to the necessary verboseness.
         self._prev_levelno = self._logger.level
         if self._handler.level < self._logger.level:
             self._logger.setLevel(self._handler.level)
         # Add the handler.
         self._logger.addHandler(self._handler)
+
+    def stop_capturing(self) -> None:
+        # Remove the handler.
+        self._logger.removeHandler(self._handler)
+        # Restore the previous level.
+        self._logger.setLevel(self._prev_levelno)
+
+    def __repr__(self) -> str:
+        return f"LoggingCapture(level={logging.getLevelName(self._handler.level)!r}, logger={self._logger.name!r})"
+
+
+class _Capturing:
+    __slots__ = ("_logot", "_capture")
+
+    def __init__(self, logot: Logot, capture: Capture) -> None:
+        self._logot = logot
+        self._capture = capture
+
+    def __enter__(self) -> Logot:
+        if self._capture.is_capturing:
+            raise RuntimeError(f"{self!r}: Already capturing")
+        self._capture._logot = self._logot
+        self._capture.start_capturing()
         return self._logot
 
     def __exit__(
@@ -252,18 +281,18 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
-        # Remove the handler.
-        self._logger.removeHandler(self._handler)
-        # Restore the previous level.
-        self._logger.setLevel(self._prev_levelno)
+        if not self._capture.is_capturing:
+            raise RuntimeError(f"{self!r}: Not capturing")
+        self._capture.stop_capturing()
+        del self._capture._logot
 
 
 class _Handler(logging.Handler):
-    __slots__ = ("_logot",)
+    __slots__ = ("_capture",)
 
-    def __init__(self, logot: Logot, *, levelno: int) -> None:
+    def __init__(self, capture: LoggingCapture, *, levelno: int) -> None:
         super().__init__(levelno)
-        self._logot = logot
+        self._capture = capture
 
     def emit(self, record: logging.LogRecord) -> None:
-        self._logot._emit(record)
+        self._capture.capture(Captured(record.levelno, record.getMessage()))
