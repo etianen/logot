@@ -57,6 +57,7 @@ exclude_lines = [
     "pragma: no cover",
     "raise NotImplementedError",
     "if TYPE_CHECKING:",
+    "@overload",
 ]
 
 [tool.mypy]
