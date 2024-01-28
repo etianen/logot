@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Final
 
 from logot._format import format_log
-from logot._validate import validate_levelno
 
 
 class Captured:
@@ -12,8 +11,8 @@ class Captured:
     levelno: Final[int]
     msg: Final[str]
 
-    def __init__(self, level: int | str, msg: str) -> None:
-        self.levelno = validate_levelno(level)
+    def __init__(self, levelno: int, msg: str) -> None:
+        self.levelno = levelno
         self.msg = msg
 
     def __eq__(self, other: object) -> bool:

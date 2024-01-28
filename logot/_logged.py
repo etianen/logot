@@ -65,7 +65,7 @@ def log(level: int | str, msg: str) -> Logged:
     :param level: A log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``).
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(validate_levelno(level), msg)
+    return _RecordLogged(validate_levelno(level), msg)
 
 
 def debug(msg: str) -> Logged:
@@ -74,7 +74,7 @@ def debug(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.DEBUG, msg)
+    return _RecordLogged(logging.DEBUG, msg)
 
 
 def info(msg: str) -> Logged:
@@ -83,7 +83,7 @@ def info(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.INFO, msg)
+    return _RecordLogged(logging.INFO, msg)
 
 
 def warning(msg: str) -> Logged:
@@ -92,7 +92,7 @@ def warning(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.WARNING, msg)
+    return _RecordLogged(logging.WARNING, msg)
 
 
 def error(msg: str) -> Logged:
@@ -101,7 +101,7 @@ def error(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.ERROR, msg)
+    return _RecordLogged(logging.ERROR, msg)
 
 
 def critical(msg: str) -> Logged:
@@ -110,10 +110,10 @@ def critical(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.CRITICAL, msg)
+    return _RecordLogged(logging.CRITICAL, msg)
 
 
-class _LogRecordLogged(Logged):
+class _RecordLogged(Logged):
     __slots__ = ("_levelno", "_msg", "_matcher")
 
     def __init__(self, levelno: int, msg: str) -> None:
@@ -122,7 +122,7 @@ class _LogRecordLogged(Logged):
         self._matcher = compile_matcher(msg)
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, _LogRecordLogged) and other._levelno == self._levelno and other._msg == self._msg
+        return isinstance(other, _RecordLogged) and other._levelno == self._levelno and other._msg == self._msg
 
     def __repr__(self) -> str:
         return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
