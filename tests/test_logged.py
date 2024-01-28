@@ -2,35 +2,31 @@ from __future__ import annotations
 
 import logging
 
-from logot import Logged, logged
+from logot import Captured, Logged, logged
 from tests import lines
 
 
-def record(level: int, msg: str) -> logging.LogRecord:
-    return logging.LogRecord(name="logot", level=level, pathname=__file__, lineno=0, msg=msg, args=(), exc_info=None)
-
-
-def assert_reduce(log: Logged | None, *records: logging.LogRecord) -> None:
-    for record in records:
+def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
+    for captured in captured_items:
         # The `Logged` should not have been fully reduced.
-        assert log is not None
-        log = log._reduce(record)
-    # Once all log records are consumed, the `Logged` should have been fully-reduced.
-    assert log is None
+        assert logged is not None
+        logged = logged._reduce(captured)
+    # Once captured items are consumed, the `Logged` should have been fully-reduced.
+    assert logged is None
 
 
-def test_log_record_logged_eq_pass() -> None:
+def test_record_logged_eq_pass() -> None:
     assert logged.info("foo bar") == logged.info("foo bar")
 
 
-def test_log_record_logged_eq_fail() -> None:
+def test_record_logged_eq_fail() -> None:
     # Different levels are not equal.
     assert logged.info("foo bar") != logged.debug("foo bar")
     # Different messages are not equal.
     assert logged.info("foo bar") != logged.info("foo")
 
 
-def test_log_record_logged_repr() -> None:
+def test_record_logged_repr() -> None:
     assert repr(logged.log(logging.DEBUG, "foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
@@ -39,7 +35,7 @@ def test_log_record_logged_repr() -> None:
     assert repr(logged.critical("foo bar")) == "log('CRITICAL', 'foo bar')"
 
 
-def test_log_record_logged_str() -> None:
+def test_record_logged_str() -> None:
     assert str(logged.log(logging.DEBUG, "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
@@ -48,12 +44,12 @@ def test_log_record_logged_str() -> None:
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
 
 
-def test_log_record_logged_reduce() -> None:
+def test_record_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo bar"),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.DEBUG, "foo bar"),  # Non-matching.
-        record(logging.INFO, "foo bar"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.DEBUG, "foo bar"),  # Non-matching.
+        Captured(logging.INFO, "foo bar"),  # Matching.
     )
 
 
@@ -117,23 +113,23 @@ def test_ordered_all_logged_str() -> None:
 def test_ordered_all_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo") >> logged.info("bar") >> logged.info("baz"),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "baz"),  # Non-matching.
-        record(logging.INFO, "bar"),  # Non-matching.
-        record(logging.INFO, "foo"),  # Matching.
-        record(logging.INFO, "foo"),  # Non-matching.
-        record(logging.INFO, "bar"),  # Matching.
-        record(logging.INFO, "baz"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "baz"),  # Non-matching.
+        Captured(logging.INFO, "bar"),  # Non-matching.
+        Captured(logging.INFO, "foo"),  # Matching.
+        Captured(logging.INFO, "foo"),  # Non-matching.
+        Captured(logging.INFO, "bar"),  # Matching.
+        Captured(logging.INFO, "baz"),  # Matching.
     )
     assert_reduce(
         (logged.info("foo1") & logged.info("foo2")) >> (logged.info("bar1") & logged.info("bar2")),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "bar2"),  # Non-matching.
-        record(logging.INFO, "foo2"),  # Matching.
-        record(logging.INFO, "bar1"),  # Non-matching.
-        record(logging.INFO, "foo1"),  # Matching.
-        record(logging.INFO, "bar2"),  # Matching.
-        record(logging.INFO, "bar1"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "bar2"),  # Non-matching.
+        Captured(logging.INFO, "foo2"),  # Matching.
+        Captured(logging.INFO, "bar1"),  # Non-matching.
+        Captured(logging.INFO, "foo1"),  # Matching.
+        Captured(logging.INFO, "bar2"),  # Matching.
+        Captured(logging.INFO, "bar1"),  # Matching.
     )
 
 
@@ -197,21 +193,21 @@ def test_unordered_all_logged_str() -> None:
 def test_unordered_all_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo") & logged.info("bar") & logged.info("baz"),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "baz"),  # Matching.
-        record(logging.INFO, "baz"),  # Non-matching.
-        record(logging.INFO, "bar"),  # Matching.
-        record(logging.INFO, "foo"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "baz"),  # Matching.
+        Captured(logging.INFO, "baz"),  # Non-matching.
+        Captured(logging.INFO, "bar"),  # Matching.
+        Captured(logging.INFO, "foo"),  # Matching.
     )
     assert_reduce(
         (logged.info("foo1") >> logged.info("foo2")) & (logged.info("bar1") >> logged.info("bar2")),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "bar2"),  # Non-matching.
-        record(logging.INFO, "foo2"),  # Non-matching.
-        record(logging.INFO, "bar1"),  # Matching.
-        record(logging.INFO, "foo1"),  # Matching.
-        record(logging.INFO, "foo2"),  # Matching.
-        record(logging.INFO, "bar2"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "bar2"),  # Non-matching.
+        Captured(logging.INFO, "foo2"),  # Non-matching.
+        Captured(logging.INFO, "bar1"),  # Matching.
+        Captured(logging.INFO, "foo1"),  # Matching.
+        Captured(logging.INFO, "foo2"),  # Matching.
+        Captured(logging.INFO, "bar2"),  # Matching.
     )
 
 
@@ -275,15 +271,15 @@ def test_any_logged_str() -> None:
 def test_any_logged_reduce() -> None:
     assert_reduce(
         logged.info("foo") | logged.info("bar") | logged.info("baz"),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "bar"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "bar"),  # Matching.
     )
     assert_reduce(
         (logged.info("foo1") >> logged.info("foo2")) | (logged.info("bar1") >> logged.info("bar2")),
-        record(logging.INFO, "boom!"),  # Non-matching.
-        record(logging.INFO, "bar2"),  # Non-matching.
-        record(logging.INFO, "foo2"),  # Non-matching.
-        record(logging.INFO, "bar1"),  # Matching.
-        record(logging.INFO, "foo1"),  # Matching.
-        record(logging.INFO, "foo2"),  # Matching.
+        Captured(logging.INFO, "boom!"),  # Non-matching.
+        Captured(logging.INFO, "bar2"),  # Non-matching.
+        Captured(logging.INFO, "foo2"),  # Non-matching.
+        Captured(logging.INFO, "bar1"),  # Matching.
+        Captured(logging.INFO, "foo1"),  # Matching.
+        Captured(logging.INFO, "foo2"),  # Matching.
     )

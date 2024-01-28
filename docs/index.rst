@@ -150,6 +150,7 @@ Learn more about :mod:`logot` with the following guides:
 
    match
    logged
+   captured
    pytest
    unittest
    api

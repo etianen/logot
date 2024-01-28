@@ -19,6 +19,8 @@ Import the :mod:`logot` API in your tests:
 
    .. automethod:: capturing
 
+   .. automethod:: capture
+
    .. automethod:: wait_for
 
    .. automethod:: await_for
@@ -36,6 +38,12 @@ Import the :mod:`logot` API in your tests:
    .. autoattribute:: DEFAULT_TIMEOUT
 
 .. autoclass:: logot.Logged
+
+.. autoclass:: logot.Captured
+
+   .. autoattribute:: levelno
+
+   .. autoattribute:: msg
 
 
 :mod:`logot.logged`

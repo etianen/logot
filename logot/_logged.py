@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 
+from logot._captured import Captured
+from logot._format import format_log
 from logot._match import compile_matcher
 from logot._validate import validate_levelno
 
@@ -27,14 +29,14 @@ class Logged(ABC):
 
     __slots__ = ()
 
-    def __rshift__(self, log: Logged) -> Logged:
-        return _OrderedAllLogged.from_compose(self, log)
+    def __rshift__(self, logged: Logged) -> Logged:
+        return _OrderedAllLogged.from_compose(self, logged)
 
-    def __and__(self, log: Logged) -> Logged:
-        return _UnorderedAllLogged.from_compose(self, log)
+    def __and__(self, logged: Logged) -> Logged:
+        return _UnorderedAllLogged.from_compose(self, logged)
 
-    def __or__(self, log: Logged) -> Logged:
-        return _AnyLogged.from_compose(self, log)
+    def __or__(self, logged: Logged) -> Logged:
+        return _AnyLogged.from_compose(self, logged)
 
     def __str__(self) -> str:
         return self._str(indent="")
@@ -48,7 +50,7 @@ class Logged(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
+    def _reduce(self, captured: Captured) -> Logged | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -63,7 +65,7 @@ def log(level: int | str, msg: str) -> Logged:
     :param level: A log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``).
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(validate_levelno(level), msg)
+    return _RecordLogged(validate_levelno(level), msg)
 
 
 def debug(msg: str) -> Logged:
@@ -72,7 +74,7 @@ def debug(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.DEBUG, msg)
+    return _RecordLogged(logging.DEBUG, msg)
 
 
 def info(msg: str) -> Logged:
@@ -81,7 +83,7 @@ def info(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.INFO, msg)
+    return _RecordLogged(logging.INFO, msg)
 
 
 def warning(msg: str) -> Logged:
@@ -90,7 +92,7 @@ def warning(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.WARNING, msg)
+    return _RecordLogged(logging.WARNING, msg)
 
 
 def error(msg: str) -> Logged:
@@ -99,7 +101,7 @@ def error(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.ERROR, msg)
+    return _RecordLogged(logging.ERROR, msg)
 
 
 def critical(msg: str) -> Logged:
@@ -108,10 +110,10 @@ def critical(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern <match>`.
     """
-    return _LogRecordLogged(logging.CRITICAL, msg)
+    return _RecordLogged(logging.CRITICAL, msg)
 
 
-class _LogRecordLogged(Logged):
+class _RecordLogged(Logged):
     __slots__ = ("_levelno", "_msg", "_matcher")
 
     def __init__(self, levelno: int, msg: str) -> None:
@@ -120,117 +122,117 @@ class _LogRecordLogged(Logged):
         self._matcher = compile_matcher(msg)
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, _LogRecordLogged) and other._levelno == self._levelno and other._msg == self._msg
+        return isinstance(other, _RecordLogged) and other._levelno == self._levelno and other._msg == self._msg
 
     def __repr__(self) -> str:
         return f"log({logging.getLevelName(self._levelno)!r}, {self._msg!r})"
 
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
-        if self._levelno == record.levelno and self._matcher(record.getMessage()):
+    def _reduce(self, captured: Captured) -> Logged | None:
+        if self._levelno == captured.levelno and self._matcher(captured.msg):
             return None
         return self
 
     def _str(self, *, indent: str) -> str:
-        return f"[{logging.getLevelName(self._levelno)}] {self._msg}"
+        return format_log(self._levelno, self._msg)
 
 
 class _ComposedLogged(Logged):
-    __slots__ = ("_logs",)
+    __slots__ = ("_logged_items",)
 
-    def __init__(self, logs: tuple[Logged, ...]) -> None:
-        assert len(logs) > 1
-        self._logs = logs
+    def __init__(self, logged_items: tuple[Logged, ...]) -> None:
+        assert len(logged_items) > 1
+        self._logged_items = logged_items
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, self.__class__) and other._logs == self._logs
+        return isinstance(other, self.__class__) and other._logged_items == self._logged_items
 
     @classmethod
-    def from_compose(cls, log_a: Logged, log_b: Logged) -> Logged:
-        # If possible, flatten nested logs of the same type.
-        if isinstance(log_a, cls):
-            if isinstance(log_b, cls):
-                return cls((*log_a._logs, *log_b._logs))
-            return cls((*log_a._logs, log_b))
-        if isinstance(log_b, cls):
-            return cls((log_a, *log_b._logs))
-        # Wrap the logs without flattening.
-        return cls((log_a, log_b))
+    def from_compose(cls, logged_a: Logged, logged_b: Logged) -> Logged:
+        # If possible, flatten nested logged items of the same type.
+        if isinstance(logged_a, cls):
+            if isinstance(logged_b, cls):
+                return cls((*logged_a._logged_items, *logged_b._logged_items))
+            return cls((*logged_a._logged_items, logged_b))
+        if isinstance(logged_b, cls):
+            return cls((logged_a, *logged_b._logged_items))
+        # Wrap the logged items without flattening.
+        return cls((logged_a, logged_b))
 
     @classmethod
-    def from_reduce(cls, logs: tuple[Logged, ...]) -> Logged | None:
-        assert logs
-        # If there is a single log, do not wrap it.
-        if len(logs) == 1:
-            return logs[0]
-        # Wrap the logs.
-        return cls(logs)
+    def from_reduce(cls, logged_items: tuple[Logged, ...]) -> Logged | None:
+        assert logged_items
+        # If there is a single logged item, do not wrap it.
+        if len(logged_items) == 1:
+            return logged_items[0]
+        # Wrap the logged items.
+        return cls(logged_items)
 
 
 class _OrderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return f"({' >> '.join(map(repr, self._logs))})"
+        return f"({' >> '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
-        log = self._logs[0]
-        reduced_log = log._reduce(record)
+    def _reduce(self, captured: Captured) -> Logged | None:
+        logged = self._logged_items[0]
+        reduced = logged._reduce(captured)
         # Handle full reduction.
-        if reduced_log is None:
-            return _OrderedAllLogged.from_reduce(self._logs[1:])
+        if reduced is None:
+            return _OrderedAllLogged.from_reduce(self._logged_items[1:])
         # Handle partial reduction.
-        if reduced_log is not log:
-            return _OrderedAllLogged((reduced_log, *self._logs[1:]))
+        if reduced is not logged:
+            return _OrderedAllLogged((reduced, *self._logged_items[1:]))
         # Handle no reduction.
         return self
 
     def _str(self, *, indent: str) -> str:
-        return f"\n{indent}".join(log._str(indent=indent) for log in self._logs)
+        return f"\n{indent}".join(logged._str(indent=indent) for logged in self._logged_items)
 
 
 class _UnorderedAllLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return f"({' & '.join(map(repr, self._logs))})"
+        return f"({' & '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
-        for n, log in enumerate(self._logs):
-            reduced_log = log._reduce(record)
+    def _reduce(self, captured: Captured) -> Logged | None:
+        for n, logged in enumerate(self._logged_items):
+            reduced = logged._reduce(captured)
             # Handle full reduction.
-            if reduced_log is None:
-                return _UnorderedAllLogged.from_reduce((*self._logs[:n], *self._logs[n + 1 :]))
+            if reduced is None:
+                return _UnorderedAllLogged.from_reduce((*self._logged_items[:n], *self._logged_items[n + 1 :]))
             # Handle partial reduction.
-            if reduced_log is not log:
-                return _UnorderedAllLogged((*self._logs[:n], reduced_log, *self._logs[n + 1 :]))
+            if reduced is not logged:
+                return _UnorderedAllLogged((*self._logged_items[:n], reduced, *self._logged_items[n + 1 :]))
         # Handle no reduction.
         return self
 
     def _str(self, *, indent: str) -> str:
         nested_indent = indent + "  "
-        logs_str = "".join(f"\n{indent}- {log._str(indent=nested_indent)}" for log in self._logs)
-        return f"Unordered:{logs_str}"
+        logged_items_str = "".join(f"\n{indent}- {logged._str(indent=nested_indent)}" for logged in self._logged_items)
+        return f"Unordered:{logged_items_str}"
 
 
 class _AnyLogged(_ComposedLogged):
     __slots__ = ()
 
     def __repr__(self) -> str:
-        return f"({' | '.join(map(repr, self._logs))})"
+        return f"({' | '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, record: logging.LogRecord) -> Logged | None:
-        for n, log in enumerate(self._logs):
-            reduced_log = log._reduce(record)
+    def _reduce(self, captured: Captured) -> Logged | None:
+        for n, logged in enumerate(self._logged_items):
+            reduced = logged._reduce(captured)
             # Handle full reduction.
-            if reduced_log is None:
+            if reduced is None:
                 return None
             # Handle partial reduction.
-            if reduced_log is not log:
-                return _AnyLogged((*self._logs[:n], reduced_log, *self._logs[n + 1 :]))
+            if reduced is not logged:
+                return _AnyLogged((*self._logged_items[:n], reduced, *self._logged_items[n + 1 :]))
         # Handle no reduction.
         return self
 
     def _str(self, *, indent: str) -> str:
         nested_indent = indent + "  "
-        logs_str = "".join(f"\n{indent}- {log._str(indent=nested_indent)}" for log in self._logs)
-        return f"Any:{logs_str}"
+        logged_items_str = "".join(f"\n{indent}- {logged._str(indent=nested_indent)}" for logged in self._logged_items)
+        return f"Any:{logged_items_str}"
