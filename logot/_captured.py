@@ -20,7 +20,7 @@ class Captured:
         return isinstance(other, Captured) and other.levelno == self.levelno and other.msg == self.msg
 
     def __repr__(self) -> str:
-        return f"CapturedLog(levelno={self.levelno!r}, msg={self.msg!r})"
+        return f"Captured(levelno={self.levelno!r}, msg={self.msg!r})"
 
     def __str__(self) -> str:
         return format_log(self.levelno, self.msg)
