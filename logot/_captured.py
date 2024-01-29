@@ -8,16 +8,16 @@ class Captured:
     A captured log record.
 
     Send :class:`Captured` logs to :meth:`Logot.capture` to integrate with
-    :ref:`3rd-party logging frameworks <captured-3rd-party>`.
+    :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`.
 
     .. note::
 
-        This class is for integration with :ref:`3rd-party logging frameworks <captured-3rd-party>`. It is not generally
-        used when writing tests.
+        This class is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
+        generally used when writing tests.
 
     .. seealso::
 
-        See :ref:`captured-3rd-party` usage guide.
+        See :ref:`log-capturing-3rd-party` usage guide.
 
     :param levelname: See :attr:`Captured.levelname`.
     :param msg: See :attr:`Captured.msg`.
@@ -40,8 +40,8 @@ class Captured:
     """
     The log level number (e.g. :data:`logging.DEBUG`).
 
-    This is an *optional* log capture field. When provided, it allows matching :doc:`log patterns <logged>` from
-    :func:`logged.log` with a numeric ``level``.
+    This is an *optional* log capture field. When provided, it allows matching
+    :doc:`log patterns <log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
     def __init__(self, levelname: str, msg: str, *, levelno: int | None = None) -> None:

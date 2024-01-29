@@ -14,7 +14,7 @@ Log capturing
 .. note::
 
    If using :mod:`pytest`, you can probably just use the pre-configured ``logot`` fixture included in the bundled
-   :doc:`pytest plugin <pytest>` and skip manually configuring log capture. 💪
+   :doc:`pytest plugin <usage-pytest>` and skip manually configuring log capture. 💪
 
 
 Capturing :mod:`logging` logs
@@ -37,7 +37,7 @@ careful to avoid capturing duplicate logs with overlapping calls to :meth:`Logot
    See :class:`Logot` and :meth:`Logot.capturing` API reference.
 
 
-.. _captured-3rd-party:
+.. _log-capturing-3rd-party:
 
 Capturing 3rd-party logs
 ~~~~~~~~~~~~~~~~~~~~~~~~
