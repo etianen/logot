@@ -3,16 +3,10 @@ from __future__ import annotations
 import logging
 
 
-def validate_levelno(level: int | str) -> int:
-    # Handle `int` level.
-    if isinstance(level, int):
+def validate_level(level: str | int) -> str | int:
+    # Handle `str` or `int` level.
+    if isinstance(level, (str, int)):
         return level
-    # Handle `str` level.
-    if isinstance(level, str):
-        levelno = logging.getLevelName(level)
-        if not isinstance(levelno, int):
-            raise ValueError(f"Unknown level: {level!r}")
-        return levelno
     # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
 

@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-import logging
-from typing import Final
-
 from logot._format import format_log
-from logot._validate import validate_levelno
 
 
 class Captured:
@@ -23,31 +19,43 @@ class Captured:
 
         See :ref:`captured-3rd-party` usage guide.
 
-    :param level: The log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``).
+    :param levelname: The log level name (e.g. ``"DEBUG"``).
     :param msg: The log message.
+    :param levelno: The log level number (e.g. :data:`logging.DEBUG`).
     """
 
-    __slots__ = ("levelno", "msg")
+    __slots__ = ("levelname", "msg", "levelno")
 
-    levelno: Final[int]
+    levelname: str
     """
-    The integer log level (e.g. :data:`logging.DEBUG`).
+    The log level name (e.g. ``"DEBUG"``).
     """
 
-    msg: Final[str]
+    msg: str
     """
     The log message.
     """
 
-    def __init__(self, level: int | str, msg: str) -> None:
-        self.levelno = validate_levelno(level)
+    levelno: int
+    """
+    The log level number (e.g. :data:`logging.DEBUG`).
+    """
+
+    def __init__(self, levelname: str, msg: str, *, levelno: int) -> None:
+        self.levelname = levelname
         self.msg = msg
+        self.levelno = levelno
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, Captured) and other.levelno == self.levelno and other.msg == self.msg
+        return (
+            isinstance(other, Captured)
+            and other.levelname == self.levelname
+            and other.msg == self.msg
+            and other.levelno == self.levelno
+        )
 
     def __repr__(self) -> str:
-        return f"Captured({logging.getLevelName(self.levelno)!r}, {self.msg!r})"
+        return f"Captured({self.levelname!r}, {self.msg!r}, levelno={self.levelno!r})"
 
     def __str__(self) -> str:
-        return format_log(self.levelno, self.msg)
+        return format_log(self.levelname, self.msg)

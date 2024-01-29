@@ -48,7 +48,7 @@ Any 3rd-party logging library can be integrated with :mod:`logot` by sending :cl
 .. code:: python
 
    def on_foo_log(logot: Logot, record: FooRecord) -> None:
-      logot.capture(Captured(record.levelno, record.msg))
+      logot.capture(Captured(record.levelname, record.msg, levelno=record.levelno))
 
    foo_logger.add_handler(on_foo_log)
 

@@ -9,7 +9,7 @@ from typing import ClassVar, TypeVar
 
 from logot._captured import Captured
 from logot._logged import Logged
-from logot._validate import validate_levelno, validate_logger, validate_timeout
+from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
 W = TypeVar("W", bound=Waiter)
@@ -29,11 +29,9 @@ class Logot:
 
     __slots__ = ("_timeout", "_lock", "_queue", "_waiter")
 
-    DEFAULT_LEVEL: ClassVar[int | str] = logging.NOTSET
+    DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
     The default ``level`` used by :meth:`capturing`.
-
-    This is :data:`logging.NOTSET`, specifying that all logs are captured.
     """
 
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
@@ -45,9 +43,7 @@ class Logot:
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
-    The default ``timeout`` used by :meth:`wait_for` and :meth:`await_for`.
-
-    This is 3 seconds.
+    The default ``timeout`` (in seconds) used by :meth:`wait_for` and :meth:`await_for`.
     """
 
     def __init__(
@@ -63,7 +59,7 @@ class Logot:
     def capturing(
         self,
         *,
-        level: int | str = DEFAULT_LEVEL,
+        level: str | int = DEFAULT_LEVEL,
         logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
         """
@@ -76,13 +72,13 @@ class Logot:
 
             See :doc:`captured` usage guide.
 
-        :param level: A log level (e.g. :data:`logging.DEBUG`) or string name (e.g. ``"DEBUG"``). Defaults to
-            :data:`logging.NOTSET`, specifying that all logs are captured.
-        :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
+        :param level: A log level name (e.g. ``"DEBUG"``) or numeric constant (e.g. :data:`logging.DEBUG`). Defaults to
+            :attr:`DEFAULT_LEVEL`.
+        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`DEFAULT_LOGGER`.
         """
-        levelno = validate_levelno(level)
+        level = validate_level(level)
         logger = validate_logger(logger)
-        return _Capturing(self, _Handler(self, levelno=levelno), logger=logger)
+        return _Capturing(self, _Handler(level, self), logger=logger)
 
     def capture(self, captured: Captured) -> None:
         """
@@ -245,10 +241,10 @@ class _Capturing:
 class _Handler(logging.Handler):
     __slots__ = ("_logot",)
 
-    def __init__(self, logot: Logot, *, levelno: int) -> None:
-        super().__init__(levelno)
+    def __init__(self, level: str | int, logot: Logot) -> None:
+        super().__init__(level)
         self._logot = logot
 
     def emit(self, record: logging.LogRecord) -> None:
-        captured = Captured(record.levelno, record.getMessage())
+        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno)
         self._logot.capture(captured)
