@@ -37,6 +37,8 @@ class Logot:
     DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
     """
     The default ``logger`` used by :meth:`capturing`.
+
+    This is the root logger.
     """
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
