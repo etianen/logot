@@ -57,9 +57,8 @@ def test_record_logged_reduce() -> None:
     # Test `int` level.
     assert_reduce(
         logged.log(logging.INFO, "foo bar"),
-        Captured("INFO", "boom!"),  # Non-matching.
-        Captured("DEBUG", "foo bar"),  # Non-matching.
-        Captured("INFO", "foo bar"),  # Matching.
+        Captured("INFO", "foo bar"),  # Non-matching (needs levelno).
+        Captured("INFO", "foo bar", levelno=logging.INFO),  # Matching.
     )
 
 
