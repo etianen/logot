@@ -21,7 +21,7 @@ class Captured:
 
     :param levelname: The log level name (e.g. ``"DEBUG"``).
     :param msg: The log message.
-    :param levelno: The log level number.
+    :param levelno: The log level number (e.g. :data:`logging.DEBUG`).
     """
 
     __slots__ = ("levelname", "msg", "levelno")
@@ -38,7 +38,7 @@ class Captured:
 
     levelno: int
     """
-    The log level number.
+    The log level number (e.g. :data:`logging.DEBUG`).
     """
 
     def __init__(self, levelname: str, msg: str, *, levelno: int) -> None:
