@@ -132,8 +132,11 @@ class _RecordLogged(Logged):
             if self._level != captured.levelname:
                 return self
         # Match `int` level.
-        elif self._level != captured.levelno:
-            return self
+        elif isinstance(self._level, int):
+            if self._level != captured.levelno:
+                return self
+        else:  # pragma: no cover
+            raise TypeError(f"Invalid level: {self._level!r}")
         # Match message.
         if not self._matcher(captured.msg):
             return self
