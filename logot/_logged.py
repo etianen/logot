@@ -10,7 +10,7 @@ from logot._validate import validate_level
 
 class Logged(ABC):
     """
-    A :doc:`log pattern <log-pattern-matching>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and similar
+    A :doc:`log pattern <log-pattern-matching>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and related
     APIs.
 
     .. important::
