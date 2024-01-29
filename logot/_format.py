@@ -8,8 +8,11 @@ def format_level(level: str | int) -> str:
     if isinstance(level, str):
         return level
     # Format `int` level.
-    level: str = logging.getLevelName(level)
-    return level
+    if isinstance(level, int):
+        levelname: str = logging.getLevelName(level)
+        return levelname
+    # Handle invalid level.
+    raise TypeError(f"Invalid level: {level!r}")
 
 
 def format_log(levelname: str, msg: str) -> str:
