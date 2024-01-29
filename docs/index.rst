@@ -15,7 +15,7 @@ Log-based testing 🪵
 
 .. note::
 
-   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`unittest` to learn about about using
+   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`usage-unittest` to learn about about using
    :mod:`logot` with other testing frameworks.
 
 
@@ -151,6 +151,6 @@ Learn more about :mod:`logot` with the following guides:
    log-message-matching
    log-pattern-matching
    log-capturing
-   pytest
-   unittest
+   usage-pytest
+   usage-unittest
    api
