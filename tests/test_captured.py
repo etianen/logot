@@ -1,24 +1,26 @@
 from __future__ import annotations
 
+import logging
+
 from logot import Captured
 
 
 def test_eq_pass() -> None:
-    assert Captured("INFO", "foo bar", levelno=20) == Captured("INFO", "foo bar", levelno=20)
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) == Captured("INFO", "foo bar", levelno=logging.INFO)
 
 
 def test_eq_fail() -> None:
     # Different levelnames are not equal.
-    assert Captured("INFO", "foo bar", levelno=20) != Captured("DEBUG", "foo bar", levelno=20)
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) != Captured("DEBUG", "foo bar", levelno=logging.INFO)
     # Different messages are not equal.
-    assert Captured("INFO", "foo bar", levelno=20) != Captured("INFO", "foo", levelno=20)
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) != Captured("INFO", "foo", levelno=logging.INFO)
     # Different levelnos are not equal.
-    assert Captured("INFO", "foo bar", levelno=20) != Captured("INFO", "foo bar", levelno=10)
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) != Captured("INFO", "foo bar", levelno=logging.DEBUG)
 
 
 def test_repr() -> None:
-    assert repr(Captured("INFO", "foo bar", levelno=20)) == "Captured('INFO', 'foo bar', levelno=20)"
+    assert repr(Captured("INFO", "foo bar", levelno=99)) == "Captured('INFO', 'foo bar', levelno=99)"
 
 
 def test_str() -> None:
-    assert str(Captured("INFO", "foo bar", levelno=20)) == "[INFO] foo bar"
+    assert str(Captured("INFO", "foo bar", levelno=logging.INFO)) == "[INFO] foo bar"
