@@ -46,8 +46,16 @@ def test_record_logged_str() -> None:
 
 
 def test_record_logged_reduce() -> None:
+    # Test `str` level.
     assert_reduce(
-        logged.info("foo bar"),
+        logged.log("INFO", "foo bar"),
+        log("INFO", "boom!"),  # Non-matching.
+        log("DEBUG", "foo bar"),  # Non-matching.
+        log("INFO", "foo bar"),  # Matching.
+    )
+    # Test `int` level.
+    assert_reduce(
+        logged.log(logging.INFO, "foo bar"),
         log("INFO", "boom!"),  # Non-matching.
         log("DEBUG", "foo bar"),  # Non-matching.
         log("INFO", "foo bar"),  # Matching.
