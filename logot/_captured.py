@@ -8,7 +8,7 @@ class Captured:
     A captured log record.
 
     Send :class:`Captured` logs to :meth:`Logot.capture` to integrate with
-    :ref:`3rd-party logging frameworks <captured-3rd-party>`
+    :ref:`3rd-party logging frameworks <captured-3rd-party>`.
 
     .. note::
 
@@ -19,9 +19,9 @@ class Captured:
 
         See :ref:`captured-3rd-party` usage guide.
 
-    :param levelname: The log level name (e.g. ``"DEBUG"``).
-    :param msg: The log message.
-    :param levelno: The log level number (e.g. :data:`logging.DEBUG`).
+    :param levelname: See :attr:`Captured.levelname`.
+    :param msg: See :attr:`Captured.msg`.
+    :param levelno: See :attr:`Captured.levelno`.
     """
 
     __slots__ = ("levelname", "msg", "levelno")
@@ -36,12 +36,15 @@ class Captured:
     The log message.
     """
 
-    levelno: int
+    levelno: int | None
     """
     The log level number (e.g. :data:`logging.DEBUG`).
+
+    This is an *optional* log capture field. When provided, it allows matching :doc:`log patterns <logged>` from
+    :func:`logged.log` with a numeric ``level``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int) -> None:
+    def __init__(self, levelname: str, msg: str, *, levelno: int | None = None) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno

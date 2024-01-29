@@ -61,7 +61,7 @@ def log(level: str | int, msg: str) -> Logged:
     """
     Creates a :doc:`log pattern <logged>` representing a log record at the given ``level`` with the given ``msg``.
 
-    :param level: A log level name (e.g. ``"DEBUG"``) or numeric constant (e.g. :data:`logging.DEBUG`).
+    :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern <match>`.
     """
     return _RecordLogged(validate_level(level), msg)
