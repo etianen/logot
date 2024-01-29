@@ -24,7 +24,7 @@ class Logot:
         See :doc:`index` usage guide.
 
     :param timeout: The default timeout (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`. Defaults to
-        :attr:`DEFAULT_TIMEOUT`.
+        :attr:`Logot.DEFAULT_TIMEOUT`.
     """
 
     __slots__ = ("_timeout", "_lock", "_queue", "_waiter")
@@ -72,9 +72,9 @@ class Logot:
 
             See :doc:`captured` usage guide.
 
-        :param level: A log level name (e.g. ``"DEBUG"``) or numeric constant (e.g. :data:`logging.DEBUG`). Defaults to
-            :attr:`DEFAULT_LEVEL`.
-        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`DEFAULT_LOGGER`.
+        :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
+            :attr:`Logot.DEFAULT_LEVEL`.
+        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
         level = validate_level(level)
         logger = validate_logger(logger)
