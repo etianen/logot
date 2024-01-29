@@ -41,9 +41,11 @@ Import the :mod:`logot` API in your tests:
 
 .. autoclass:: logot.Captured
 
-   .. autoattribute:: levelno
+   .. autoattribute:: levelname
 
    .. autoattribute:: msg
+
+   .. autoattribute:: levelno
 
 
 :mod:`logot.logged`
