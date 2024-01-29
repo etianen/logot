@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC, abstractmethod
 
 from logot._captured import Captured
-from logot._format import format_log
+from logot._format import format_level, format_log
 from logot._match import compile_matcher
 from logot._validate import validate_level
 
@@ -143,14 +142,7 @@ class _RecordLogged(Logged):
         return None
 
     def _str(self, *, indent: str) -> str:
-        # Format `str` level.
-        if isinstance(self._level, str):
-            levelname = self._level
-        # Format `int` level.
-        else:
-            levelname = logging.getLevelName(self._level)
-        # Format log.
-        return format_log(levelname, self._msg)
+        return format_log(format_level(self._level), self._msg)
 
 
 class _ComposedLogged(Logged):
