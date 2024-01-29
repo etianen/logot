@@ -150,7 +150,7 @@ Learn more about :mod:`logot` with the following guides:
 
    log-message-matching
    log-pattern-matching
-   captured
+   log-capturing
    pytest
    unittest
    api

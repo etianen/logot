@@ -70,7 +70,7 @@ class Logot:
 
         .. seealso::
 
-            See :doc:`captured` usage guide.
+            See :doc:`log-capturing` usage guide.
 
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
             :attr:`Logot.DEFAULT_LEVEL`.
@@ -89,12 +89,12 @@ class Logot:
 
         .. note::
 
-            This method is for integration with :ref:`3rd-party logging frameworks <captured-3rd-party>`. It is not
+            This method is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
             generally used when writing tests.
 
         .. seealso::
 
-            See :ref:`captured-3rd-party` usage guide.
+            See :ref:`log-capturing-3rd-party` usage guide.
 
         :param captured: The captured log.
         """

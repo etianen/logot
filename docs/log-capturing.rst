@@ -37,7 +37,7 @@ careful to avoid capturing duplicate logs with overlapping calls to :meth:`Logot
    See :class:`Logot` and :meth:`Logot.capturing` API reference.
 
 
-.. _captured-3rd-party:
+.. _log-capturing-3rd-party:
 
 Capturing 3rd-party logs
 ~~~~~~~~~~~~~~~~~~~~~~~~
