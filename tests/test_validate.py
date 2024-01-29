@@ -5,27 +5,21 @@ from typing import cast
 
 import pytest
 
-from logot._validate import validate_levelno, validate_logger, validate_timeout
+from logot._validate import validate_level, validate_logger, validate_timeout
 from tests import logger
 
 
-def test_validate_levelno_int_pass() -> None:
-    assert validate_levelno(logging.INFO) == logging.INFO
+def test_validate_level_str_pass() -> None:
+    assert validate_level("INFO") == "INFO"
 
 
-def test_validate_levelno_str_pass() -> None:
-    assert validate_levelno("INFO") == logging.INFO
+def test_validate_level_int_pass() -> None:
+    assert validate_level(20) == 20
 
 
-def test_validate_levelno_str_fail() -> None:
-    with pytest.raises(ValueError) as ex:
-        validate_levelno("BOOM")
-    assert str(ex.value) == "Unknown level: 'BOOM'"
-
-
-def test_validate_levelno_type_fail() -> None:
+def test_validate_level_type_fail() -> None:
     with pytest.raises(TypeError) as ex:
-        validate_levelno(cast(int, 1.5))
+        validate_level(cast(int, 1.5))
     assert str(ex.value) == "Invalid level: 1.5"
 
 
