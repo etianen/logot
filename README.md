@@ -1,5 +1,6 @@
 # Log-based testing 🪵
 
+[![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Build](https://github.com/etianen/logot/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logot/actions/workflows/build.yml)
 [![Docs](https://readthedocs.org/projects/logot/badge/)](https://logot.readthedocs.io)
 [![PyPI version](https://img.shields.io/pypi/v/logot.svg)](https://pypi.org/project/logot/)
