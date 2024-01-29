@@ -45,6 +45,10 @@ sphinx-autobuild = { version = "*", markers = "python_version >= '3.12'" }
 [tool.poetry.plugins.pytest11]
 logot = "logot._pytest"
 
+[tool.poetry.urls]
+changelog = "https://github.com/etianen/logot/releases"
+tracker = "https://github.com/etianen/logot/issues"
+
 [tool.coverage.run]
 source = ["logot", "tests"]
 
