@@ -10,7 +10,8 @@ from logot._validate import validate_level
 
 class Logged(ABC):
     """
-    A :doc:`log pattern <logged>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and similar APIs.
+    A :doc:`log pattern <log-pattern-matching>` passed to :meth:`Logot.wait_for`, :meth:`Logot.await_for` and similar
+    APIs.
 
     .. important::
 
@@ -23,7 +24,7 @@ class Logged(ABC):
 
     .. seealso::
 
-        See :doc:`logged` usage guide.
+        See :doc:`log-pattern-matching` usage guide.
     """
 
     __slots__ = ()
@@ -59,55 +60,61 @@ class Logged(ABC):
 
 def log(level: str | int, msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at the given ``level`` with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at the given ``level`` with the given
+    ``msg``.
 
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged(validate_level(level), msg)
 
 
 def debug(msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at ``DEBUG`` level with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
+    ``msg``.
 
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged("DEBUG", msg)
 
 
 def info(msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at ``INFO`` level with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at ``INFO`` level with the given
+    ``msg``.
 
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged("INFO", msg)
 
 
 def warning(msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at ``WARNING`` level with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at ``WARNING`` level with the given
+    ``msg``.
 
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged("WARNING", msg)
 
 
 def error(msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at ``ERROR`` level with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at ``ERROR`` level with the given
+    ``msg``.
 
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged("ERROR", msg)
 
 
 def critical(msg: str) -> Logged:
     """
-    Creates a :doc:`log pattern <logged>` representing a log record at ``CRITICAL`` level with the given ``msg``.
+    Creates a :doc:`log pattern <log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
+    ``msg``.
 
-    :param msg: A log :doc:`message pattern <match>`.
+    :param msg: A log :doc:`message pattern <log-message-matching>`.
     """
     return _RecordLogged("CRITICAL", msg)
 

@@ -85,7 +85,7 @@ class Logot:
         Adds the given captured log record to the internal capture queue.
 
         Any waiters blocked on :meth:`wait_for` to :meth:`await_for` will be notified and wake up if their
-        :doc:`log pattern <logged>` is satisfied.
+        :doc:`log pattern <log-pattern-matching>` is satisfied.
 
         .. note::
 
@@ -113,7 +113,7 @@ class Logot:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
-        :param logged: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
             :class:`Logot`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
@@ -128,7 +128,7 @@ class Logot:
         """
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
-        :param logged: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
             :class:`Logot`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
@@ -143,7 +143,7 @@ class Logot:
         """
         Fails *immediately* if the expected ``log`` pattern has not arrived.
 
-        :param logged: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <log-pattern-matching>`.
         :raises AssertionError: If the expected ``log`` pattern has not arrived.
         """
         reduced = self._reduce(logged)
@@ -154,7 +154,7 @@ class Logot:
         """
         Fails *immediately* if the expected ``log`` pattern **has** arrived.
 
-        :param logged: The expected :doc:`log pattern <logged>`.
+        :param logged: The expected :doc:`log pattern <log-pattern-matching>`.
         :raises AssertionError: If the expected ``log`` pattern **has** arrived.
         """
         reduced = self._reduce(logged)

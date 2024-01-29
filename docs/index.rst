@@ -84,7 +84,7 @@ Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or 
 
 .. seealso::
 
-   See :doc:`logged` for examples of how to wait for logs that may arrive in an unpredictable order.
+   See :doc:`log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
 
 Testing asynchronous code
@@ -107,7 +107,7 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
 
 .. seealso::
 
-   See :doc:`logged` for examples of how to wait for logs that may arrive in an unpredictable order.
+   See :doc:`log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
 
 Testing synchronous code
@@ -148,8 +148,8 @@ Learn more about :mod:`logot` with the following guides:
 .. toctree::
    :maxdepth: 1
 
-   match
-   logged
+   log-message-matching
+   log-pattern-matching
    captured
    pytest
    unittest
