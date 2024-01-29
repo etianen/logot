@@ -34,7 +34,7 @@ class Logot:
     The default ``level`` used by :meth:`capturing`.
     """
 
-    DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = "root"
+    DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
     """
     The default ``logger`` used by :meth:`capturing`.
     """
