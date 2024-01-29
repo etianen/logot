@@ -73,8 +73,8 @@ class Logot:
             See :doc:`captured` usage guide.
 
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric constant (e.g. :data:`logging.DEBUG`). Defaults to
-            :data:`logging.NOTSET`, specifying that all logs are captured.
-        :param logger: A logger or logger name to capture logs from. Defaults to the root logger.
+            :attr:`DEFAULT_LEVEL`.
+        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`DEFAULT_LOGGER`.
         """
         level = validate_level(level)
         logger = validate_logger(logger)
