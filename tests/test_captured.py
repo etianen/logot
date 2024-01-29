@@ -6,19 +6,21 @@ from logot import Captured
 
 
 def test_eq_pass() -> None:
-    assert Captured(logging.INFO, "foo bar") == Captured(logging.INFO, "foo bar")
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) == Captured("INFO", "foo bar", levelno=logging.INFO)
 
 
 def test_eq_fail() -> None:
-    # Different levels are not equal.
-    assert Captured(logging.INFO, "foo bar") != Captured(logging.DEBUG, "foo bar")
+    # Different levelnames are not equal.
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) != Captured("DEBUG", "foo bar", levelno=logging.INFO)
     # Different messages are not equal.
-    assert Captured(logging.INFO, "foo bar") != Captured(logging.INFO, "foo")
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) != Captured("INFO", "foo", levelno=logging.INFO)
+    # Different levelnos are not equal.
+    assert Captured("INFO", "foo bar", levelno=logging.INFO) == Captured("INFO", "foo bar", levelno=logging.DEBUG)
 
 
 def test_repr() -> None:
-    assert repr(Captured(logging.INFO, "foo bar")) == "Captured('INFO', 'foo bar')"
+    assert repr(Captured("INFO", "foo bar", levelno=logging.INFO)) == "Captured('INFO', 'foo bar', levelno=20)"
 
 
 def test_str() -> None:
-    assert str(Captured(logging.INFO, "foo bar")) == "[INFO] foo bar"
+    assert str(Captured("INFO", "foo bar", levelno=logging.INFO)) == "[INFO] foo bar"

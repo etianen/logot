@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
 
-
-def format_log(levelno: int, msg: str) -> str:
-    return f"[{logging.getLevelName(levelno)}] {msg}"
+def format_log(levelname: str, msg: str) -> str:
+    return f"[{levelname}] {msg}"
