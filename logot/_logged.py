@@ -128,13 +128,13 @@ class _RecordLogged(Logged):
         return f"log({self._level!r}, {self._msg!r})"
 
     def _reduce(self, captured: Captured) -> Logged | None:
-        # Match level.
+        # Match `str` level.
         if isinstance(self._level, str):
             if self._level != captured.levelname:
                 return self
-        else:
-            if self._level != captured.levelno:
-                return self
+        # Match `int` level.
+        elif self._level != captured.levelno:
+            return self
         # Match message.
         if not self._matcher(captured.msg):
             return self
@@ -142,10 +142,13 @@ class _RecordLogged(Logged):
         return self
 
     def _str(self, *, indent: str) -> str:
+        # Format `str` level.
         if isinstance(self._level, str):
             levelname = self._level
+        # Format `int` level.
         else:
             levelname = logging.getLevelName(self._level)
+        # Format log.
         return format_log(levelname, self._msg)
 
 
