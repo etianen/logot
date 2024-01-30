@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   test:
-    name: test (python~=${{ matrix.python-version }} pytest${{ matrix.pytest-version }})
+    name: test (python~=${{ matrix.python-version }}, pytest${{ matrix.pytest-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
