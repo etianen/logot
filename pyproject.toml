@@ -32,7 +32,7 @@ hypothesis = "^6.96.1"
 mypy = "^1.8.0"
 ruff = "^0.1.11"
 pytest = "*"
-pytest-asyncio = "^0.23.3"
+typing-extensions = "^4.9.0"
 
 [tool.poetry.group.docs]
 optional = true
@@ -69,7 +69,6 @@ strict = true
 testpaths = ["tests"]
 console_output_style = "classic"
 addopts = "--tb=native --import-mode=importlib"
-asyncio_mode = "auto"
 
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
