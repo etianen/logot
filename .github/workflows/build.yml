@@ -7,6 +7,7 @@ permissions:
 
 jobs:
   test:
+    name: test (python~=${{ matrix.python-version }}, pytest${{ matrix.pytest-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,8 +17,12 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+        pytest-version:
+          - "~=7.0"
+          - "~=8.0"
       fail-fast: false
     env:
+      COVERAGE_FILE: .coverage-${{ matrix.python-version }}-${{ matrix.pytest-version }}
       PYTHONDEVMODE: 1
     steps:
     - name: Checkout
@@ -27,8 +32,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     # Install dependencies.
+    # This is done in two steps - first we install the `poetry` dev dependencies, then we install the project in
+    # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
+    # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
     - name: Install dependencies
-      run: poetry install
+      run: |
+        poetry install --no-root
+        poetry run pip install -e .[pytest] "pytest${{ matrix.pytest-version }}"
     # Run checks.
     - name: Check (ruff)
       run: poetry run ruff check
@@ -38,13 +48,13 @@ jobs:
       run: poetry run mypy
     # Run tests.
     - name: Test
-      run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
+      run: poetry run coverage run -m pytest
     # Upload coverage.
     - name: Upload coverage
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-${{ matrix.python-version }}
-        path: .coverage-${{ matrix.python-version }}
+        name: ${{ env.COVERAGE_FILE }}
+        path: ${{ env.COVERAGE_FILE }}
 
   docs:
     runs-on: ubuntu-latest
@@ -78,7 +88,7 @@ jobs:
     - name: Download coverage
       uses: actions/download-artifact@v4
       with:
-        pattern: coverage-*
+        pattern: .coverage-*
         merge-multiple: true
     - name: Combine coverage
       run: poetry run coverage combine .coverage-*
