@@ -40,7 +40,7 @@ For non-trivial features and changes, please [open an issue](https://github.com/
 3. Install dependencies and activate your project:
 
    ``` bash
-   poetry install
+   poetry install --all-extras
    poetry shell
    ```
 
