@@ -3,6 +3,10 @@
 
 .. automodule:: logot.logged
 
+
+API reference
+-------------
+
 .. autofunction:: logot.logged.log
 
 .. autofunction:: logot.logged.debug
