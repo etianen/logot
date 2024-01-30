@@ -36,7 +36,6 @@ jobs:
         poetry install --no-root
         pip install -e .[pytest] "pytest${{ matrix.pytest-version }}"
     # Run checks.
-    - run: poetry run which ruff
     - name: Check (ruff)
       run: ruff check
     - name: Check (ruff format)
