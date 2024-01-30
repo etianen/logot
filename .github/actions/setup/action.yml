@@ -13,6 +13,8 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: poetry
     # Configure poetry.
+    # It's convenient to not have to use `poetry run` all the time, and the `actions/setup-python` action seems to
+    # indicate a venv is not necessary.
     - run: poetry config virtualenvs.create false
       shell: bash
     # Run pre-install checks.
