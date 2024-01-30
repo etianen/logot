@@ -14,7 +14,7 @@ Log capturing
 .. note::
 
    If using :mod:`pytest`, you can probably just use the pre-configured ``logot`` fixture included in the bundled
-   :doc:`pytest plugin <usage-pytest>` and skip manually configuring log capture. 💪
+   :doc:`pytest plugin </usage-pytest>` and skip manually configuring log capture. 💪
 
 
 Capturing :mod:`logging` logs

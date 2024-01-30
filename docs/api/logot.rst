@@ -1,19 +1,11 @@
-API reference
-=============
-
-.. currentmodule:: logot
-
-Import the :mod:`logot` API in your tests:
-
-.. code:: python
-
-   from logot import Logot, logged
-
-
 :mod:`logot`
-------------
+============
 
-.. module:: logot
+.. automodule:: logot
+
+
+API reference
+-------------
 
 .. autoclass:: logot.Logot
 
@@ -46,21 +38,3 @@ Import the :mod:`logot` API in your tests:
    .. autoattribute:: msg
 
    .. autoattribute:: levelno
-
-
-:mod:`logot.logged`
--------------------
-
-.. module:: logot.logged
-
-.. autofunction:: logot.logged.log
-
-.. autofunction:: logot.logged.debug
-
-.. autofunction:: logot.logged.info
-
-.. autofunction:: logot.logged.warning
-
-.. autofunction:: logot.logged.error
-
-.. autofunction:: logot.logged.critical
