@@ -12,6 +12,9 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
         cache: poetry
+    # Configure poetry.
+    - run: poetry config virtualenvs.create false
+      shell: bash
     # Run pre-install checks.
     - run: poetry check
       shell: bash

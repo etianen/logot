@@ -7,6 +7,7 @@ permissions:
 
 jobs:
   test:
+    name: test (python~=${{ matrix.python-version }} pytest${{ matric.pytest-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,6 +17,9 @@ jobs:
           - "3.10"
           - "3.11"
           - "3.12"
+        pytest-version:
+          - "~=7.0"
+          - "~=8.0"
       fail-fast: false
     env:
       PYTHONDEVMODE: 1
@@ -28,17 +32,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
     # Install dependencies.
     - name: Install dependencies
-      run: poetry install
+      run: |
+        poetry install --no-root
+        pip install -e .[pytest] "pytest${{ matric.pytest-version }}"
     # Run checks.
     - name: Check (ruff)
-      run: poetry run ruff check
+      run: ruff check
     - name: Check (ruff format)
-      run: poetry run ruff format --check
+      run: ruff format --check
     - name: Check (mypy)
-      run: poetry run mypy
+      run: mypy
     # Run tests.
     - name: Test
-      run: poetry run coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
+      run: coverage run --data-file=".coverage-${{ matrix.python-version }}" -m pytest
     # Upload coverage.
     - name: Upload coverage
       uses: actions/upload-artifact@v4
@@ -58,7 +64,7 @@ jobs:
       run: poetry install --without dev --with docs
     # Build docs.
     - name: Build docs
-      run: poetry run sphinx-build -W docs docs/_build
+      run: sphinx-build -W docs docs/_build
 
   report:
     runs-on: ubuntu-latest
@@ -81,9 +87,9 @@ jobs:
         pattern: coverage-*
         merge-multiple: true
     - name: Combine coverage
-      run: poetry run coverage combine .coverage-*
+      run: coverage combine .coverage-*
     - name: Report coverage
-      run: poetry run coverage report
+      run: coverage report
     # Fail if any `needs` job was not a success.
     # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
     - name: Fail on workflow error
