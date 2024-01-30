@@ -3,7 +3,7 @@ Log-based testing 🪵
 
 .. currentmodule:: logot
 
-:mod:`logot` makes it easy to test your application is logging correctly:
+:mod:`logot` makes it easy to test whether your code is logging correctly:
 
 .. code:: python
 
@@ -22,12 +22,11 @@ Log-based testing 🪵
 Why test logging? 🤔
 --------------------
 
-Good logging ensures your application is debuggable at runtime, but why bother actually *testing* your logs? After
-all... surely the worst that can happen is your logs are a bit *wonky*? 🥴
+Good logging ensures your code is debuggable at runtime, but why bother actually *testing* your logs? After all...
+surely the worst that can happen is your logs are a bit *wonky*? 🥴
 
 Sometimes, testing logs is the only *reasonable* way to known your code has actually run correctly! This is particularly
-the case in *threaded* or *asynchronous* applications where work is carried out at unpredictable times by background
-workers.
+the case in *threaded* or *asynchronous* code where work is carried out at unpredictable times by background workers.
 
 For example, imagine the following code running in a thread:
 
@@ -47,8 +46,7 @@ For example, imagine the following code running in a thread:
 .. note::
 
    It's certainly *possible* to rewrite this code in a way that can be tested without :mod:`logot`, but that often makes
-   the code less clear or more verbose. For complex threaded or asynchronous applications, this can quickly become
-   burdensome.
+   the code less clear or more verbose. For complex threaded or asynchronous code, this can quickly become burdensome.
    👎
 
 Testing this code with :mod:`logot` is easy!

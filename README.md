@@ -6,7 +6,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/logot.svg)](https://pypi.org/project/logot/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/logot.svg)](https://pypi.org/project/logot/)
 
-`logot` makes it easy to test your application is logging correctly:
+`logot` makes it easy to test whether your code is logging correctly:
 
 ``` python
 from logot import Logot, logged
