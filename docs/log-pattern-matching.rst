@@ -4,7 +4,7 @@ Log pattern matching
 .. currentmodule:: logot
 
 :mod:`logot` makes it easy to match logs that may arrive in an unpredictable order. This is especially useful in
-*threaded* or *asynchronous* applications!
+*threaded* or *asynchronous* code!
 
 Compose your :mod:`logot.logged` calls with special *log pattern operators*:
 

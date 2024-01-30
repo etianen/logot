@@ -41,7 +41,7 @@ class Captured:
     The log level number (e.g. :data:`logging.DEBUG`).
 
     This is an *optional* log capture field. When provided, it allows matching
-    :doc:`log patterns <log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
     def __init__(self, levelname: str, msg: str, *, levelno: int | None = None) -> None:

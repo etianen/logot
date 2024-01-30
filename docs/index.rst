@@ -3,7 +3,7 @@ Log-based testing 🪵
 
 .. currentmodule:: logot
 
-:mod:`logot` makes it easy to test your application is logging correctly:
+:mod:`logot` makes it easy to test whether your code is logging correctly:
 
 .. code:: python
 
@@ -15,19 +15,18 @@ Log-based testing 🪵
 
 .. note::
 
-   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`usage-unittest` to learn about about using
+   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`/usage-unittest` to learn about about using
    :mod:`logot` with other testing frameworks.
 
 
 Why test logging? 🤔
 --------------------
 
-Good logging ensures your application is debuggable at runtime, but why bother actually *testing* your logs? After
-all... surely the worst that can happen is your logs are a bit *wonky*? 🥴
+Good logging ensures your code is debuggable at runtime, but why bother actually *testing* your logs? After all...
+surely the worst that can happen is your logs are a bit *wonky*? 🥴
 
 Sometimes, testing logs is the only *reasonable* way to known your code has actually run correctly! This is particularly
-the case in *threaded* or *asynchronous* applications where work is carried out at unpredictable times by background
-workers.
+the case in *threaded* or *asynchronous* code where work is carried out at unpredictable times by background workers.
 
 For example, imagine the following code running in a thread:
 
@@ -47,8 +46,7 @@ For example, imagine the following code running in a thread:
 .. note::
 
    It's certainly *possible* to rewrite this code in a way that can be tested without :mod:`logot`, but that often makes
-   the code less clear or more verbose. For complex threaded or asynchronous applications, this can quickly become
-   burdensome.
+   the code less clear or more verbose. For complex threaded or asynchronous code, this can quickly become burdensome.
    👎
 
 Testing this code with :mod:`logot` is easy!
@@ -84,7 +82,7 @@ Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or 
 
 .. seealso::
 
-   See :doc:`log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
+   See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
 
 Testing asynchronous code
@@ -107,7 +105,7 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
 
 .. seealso::
 
-   See :doc:`log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
+   See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
 
 Testing synchronous code
@@ -144,7 +142,6 @@ Learn more about :mod:`logot` with the following guides:
 
    self
 
-
 .. toctree::
    :maxdepth: 1
 
@@ -153,4 +150,4 @@ Learn more about :mod:`logot` with the following guides:
    log-capturing
    usage-pytest
    usage-unittest
-   api
+   api/index
