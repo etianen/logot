@@ -7,7 +7,7 @@ permissions:
 
 jobs:
   test:
-    name: test (python~=${{ matrix.python-version }} pytest${{ matric.pytest-version }})
+    name: test (python~=${{ matrix.python-version }} pytest${{ matrix.pytest-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,7 +34,7 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install --no-root
-        pip install -e .[pytest] "pytest${{ matric.pytest-version }}"
+        pip install -e .[pytest] "pytest${{ matrix.pytest-version }}"
     # Run checks.
     - name: Check (ruff)
       run: ruff check
