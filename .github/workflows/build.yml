@@ -22,7 +22,7 @@ jobs:
           - "~=8.0"
       fail-fast: false
     env:
-      COVERAGE_FILE: .coverage-${{ matrix.python-version }}-${{ matrix.pytest-version }}
+      COVERAGE_FILE: .coverage.python~=${{ matrix.python-version }}.pytest${{ matrix.pytest-version }}
       PYTHONDEVMODE: 1
     steps:
     - name: Checkout
@@ -88,10 +88,10 @@ jobs:
     - name: Download coverage
       uses: actions/download-artifact@v4
       with:
-        pattern: .coverage-*
+        pattern: .coverage.*
         merge-multiple: true
     - name: Combine coverage
-      run: poetry run coverage combine .coverage-*
+      run: poetry run coverage combine .coverage.*
     - name: Report coverage
       run: poetry run coverage report
     # Fail if any `needs` job was not a success.
