@@ -5,7 +5,7 @@ import logging
 import pytest
 
 from logot import Captured, Logot, logged
-from tests import asyncio_test, lines, log_soon, logger
+from tests import asyncio_test, capture_soon, lines, logger
 
 
 def test_capturing() -> None:
@@ -30,7 +30,7 @@ def test_wait_for_pass_immediate(logot: Logot) -> None:
 
 
 def test_wait_for_pass_soon(logot: Logot) -> None:
-    with log_soon(logging.INFO, "foo bar"):
+    with capture_soon(logot, Captured("INFO", "foo bar")):
         logot.wait_for(logged.info("foo bar"))
 
 
@@ -53,7 +53,7 @@ async def test_await_for_pass_immediate(logot: Logot) -> None:
 
 @asyncio_test
 async def test_await_for_pass_soon(logot: Logot) -> None:
-    with log_soon(logging.INFO, "foo bar"):
+    with capture_soon(logot, Captured("INFO", "foo bar")):
         await logot.await_for(logged.info("foo bar"))
 
 
