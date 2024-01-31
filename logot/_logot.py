@@ -212,6 +212,9 @@ class Logot:
         # All done!
         return logged
 
+    def __repr__(self) -> str:
+        return f"Logot(timeout={self.timeout!r})"
+
 
 class _Capturing:
     __slots__ = ("_logot", "_handler", "_logger", "_prev_levelno")

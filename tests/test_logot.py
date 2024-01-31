@@ -105,3 +105,7 @@ def test_clear(logot: Logot) -> None:
     logger.info("foo bar")
     logot.clear()
     logot.assert_not_logged(logged.info("foo bar"))
+
+
+def test_repr(logot: Logot) -> None:
+    assert repr(logot) == "Logot(timeout=3.0)"
