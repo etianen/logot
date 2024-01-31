@@ -11,6 +11,8 @@ from typing import Any, Callable
 
 from typing_extensions import ParamSpec
 
+from logot import Captured, Logot
+
 P = ParamSpec("P")
 
 logger = logging.getLogger("logot")
@@ -29,8 +31,8 @@ def lines(*lines: str) -> str:
 
 
 @contextmanager
-def log_soon(level: int, msg: str) -> Generator[None, None, None]:
-    thread = threading.Thread(target=_log_soon, args=(level, msg), daemon=True)
+def capture_soon(logot: Logot, captured: Captured) -> Generator[None, None, None]:
+    thread = threading.Thread(target=_capture_soon, args=(logot, captured), daemon=True)
     thread.start()
     try:
         yield
@@ -38,6 +40,6 @@ def log_soon(level: int, msg: str) -> Generator[None, None, None]:
         thread.join()
 
 
-def _log_soon(level: int, msg: str) -> None:
+def _capture_soon(logot: Logot, captured: Captured) -> None:
     sleep(0.1)
-    logger.log(level, msg)
+    logot.capture(captured)
