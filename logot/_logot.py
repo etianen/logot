@@ -23,11 +23,10 @@ class Logot:
 
         See :doc:`/index` usage guide.
 
-    :param timeout: The default timeout (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`. Defaults to
-        :attr:`Logot.DEFAULT_TIMEOUT`.
+    :param timeout: See :attr:`Logot.timeout`.
     """
 
-    __slots__ = ("_timeout", "_lock", "_queue", "_waiter")
+    __slots__ = ("timeout", "_lock", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -46,12 +45,19 @@ class Logot:
     The default ``timeout`` (in seconds) used by :meth:`wait_for` and :meth:`await_for`.
     """
 
+    timeout: float
+    """
+    The default timeout (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
+
+    Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
+    """
+
     def __init__(
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
     ) -> None:
-        self._timeout = validate_timeout(timeout)
+        self.timeout = validate_timeout(timeout)
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
         self._waiter: Waiter | None = None
@@ -173,7 +179,7 @@ class Logot:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
             if timeout is None:
-                timeout = self._timeout
+                timeout = self.timeout
             else:
                 timeout = validate_timeout(timeout)
             # Ensure no other waiters.
