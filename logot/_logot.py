@@ -120,8 +120,7 @@ class Logot:
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
-            :class:`Logot`.
+        :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         waiter = self._open_waiter(logged, SyncWaiter, timeout=timeout)
@@ -135,8 +134,7 @@ class Logot:
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :param timeout: How long to wait (in seconds) before failing the test. Defaults to the ``timeout`` passed to
-            :class:`Logot`.
+        :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         waiter = self._open_waiter(logged, AsyncWaiter, timeout=timeout)
