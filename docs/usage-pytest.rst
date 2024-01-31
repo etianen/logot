@@ -22,6 +22,20 @@ Using with :mod:`pytest`
    See :class:`Logot` API reference for default settings.
 
 
+Installing
+----------
+
+Ensure :mod:`logot` is installed alongside a compatible :mod:`pytest` version by adding the ``pytest`` extra:
+
+.. code:: bash
+
+   pip install 'logot[pytest]'
+
+.. seealso::
+
+   See :ref:`installing-extras` usage guide.
+
+
 Customizing the ``logot`` fixture
 ---------------------------------
 

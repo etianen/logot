@@ -150,4 +150,5 @@ Learn more about :mod:`logot` with the following guides:
    log-capturing
    usage-pytest
    usage-unittest
+   installing
    api/index
