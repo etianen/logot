@@ -37,7 +37,7 @@ jobs:
     # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
     - name: Install dependencies
       run: |
-        poetry install --no-root
+        poetry install --no-root --without main
         poetry run pip install -e .[pytest] "pytest${{ matrix.pytest-version }}"
     # Run checks.
     - name: Check (ruff)
