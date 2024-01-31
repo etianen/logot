@@ -14,9 +14,12 @@ def test_capturing() -> None:
     logger.setLevel(logging.WARNING)
     try:
         with Logot().capturing(level=logging.DEBUG, logger=logger) as logot:
-            assert isinstance(logot, Logot)
             # The logger will have been overridden for the required verbosity.
             assert logger.level == logging.DEBUG
+            # Write a log.
+            logger.info("foo bar")
+            # Assert the log was captured.
+            logot.assert_logged(logged.info("foo bar"))
         # When the capture ends, the logging verbosity is restored.
         assert logger.level == logging.WARNING
     finally:
