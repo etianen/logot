@@ -42,7 +42,7 @@ class Logot:
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
-    The default ``timeout`` (in seconds) used by :meth:`wait_for` and :meth:`await_for`.
+    The default timeout (in seconds) for new :class:`Logot` instances.
     """
 
     timeout: float
