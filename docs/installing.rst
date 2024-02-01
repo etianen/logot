@@ -24,7 +24,7 @@ Installing package ``extras``
 
    pip install 'logot[pytest]'
 
-Supported 3rd-party integrations:
+Package extras for supported 3rd-party integrations:
 
 - ``pytest`` - :doc:`usage-pytest`
 
