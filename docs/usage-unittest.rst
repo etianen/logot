@@ -33,5 +33,5 @@ Override :mod:`logot`-prefixed attributes in your :class:`logot.unittest.LogotTe
 .. code:: python
 
    class MyAppTest(LogotTestCase):
-
       logot_level = logging.WARNING
+      logot_logger = "app"
