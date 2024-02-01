@@ -23,6 +23,8 @@ class LogotTestCase(TestCase):
     """
     The ``level`` used by automatic :doc:`log capturing </log-capturing>`.
 
+    Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
+
     .. note::
 
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
@@ -32,6 +34,8 @@ class LogotTestCase(TestCase):
     """
     The ``logger`` used by automatic :doc:`log capturing </log-capturing>`.
 
+    Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
+
     .. note::
 
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
@@ -39,7 +43,9 @@ class LogotTestCase(TestCase):
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
     """
-    The ``timeout`` (in seconds) for initialized :class:`logot.Logot` instances.
+    The ``timeout`` (in seconds) for :attr:`LogotTestCase.logot`.
+
+    Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
 
     .. note::
 
