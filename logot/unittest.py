@@ -3,7 +3,7 @@ Integration API for :mod:`unittest`.
 
 .. seealso::
 
-    See :doc:`/usage-unittest` usage guide.
+    See :doc:`/using-unittest` usage guide.
 """
 from __future__ import annotations
 
