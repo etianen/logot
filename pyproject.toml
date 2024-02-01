@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "logot"
 version = "0.3.2"
-description = "Log-based testing"
+description = "Test whether your code is logging correctly 🪵"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
 readme = "README.md"
