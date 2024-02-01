@@ -10,8 +10,7 @@ during tests and can be used to make log assertions:
 
 .. code:: python
 
-   import unittest
-   from logot import Logot, logged
+   from logot import logged
    from logot.unittest import LogotTestCase
 
    class MyAppTest(LogotTestCase):
