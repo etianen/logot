@@ -26,7 +26,7 @@ Installing package ``extras``
 
 Package extras for supported 3rd-party integrations:
 
-- ``pytest`` - :doc:`usage-pytest`
+- ``pytest`` - :doc:`using-pytest`
 
 
 Installing with Poetry

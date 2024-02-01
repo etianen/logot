@@ -17,8 +17,8 @@ Test framework integrations
 
 Use a supported test framework integration for automatic log capturing in tests:
 
-- :doc:`/usage-pytest`
-- :doc:`/usage-unittest`
+- :doc:`/using-pytest`
+- :doc:`/using-unittest`
 
 
 Capturing :mod:`logging` logs
