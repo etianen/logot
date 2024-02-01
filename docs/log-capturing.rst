@@ -11,14 +11,18 @@ Log capturing
       app.start()
       logot.wait_for(logged.info("App started"))
 
-.. note::
 
-   If using :mod:`pytest`, you can probably just use the pre-configured ``logot`` fixture included in the bundled
-   :doc:`pytest plugin </usage-pytest>` and skip manually configuring log capture. 💪
+Test framework integrations
+---------------------------
+
+Use a supported test framework integration for automatic log capturing in tests:
+
+- :doc:`/usage-pytest`
+- :doc:`/usage-unittest`
 
 
 Capturing :mod:`logging` logs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 The :meth:`Logot.capturing` method defaults to capturing **all** records from the root logger. Customize this with the
 ``level`` and ``logger`` arguments to :meth:`Logot.capturing`:
@@ -40,7 +44,7 @@ careful to avoid capturing duplicate logs with overlapping calls to :meth:`Logot
 .. _log-capturing-3rd-party:
 
 Capturing 3rd-party logs
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------
 
 Any 3rd-party logging library can be integrated with :mod:`logot` by sending :class:`Captured` logs to
 :meth:`Logot.capture`:

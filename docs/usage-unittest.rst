@@ -3,7 +3,7 @@ Using with :mod:`unittest`
 
 .. currentmodule:: logot
 
-:mod:`logot` provides :class:`logot.unittest.LogotTestCase` for easy integration with :mod:`unittest`.
+:mod:`logot` includes :class:`logot.unittest.LogotTestCase` for easy integration with :mod:`unittest`.
 
 The :attr:`logot <logot.unittest.LogotTestCase.logot>` attribute automatically :doc:`captures logs </log-capturing>`
 during tests and can be used to make log assertions:
