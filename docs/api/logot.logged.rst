@@ -7,14 +7,14 @@
 API reference
 -------------
 
-.. autofunction:: logot.logged.log
+.. autofunction:: log
 
-.. autofunction:: logot.logged.debug
+.. autofunction:: debug
 
-.. autofunction:: logot.logged.info
+.. autofunction:: info
 
-.. autofunction:: logot.logged.warning
+.. autofunction:: warning
 
-.. autofunction:: logot.logged.error
+.. autofunction:: error
 
-.. autofunction:: logot.logged.critical
+.. autofunction:: critical

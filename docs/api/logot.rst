@@ -7,10 +7,10 @@
 API reference
 -------------
 
-.. autoclass:: logot.Logot
+.. autoclass:: Logot
    :members:
 
-.. autoclass:: logot.Logged
+.. autoclass:: Logged
 
-.. autoclass:: logot.Captured
+.. autoclass:: Captured
    :members:
