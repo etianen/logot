@@ -9,7 +9,7 @@ from typing import ClassVar, TypeVar
 
 from logot._capture import Captured
 from logot._logged import Logged
-from logot._types import Level, LoggerLike
+from logot._types import Level, Logger, LoggerLike
 from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
@@ -220,7 +220,7 @@ class Logot:
 class _Capturing:
     __slots__ = ("_logot", "_handler", "_logger", "_prev_levelno")
 
-    def __init__(self, logot: Logot, handler: logging.Handler, *, logger: logging.Logger) -> None:
+    def __init__(self, logot: Logot, handler: logging.Handler, *, logger: Logger) -> None:
         self._logot = logot
         self._handler = handler
         self._logger = logger

@@ -55,7 +55,11 @@ source = ["logot", "tests"]
 show_missing = true
 skip_covered = true
 fail_under = 100
-exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
 
 [tool.mypy]
 files = ["logot/**/*.py", "tests/**/*.py"]
