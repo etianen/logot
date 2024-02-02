@@ -7,7 +7,7 @@ from threading import Lock
 from types import TracebackType
 from typing import ClassVar, TypeVar
 
-from logot._captured import Captured
+from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
