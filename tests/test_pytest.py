@@ -7,7 +7,7 @@ import pytest
 from logot import Logot
 
 
-def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any) -> None:
+def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any, *, passed: bool = True) -> None:
     pytester.makepyfile(
         f"""
         def test_{name}(logot_{name}):
@@ -20,17 +20,23 @@ def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any) -> None
         logot_{name} = {value}
         """
     )
-    pytester.runpytest().assert_outcomes(passed=1)
+    pytester.runpytest().assert_outcomes(
+        passed=int(passed),
+        errors=int(not passed),
+    )
 
 
-def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any) -> None:
+def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any, *, passed: bool = True) -> None:
     pytester.makepyfile(
         f"""
         def test_{name}(logot_{name}):
             assert logot_{name} == {value!r}
         """
     )
-    pytester.runpytest(f"--logot-{name.replace('_', '-')}={value}").assert_outcomes(passed=1)
+    pytester.runpytest(f"--logot-{name.replace('_', '-')}={value}").assert_outcomes(
+        passed=int(passed),
+        errors=int(not passed),
+    )
 
 
 def test_level_default(logot_level: str | int) -> None:
@@ -63,7 +69,9 @@ def test_timeout_default(logot_timeout: float) -> None:
 
 def test_timeout_ini(pytester: pytest.Pytester) -> None:
     assert_fixture_ini(pytester, "timeout", 9999.0)
+    assert_fixture_ini(pytester, "timeout", "boom!", passed=False)
 
 
 def test_timeout_cli(pytester: pytest.Pytester) -> None:
     assert_fixture_cli(pytester, "timeout", 9999.0)
+    assert_fixture_cli(pytester, "timeout", "boom!", passed=False)
