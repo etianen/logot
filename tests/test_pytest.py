@@ -10,6 +10,22 @@ def test_level_default(logot_level: Level) -> None:
     assert logot_level == Logot.DEFAULT_LEVEL
 
 
+def test_level_set(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(
+        """
+        def test_level(logot_level):
+            assert logot_level == "INFO"
+        """
+    )
+    pytester.makeini(
+        """
+        [pytest]
+        logot_level = INFO
+        """
+    )
+    pytester.runpytest().assert_outcomes(passed=1)
+
+
 def test_logger_default(logot_logger: LoggerLike) -> None:
     assert logot_logger == Logot.DEFAULT_LOGGER
 
