@@ -19,15 +19,12 @@ during tests and can be used to make log assertions:
          app.start()
          self.logot.wait_for(logged.info("App started"))
 
-.. seealso::
-
-   See :mod:`logot.unittest.LogotTestCase` API reference.
-
 
 Configuring
 -----------
 
-Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to the test case:
+Override ``logot``-prefixed attributes in your test case to configure the
+:attr:`logot <logot.unittest.LogotTestCase.logot>` attribute:
 
 .. code:: python
 
@@ -35,3 +32,7 @@ Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestC
       logot_level = logging.WARNING
       logot_logger = "app"
       logot_timeout = 10.0
+
+.. seealso::
+
+   See :mod:`logot.unittest.LogotTestCase` API reference.

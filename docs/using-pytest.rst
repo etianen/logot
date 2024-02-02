@@ -16,10 +16,6 @@ assertions:
       app.start()
       logot.wait_for(logged.info("App started"))
 
-.. seealso::
-
-   See :class:`Logot` API reference for default settings.
-
 
 Installing
 ----------
@@ -77,7 +73,7 @@ The following fixtures are available in the :mod:`pytest` plugin:
 
    Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
 
-``logot_timeout: float``
+``logot_timeout:`` :class:`float`
    The default ``timeout`` (in seconds) for the ``logot`` fixture.
 
    Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`
