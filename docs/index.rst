@@ -15,8 +15,8 @@ Log-based testing 🪵
 
 .. note::
 
-   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`/using-unittest` to learn about about using
-   :mod:`logot` with other testing frameworks.
+   These examples all show using :mod:`logot` with :mod:`pytest`. See :doc:`/using-unittest` to learn how to use
+   :mod:`logot` with :mod:`unittest`.
 
 
 Why test logging? 🤔
