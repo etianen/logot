@@ -3,7 +3,10 @@ Using with :mod:`pytest`
 
 .. currentmodule:: logot
 
-:mod:`logot` includes a :mod:`pytest` plugin. Just use the ``logot`` fixture in your tests:
+:mod:`logot` includes a :mod:`pytest` plugin.
+
+The ``logot`` fixture automatically :doc:`captures logs </log-capturing>` during tests and can be used to make log
+assertions:
 
 .. code:: python
 
@@ -12,14 +15,6 @@ Using with :mod:`pytest`
    def test_my_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(logged.info("App started"))
-
-.. note::
-
-   The ``logot`` fixture is configured with default settings and captures all logs in the root logger.
-
-.. seealso::
-
-   See :class:`Logot` API reference for default settings.
 
 
 Installing
@@ -36,21 +31,49 @@ Ensure :mod:`logot` is installed alongside a compatible :mod:`pytest` version by
    See :ref:`installing-extras` usage guide.
 
 
-Customizing the ``logot`` fixture
----------------------------------
+Configuring
+-----------
 
-To customize the ``logot`` fixure, simply override it in your own ``conftest.py``:
+Use the following CLI and :external+pytest:doc:`configuration <reference/customize>` options to configure the
+:mod:`pytest` plugin:
 
-.. code:: python
+``--logot-level``, ``logot_level``
+   The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
-   import pytest
-   from logot import Logot, logged
+   Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
 
-   @pytest.fixture()
-   def logot():
-      with Logot(timeout=30.0).capturing(level=logging.WARNING) as logot:
-         yield logot
+``--logot-logger``, ``logot_logger``
+   The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
-.. seealso::
+   Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
 
-   See :class:`Logot` and :meth:`Logot.capturing` API reference.
+``--logot-timeout``, ``logot_timeout``
+   The default ``timeout`` (in seconds) for the ``logot`` fixture.
+
+   Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
+
+
+Available fixtures
+------------------
+
+The following fixtures are available in the :mod:`pytest` plugin:
+
+``logot:`` :class:`logot.Logot`
+   An initialized :class:`logot.Logot` instance with :doc:`log capturing </log-capturing>` enabled.
+
+   Use this to make log assertions in your tests.
+
+``logot_level:`` :class:`str` ``|`` :class:`int`
+   The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
+
+   Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
+
+``logot_logger:`` :class:`str` ``|`` :data:`None`
+   The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
+
+   Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
+
+``logot_timeout:`` :class:`float`
+   The default ``timeout`` (in seconds) for the ``logot`` fixture.
+
+   Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`

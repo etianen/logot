@@ -21,7 +21,7 @@ class LogotTestCase(TestCase):
 
     logot_level: ClassVar[str | int] = Logot.DEFAULT_LEVEL
     """
-    The ``level`` used by automatic :doc:`log capturing </log-capturing>`.
+    The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
 
@@ -32,7 +32,7 @@ class LogotTestCase(TestCase):
 
     logot_logger: ClassVar[logging.Logger | str | None] = Logot.DEFAULT_LOGGER
     """
-    The ``logger`` used by automatic :doc:`log capturing </log-capturing>`.
+    The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
 
@@ -43,7 +43,7 @@ class LogotTestCase(TestCase):
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
     """
-    The ``timeout`` (in seconds) for :attr:`LogotTestCase.logot`.
+    The default ``timeout`` (in seconds) for :attr:`LogotTestCase.logot`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
 

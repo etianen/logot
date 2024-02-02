@@ -19,19 +19,20 @@ during tests and can be used to make log assertions:
          app.start()
          self.logot.wait_for(logged.info("App started"))
 
-.. seealso::
 
-   See :mod:`logot.unittest` API reference.
+Configuring
+-----------
 
-
-Customizing log capturing
--------------------------
-
-Override :mod:`logot`-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to customize automatic
-:doc:`log capturing </log-capturing>`:
+Override ``logot``-prefixed attributes in your test case to configure the
+:attr:`logot <logot.unittest.LogotTestCase.logot>` attribute:
 
 .. code:: python
 
    class MyAppTest(LogotTestCase):
       logot_level = logging.WARNING
       logot_logger = "app"
+      logot_timeout = 10.0
+
+.. seealso::
+
+   See :mod:`logot.unittest.LogotTestCase` API reference.

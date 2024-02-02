@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 
 def format_level(level: str | int) -> str:
     # Format `str` level.
@@ -9,8 +7,7 @@ def format_level(level: str | int) -> str:
         return level
     # Format `int` level.
     if isinstance(level, int):
-        levelname: str = logging.getLevelName(level)
-        return levelname
+        return f"Level {level}"
     # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
 

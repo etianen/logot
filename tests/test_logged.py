@@ -37,7 +37,7 @@ def test_record_logged_repr() -> None:
 
 
 def test_record_logged_str() -> None:
-    assert str(logged.log(logging.DEBUG, "foo bar")) == "[DEBUG] foo bar"
+    assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
