@@ -1,9 +1,37 @@
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from logot import Logot
 from logot._types import Level, LoggerLike
+
+
+def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any) -> None:
+    pytester.makepyfile(
+        f"""
+        def test_{name}(logot_{name}):
+            assert logot_{name} == {value!r}
+        """
+    )
+    pytester.makeini(
+        f"""
+        [pytest]
+        logot_{name} = {value}
+        """
+    )
+    pytester.runpytest().assert_outcomes(passed=1)
+
+
+def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any) -> None:
+    pytester.makepyfile(
+        f"""
+        def test_{name}(logot_{name}):
+            assert logot_{name} == {value!r}
+        """
+    )
+    pytester.runpytest(f"--logot-{name.replace('_', '-')}={value}").assert_outcomes(passed=1)
 
 
 def test_level_default(logot_level: Level) -> None:
@@ -11,29 +39,11 @@ def test_level_default(logot_level: Level) -> None:
 
 
 def test_level_ini(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_level(logot_level):
-            assert logot_level == "INFO"
-        """
-    )
-    pytester.makeini(
-        """
-        [pytest]
-        logot_level = INFO
-        """
-    )
-    pytester.runpytest().assert_outcomes(passed=1)
+    assert_fixture_ini(pytester, "level", "INFO")
 
 
 def test_level_cli(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_level(logot_level):
-            assert logot_level == "INFO"
-        """
-    )
-    pytester.runpytest("--logot-level=INFO").assert_outcomes(passed=1)
+    assert_fixture_cli(pytester, "level", "INFO")
 
 
 def test_logger_default(logot_logger: LoggerLike) -> None:
@@ -41,29 +51,11 @@ def test_logger_default(logot_logger: LoggerLike) -> None:
 
 
 def test_logger_ini(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_logger(logot_logger):
-            assert logot_logger == "logot"
-        """
-    )
-    pytester.makeini(
-        """
-        [pytest]
-        logot_logger = logot
-        """
-    )
-    pytester.runpytest().assert_outcomes(passed=1)
+    assert_fixture_ini(pytester, "logger", "logot")
 
 
 def test_logger_cli(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_logger(logot_logger):
-            assert logot_logger == "logot"
-        """
-    )
-    pytester.runpytest("--logot-logger=logot").assert_outcomes(passed=1)
+    assert_fixture_cli(pytester, "logger", "logot")
 
 
 def test_timeout_default(logot_timeout: float) -> None:
@@ -71,26 +63,8 @@ def test_timeout_default(logot_timeout: float) -> None:
 
 
 def test_timeout_ini(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_timeout(logot_timeout):
-            assert logot_timeout == 9999.0
-        """
-    )
-    pytester.makeini(
-        """
-        [pytest]
-        logot_timeout = 9999
-        """
-    )
-    pytester.runpytest().assert_outcomes(passed=1)
+    assert_fixture_ini(pytester, "timeout", 9999.0)
 
 
 def test_timeout_cli(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        def test_timeout(logot_timeout):
-            assert logot_timeout == 9999.0
-        """
-    )
-    pytester.runpytest("--logot-timeout=9999").assert_outcomes(passed=1)
+    assert_fixture_cli(pytester, "timeout", 9999.0)
