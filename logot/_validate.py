@@ -2,10 +2,8 @@ from __future__ import annotations
 
 import logging
 
-from logot._types import Level, Logger, LoggerLike
 
-
-def validate_level(level: Level) -> Level:
+def validate_level(level: str | int) -> str | int:
     # Handle `str` or `int` level.
     if isinstance(level, (str, int)):
         return level
@@ -13,7 +11,7 @@ def validate_level(level: Level) -> Level:
     raise TypeError(f"Invalid level: {level!r}")
 
 
-def validate_logger(logger: LoggerLike) -> Logger:
+def validate_logger(logger: str | None) -> logging.Logger:
     # Handle `None` or `str` logger.
     if logger is None or isinstance(logger, str):
         return logging.getLogger(logger)

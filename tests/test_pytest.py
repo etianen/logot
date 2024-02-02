@@ -5,7 +5,6 @@ from typing import Any
 import pytest
 
 from logot import Logot
-from logot._types import Level, LoggerLike
 
 
 def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any) -> None:
@@ -34,7 +33,7 @@ def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any) -> None
     pytester.runpytest(f"--logot-{name.replace('_', '-')}={value}").assert_outcomes(passed=1)
 
 
-def test_level_default(logot_level: Level) -> None:
+def test_level_default(logot_level: str | int) -> None:
     assert logot_level == Logot.DEFAULT_LEVEL
 
 
@@ -46,7 +45,7 @@ def test_level_cli(pytester: pytest.Pytester) -> None:
     assert_fixture_cli(pytester, "level", "INFO")
 
 
-def test_logger_default(logot_logger: LoggerLike) -> None:
+def test_logger_default(logot_logger: str | int) -> None:
     assert logot_logger == Logot.DEFAULT_LOGGER
 
 

@@ -4,7 +4,6 @@ from typing import ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Logot
-from logot._types import Level, LoggerLike
 
 
 class LogotTestCase(TestCase):
@@ -19,7 +18,7 @@ class LogotTestCase(TestCase):
     Use this to make log assertions in your tests.
     """
 
-    logot_level: ClassVar[Level] = Logot.DEFAULT_LEVEL
+    logot_level: ClassVar[str | int] = Logot.DEFAULT_LEVEL
     """
     The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
@@ -30,7 +29,7 @@ class LogotTestCase(TestCase):
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
-    logot_logger: ClassVar[LoggerLike] = Logot.DEFAULT_LOGGER
+    logot_logger: ClassVar[str | None] = Logot.DEFAULT_LOGGER
     """
     The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 

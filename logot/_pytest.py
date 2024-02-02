@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
 
 import pytest
 
 from logot._logot import Logot
-from logot._types import Level, LoggerLike, T
+
+T = TypeVar("T")
 
 MISSING: Any = object()
 
@@ -34,7 +35,7 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
 
 
 @pytest.fixture()
-def logot(logot_level: Level, logot_logger: LoggerLike, logot_timeout: float) -> Generator[Logot, None, None]:
+def logot(logot_level: str | int, logot_logger: str | None, logot_timeout: float) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
@@ -43,7 +44,7 @@ def logot(logot_level: Level, logot_logger: LoggerLike, logot_timeout: float) ->
 
 
 @pytest.fixture()
-def logot_level(request: pytest.FixtureRequest) -> Level:
+def logot_level(request: pytest.FixtureRequest) -> str | int:
     """
     The level used for automatic log capturing.
     """
@@ -51,7 +52,7 @@ def logot_level(request: pytest.FixtureRequest) -> Level:
 
 
 @pytest.fixture()
-def logot_logger(request: pytest.FixtureRequest) -> LoggerLike:
+def logot_logger(request: pytest.FixtureRequest) -> str | None:
     """
     The logger used for automatic log capturing.
     """
