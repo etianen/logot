@@ -21,14 +21,13 @@ during tests and can be used to make log assertions:
 
 .. seealso::
 
-   See :mod:`logot.unittest` API reference.
+   See :mod:`logot.unittest.LogotTestCase` API reference.
 
 
-Customizing log capturing
--------------------------
+Configuring
+-----------
 
-Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to customize automatic
-:doc:`log capturing </log-capturing>`:
+Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to the test case:
 
 .. code:: python
 
