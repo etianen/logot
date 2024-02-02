@@ -68,3 +68,29 @@ def test_logger_cli(pytester: pytest.Pytester) -> None:
 
 def test_timeout_default(logot_timeout: float) -> None:
     assert logot_timeout == Logot.DEFAULT_TIMEOUT
+
+
+def test_timeout_ini(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(
+        """
+        def test_timeout(logot_timeout):
+            assert logot_timeout == 9999.0
+        """
+    )
+    pytester.makeini(
+        """
+        [pytest]
+        logot_timeout = 9999
+        """
+    )
+    pytester.runpytest().assert_outcomes(passed=1)
+
+
+def test_timeout_cli(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(
+        """
+        def test_timeout(logot_timeout):
+            assert logot_timeout == 9999.0
+        """
+    )
+    pytester.runpytest("--logot-timeout=9999").assert_outcomes(passed=1)
