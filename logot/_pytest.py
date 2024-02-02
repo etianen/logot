@@ -43,7 +43,7 @@ def logot(logot_level: str | int, logot_logger: str | None, logot_timeout: float
         yield logot
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def logot_level(request: pytest.FixtureRequest) -> str | int:
     """
     The level used for automatic log capturing.
@@ -51,7 +51,7 @@ def logot_level(request: pytest.FixtureRequest) -> str | int:
     return _get_option(request, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def logot_logger(request: pytest.FixtureRequest) -> str | None:
     """
     The logger used for automatic log capturing.
@@ -59,7 +59,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
     return _get_option(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def logot_timeout(request: pytest.FixtureRequest) -> float:
     """
     The default `timeout` (in seconds) for `logot`.
