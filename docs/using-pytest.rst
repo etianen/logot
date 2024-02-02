@@ -3,7 +3,10 @@ Using with :mod:`pytest`
 
 .. currentmodule:: logot
 
-:mod:`logot` includes a :mod:`pytest` plugin. Just use the ``logot`` fixture in your tests:
+:mod:`logot` includes a :mod:`pytest` plugin.
+
+The ``logot`` fixture automatically :doc:`captures logs </log-capturing>` during tests and can be used to make log
+assertions:
 
 .. code:: python
 
@@ -12,10 +15,6 @@ Using with :mod:`pytest`
    def test_my_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(logged.info("App started"))
-
-.. note::
-
-   The ``logot`` fixture is configured with default settings and captures all logs in the root logger.
 
 .. seealso::
 

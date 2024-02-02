@@ -27,7 +27,7 @@ during tests and can be used to make log assertions:
 Customizing log capturing
 -------------------------
 
-Override :mod:`logot`-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to customize automatic
+Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestCase` subclass to customize automatic
 :doc:`log capturing </log-capturing>`:
 
 .. code:: python
