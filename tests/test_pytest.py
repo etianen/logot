@@ -23,10 +23,9 @@ def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any, *, pass
         {qualname} = {value}
         """
     )
-    pytester.runpytest().assert_outcomes(
-        passed=int(passed),
-        errors=int(not passed),
-    )
+    # Run the pytest.
+    result = pytester.runpytest()
+    result.assert_outcomes(passed=int(passed), errors=int(not passed))
 
 
 def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any, *, passed: bool = True) -> None:
@@ -37,7 +36,9 @@ def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any, *, pass
             assert {qualname} == {value!r}
         """
     )
-    pytester.runpytest(f"{get_optname(name)}={quote(str(value))}").assert_outcomes(
+    # Run the pytest.
+    result = pytester.runpytest(f"{get_optname(name)}={quote(str(value))}")
+    result.assert_outcomes(
         passed=int(passed),
         errors=int(not passed),
     )
