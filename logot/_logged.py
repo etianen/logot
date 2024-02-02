@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from logot._captured import Captured
+from logot._capture import Captured
 from logot._format import format_level, format_log
 from logot._match import compile_matcher
 from logot._validate import validate_level
