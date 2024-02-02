@@ -17,40 +17,52 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         parser,
         group,
         name="level",
-        help="Level used for automatic `logot` log capturing",
+        help="The `level` used for automatic `logot` log capturing",
     )
     _addoption(
         parser,
         group,
         name="logger",
-        help="Logger used for automatic `logot` log capturing",
+        help="The `logger` used for automatic `logot` log capturing",
     )
     _addoption(
         parser,
         group,
         name="timeout",
-        help="Default timeout (in seconds) for `logot`",
+        help="The `default` timeout (in seconds) for `logot`",
     )
 
 
 @pytest.fixture()
 def logot(logot_level: Level, logot_logger: LoggerLike, logot_timeout: float) -> Generator[Logot, None, None]:
+    """
+    An initialized `logot.Logot` instance with log capturing enabled.
+    """
     with Logot(timeout=logot_timeout).capturing(level=logot_level, logger=logot_logger) as logot:
         yield logot
 
 
 @pytest.fixture()
 def logot_level(request: pytest.FixtureRequest) -> Level:
+    """
+    The level used for automatic log capturing.
+    """
     return _getoption(request, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
 
 
 @pytest.fixture()
 def logot_logger(request: pytest.FixtureRequest) -> LoggerLike:
+    """
+    The logger used for automatic log capturing.
+    """
     return _getoption(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
 
 
 @pytest.fixture()
 def logot_timeout(request: pytest.FixtureRequest) -> float:
+    """
+    The default `timeout` (in seconds) for `logot`.
+    """
     return _getoption(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
 
 
