@@ -40,5 +40,31 @@ def test_logger_default(logot_logger: LoggerLike) -> None:
     assert logot_logger == Logot.DEFAULT_LOGGER
 
 
+def test_logger_ini(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(
+        """
+        def test_logger(logot_logger):
+            assert logot_logger == "logot"
+        """
+    )
+    pytester.makeini(
+        """
+        [pytest]
+        logot_logger = logot
+        """
+    )
+    pytester.runpytest().assert_outcomes(passed=1)
+
+
+def test_logger_cli(pytester: pytest.Pytester) -> None:
+    pytester.makepyfile(
+        """
+        def test_logger(logot_logger):
+            assert logot_logger == "logot"
+        """
+    )
+    pytester.runpytest("--logot-logger=logot").assert_outcomes(passed=1)
+
+
 def test_timeout_default(logot_timeout: float) -> None:
     assert logot_timeout == Logot.DEFAULT_TIMEOUT
