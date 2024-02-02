@@ -14,19 +14,19 @@ MISSING: Any = object()
 
 def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginManager) -> None:
     group = parser.getgroup("logot")
-    _addoption(
+    _add_option(
         parser,
         group,
         name="level",
         help="The `level` used for automatic `logot` log capturing",
     )
-    _addoption(
+    _add_option(
         parser,
         group,
         name="logger",
         help="The `logger` used for automatic `logot` log capturing",
     )
-    _addoption(
+    _add_option(
         parser,
         group,
         name="timeout",
@@ -48,7 +48,7 @@ def logot_level(request: pytest.FixtureRequest) -> str | int:
     """
     The level used for automatic log capturing.
     """
-    return _getoption(request, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
+    return _get_option(request, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
 
 
 @pytest.fixture()
@@ -56,7 +56,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
     """
     The logger used for automatic log capturing.
     """
-    return _getoption(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
+    return _get_option(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
 
 
 @pytest.fixture()
@@ -64,11 +64,11 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
     """
     The default `timeout` (in seconds) for `logot`.
     """
-    return _getoption(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
+    return _get_option(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
 
 
-def _addoption(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, help: str) -> None:
-    qualname = f"logot_{name}"
+def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, help: str) -> None:
+    qualname = _get_qualname(name)
     parser.addini(qualname, default=MISSING, help=help)
     group.addoption(
         f"--logot-{name.replace('_', '-')}",
@@ -79,8 +79,8 @@ def _addoption(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, h
     )
 
 
-def _getoption(request: pytest.FixtureRequest, *, name: str, parser: Callable[[str], T], default: T) -> T:
-    qualname = f"logot_{name}"
+def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[str], T], default: T) -> T:
+    qualname = _get_qualname(name)
     # Try to get the value from the command line, followed by the config file.
     value: str = request.config.getoption(qualname, default=MISSING)
     if value is MISSING:
@@ -93,3 +93,7 @@ def _getoption(request: pytest.FixtureRequest, *, name: str, parser: Callable[[s
         return parser(value)
     except (ValueError, TypeError) as ex:
         raise pytest.UsageError(f"Invalid {qualname}: {ex}")
+
+
+def _get_qualname(name: str) -> str:
+    return f"logot_{name}"
