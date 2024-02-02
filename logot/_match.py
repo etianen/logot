@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Callable
-
-if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
+from typing import Callable
 
 # Compiled matcher callable.
 # The returned `object` is truthy on successful match and falsy on failed match.
-Matcher: TypeAlias = Callable[[str], object]
+# TODO: Use `TypeAlias` when we only need to support Python 3.10+.
+Matcher = Callable[[str], object]
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
