@@ -67,11 +67,19 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
     return _get_option(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
 
 
+def get_qualname(name: str) -> str:
+    return f"logot_{name}"
+
+
+def get_optname(name: str) -> str:
+    return f"--logot-{name.replace('_', '-')}"
+
+
 def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, help: str) -> None:
-    qualname = _get_qualname(name)
+    qualname = get_qualname(name)
     parser.addini(qualname, default=MISSING, help=help)
     group.addoption(
-        f"--logot-{name.replace('_', '-')}",
+        get_optname(name),
         default=MISSING,
         dest=qualname,
         metavar=name.upper(),
@@ -80,7 +88,7 @@ def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, 
 
 
 def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[str], T], default: T) -> T:
-    qualname = _get_qualname(name)
+    qualname = get_qualname(name)
     # Try to get the value from the command line, followed by the config file.
     value: str = request.config.getoption(qualname, default=MISSING)
     if value is MISSING:
@@ -93,7 +101,3 @@ def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[
         return parser(value)
     except (ValueError, TypeError) as ex:
         raise pytest.UsageError(f"Invalid {qualname}: {ex}")
-
-
-def _get_qualname(name: str) -> str:
-    return f"logot_{name}"

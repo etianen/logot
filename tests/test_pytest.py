@@ -5,19 +5,21 @@ from typing import Any
 import pytest
 
 from logot import Logot
+from logot._pytest import get_optname, get_qualname
 
 
 def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any, *, passed: bool = True) -> None:
+    qualname = get_qualname(name)
     pytester.makepyfile(
         f"""
-        def test_{name}(logot_{name}):
-            assert logot_{name} == {value!r}
+        def test_{name}({qualname}):
+            assert {qualname} == {value!r}
         """
     )
     pytester.makeini(
         f"""
         [pytest]
-        logot_{name} = {value}
+        {qualname} = {value}
         """
     )
     pytester.runpytest().assert_outcomes(
@@ -27,13 +29,14 @@ def assert_fixture_ini(pytester: pytest.Pytester, name: str, value: Any, *, pass
 
 
 def assert_fixture_cli(pytester: pytest.Pytester, name: str, value: Any, *, passed: bool = True) -> None:
+    qualname = get_qualname(name)
     pytester.makepyfile(
         f"""
-        def test_{name}(logot_{name}):
-            assert logot_{name} == {value!r}
+        def test_{name}({qualname}):
+            assert {qualname} == {value!r}
         """
     )
-    pytester.runpytest(f"--logot-{name.replace('_', '-')}={value}").assert_outcomes(
+    pytester.runpytest(f"{get_optname(name)}={value}").assert_outcomes(
         passed=int(passed),
         errors=int(not passed),
     )
