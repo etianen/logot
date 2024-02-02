@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import ClassVar
 from unittest import TestCase, TestResult
 
@@ -29,7 +30,7 @@ class LogotTestCase(TestCase):
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
-    logot_logger: ClassVar[str | None] = Logot.DEFAULT_LOGGER
+    logot_logger: ClassVar[logging.Logger | str | None] = Logot.DEFAULT_LOGGER
     """
     The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
