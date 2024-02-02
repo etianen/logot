@@ -35,3 +35,4 @@ Override ``logot``-prefixed attributes in your :class:`logot.unittest.LogotTestC
    class MyAppTest(LogotTestCase):
       logot_level = logging.WARNING
       logot_logger = "app"
+      logot_timeout = 10.0

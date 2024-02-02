@@ -35,21 +35,23 @@ Ensure :mod:`logot` is installed alongside a compatible :mod:`pytest` version by
    See :ref:`installing-extras` usage guide.
 
 
-Customizing the ``logot`` fixture
----------------------------------
+Customizing log capturing
+-------------------------
 
-To customize the ``logot`` fixure, simply override it in your own ``conftest.py``:
+Use the following :mod:`pytest` CLI and :external+pytest:doc:`configuration <reference/customize>` options to
+customize automatic :doc:`log capturing </log-capturing>`:
 
-.. code:: python
+``--logot-level``, ``logot_level``
+   The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
-   import pytest
-   from logot import Logot, logged
+   Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
 
-   @pytest.fixture()
-   def logot():
-      with Logot(timeout=30.0).capturing(level=logging.WARNING) as logot:
-         yield logot
+``--logot-logger``, ``logot_logger``
+   The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
-.. seealso::
+   Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
 
-   See :class:`Logot` and :meth:`Logot.capturing` API reference.
+``--logot-timeout``, ``logot_timeout``
+   The default ``timeout`` (in seconds) for the ``logot`` fixture..
+
+   Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
