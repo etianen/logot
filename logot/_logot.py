@@ -66,7 +66,7 @@ class Logot:
         self,
         *,
         level: str | int = DEFAULT_LEVEL,
-        logger: str | None = DEFAULT_LOGGER,
+        logger: logging.Logger | str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
