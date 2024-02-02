@@ -31,6 +31,10 @@ def test_validate_logger_str_pass() -> None:
     assert validate_logger("logot") is logger
 
 
+def test_validate_logger_logger_pass() -> None:
+    assert validate_logger(logging.getLogger("logot")) is logger
+
+
 def test_validate_logger_type_fail() -> None:
     with pytest.raises(TypeError) as ex:
         validate_logger(cast(str, 1.5))
