@@ -9,6 +9,7 @@ from typing import ClassVar, TypeVar
 
 from logot._capture import Captured
 from logot._logged import Logged
+from logot._types import Level, LoggerLike
 from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
 
@@ -28,12 +29,12 @@ class Logot:
 
     __slots__ = ("timeout", "_lock", "_queue", "_waiter")
 
-    DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
+    DEFAULT_LEVEL: ClassVar[Level] = "DEBUG"
     """
     The default ``level`` used by :meth:`capturing`.
     """
 
-    DEFAULT_LOGGER: ClassVar[logging.Logger | str | None] = None
+    DEFAULT_LOGGER: ClassVar[LoggerLike] = None
     """
     The default ``logger`` used by :meth:`capturing`.
 
@@ -65,8 +66,8 @@ class Logot:
     def capturing(
         self,
         *,
-        level: str | int = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
+        level: Level = DEFAULT_LEVEL,
+        logger: LoggerLike = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
@@ -248,7 +249,7 @@ class _Capturing:
 class _Handler(logging.Handler):
     __slots__ = ("_logot",)
 
-    def __init__(self, level: str | int, logot: Logot) -> None:
+    def __init__(self, level: Level, logot: Logot) -> None:
         super().__init__(level)
         self._logot = logot
 

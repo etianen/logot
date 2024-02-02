@@ -6,7 +6,7 @@ from typing import Any, Callable
 import pytest
 
 from logot._logot import Logot
-from logot._types import T
+from logot._types import Level, LoggerLike, T
 
 MISSING: Any = object()
 
@@ -34,14 +34,24 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
 
 
 @pytest.fixture()
-def logot() -> Generator[Logot, None, None]:
-    with Logot().capturing() as logot:
+def logot(logot_level: Level, logot_logger: LoggerLike, logot_timeout: float) -> Generator[Logot, None, None]:
+    with Logot(timeout=logot_timeout).capturing(level=logot_level, logger=logot_logger) as logot:
         yield logot
 
 
 @pytest.fixture()
-def logot_level(request: pytest.FixtureRequest) -> str:
-    return _getoption(request.config, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
+def logot_level(request: pytest.FixtureRequest) -> Level:
+    return _getoption(request, name="level", parser=str, default=Logot.DEFAULT_LEVEL)
+
+
+@pytest.fixture()
+def logot_logger(request: pytest.FixtureRequest) -> LoggerLike:
+    return _getoption(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
+
+
+@pytest.fixture()
+def logot_timeout(request: pytest.FixtureRequest) -> float:
+    return _getoption(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
 
 
 def _addoption(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, help: str) -> None:
@@ -49,6 +59,7 @@ def _addoption(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, h
     parser.addini(qualname, default=MISSING, help=help)
     group.addoption(
         f"--logot-{name.replace('_', '-')}",
+        default=MISSING,
         dest=qualname,
         metavar=name.upper(),
         help=help,

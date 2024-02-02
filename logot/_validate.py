@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from logot._types import Logger, LoggerLike
+import logging
+
+from logot._types import Level, Logger, LoggerLike
 
 
-def validate_level(level: str | int) -> str | int:
+def validate_level(level: Level) -> Level:
     # Handle `str` or `int` level.
     if isinstance(level, (str, int)):
         return level

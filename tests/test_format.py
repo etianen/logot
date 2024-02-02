@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import cast
 
 import pytest
@@ -13,7 +12,7 @@ def test_format_level_str() -> None:
 
 
 def test_format_level_int() -> None:
-    assert format_level(logging.INFO) == "INFO"
+    assert format_level(20) == "Level 20"
 
 
 def test_validate_logger_type_fail() -> None:

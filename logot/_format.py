@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-import logging
+from logot._types import Level
 
 
-def format_level(level: str | int) -> str:
+def format_level(level: Level) -> str:
     # Format `str` level.
     if isinstance(level, str):
         return level
     # Format `int` level.
     if isinstance(level, int):
-        levelname: str = logging.getLevelName(level)
-        return levelname
+        return f"Level {level}"
     # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
 
