@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable
 
 import pytest
 
 from logot._logot import Logot
-
-T = TypeVar("T")
+from logot._types import T
 
 MISSING: Any = object()
 
