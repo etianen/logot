@@ -12,7 +12,7 @@ assertions:
 
    from logot import Logot, logged
 
-   def test_app(logot: Logot) -> None:
+   def test_something(logot: Logot) -> None:
       do_something()
       logot.assert_logged(logged.info("Something was done"))
 
