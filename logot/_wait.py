@@ -3,9 +3,14 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from threading import Lock
 
+from logot._logged import Logged
+
 
 class AbstractWaiter(ABC):
-    __slots__ = ()
+    __slots__ = ("_logged", "_timeout")
+
+    # This protected attr is populated by `Logot._start_waiting`.
+    _logged: Logged | None
 
     @abstractmethod
     def notify(self) -> None:
