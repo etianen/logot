@@ -8,8 +8,8 @@ Log capturing
 .. code:: python
 
    with Logot().capturing() as logot:
-      app.start()
-      logot.wait_for(logged.info("App started"))
+      do_something()
+      logot.assert_logged(logged.info("App started"))
 
 
 Test framework integrations
@@ -30,8 +30,8 @@ The :meth:`Logot.capturing` method defaults to capturing **all** records from th
 .. code:: python
 
    with Logot().capturing(level=logging.WARNING, logger="app") as logot:
-      app.start()
-      logot.wait_for(logged.info("App started"))
+      do_something()
+      logot.assert_logged(logged.info("App started"))
 
 For advanced use-cases, multiple :meth:`Logot.capturing` calls on the same :class:`Logot` instance are supported. Be
 careful to avoid capturing duplicate logs with overlapping calls to :meth:`Logot.capturing`!
