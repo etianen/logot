@@ -4,7 +4,7 @@ Log pattern matching
 .. currentmodule:: logot
 
 :mod:`logot` makes it easy to match logs that may arrive in an unpredictable order. This is especially useful in
-*threaded* or *asynchronous* code!
+*threaded* or *asynchronous* code. 💪
 
 Compose your :mod:`logot.logged` calls with special *log pattern operators*:
 
@@ -12,7 +12,7 @@ Compose your :mod:`logot.logged` calls with special *log pattern operators*:
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
+   def test_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(
          # Wait for the app to start...
@@ -41,7 +41,7 @@ Use the ``>>`` operator to wait for logs that must arrive in a *sequential* orde
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
+   def test_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(
          logged.info("App started")
@@ -58,9 +58,8 @@ Use the ``&`` operator to wait for logs that must arrive in *any* order:
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
+   def test_app(logot: Logot) -> None:
       app.start()
-      other_app.start()
       logot.wait_for(
          logged.info("App started")
          & logged.info("Other app started")
@@ -76,7 +75,7 @@ Use the ``|`` operator to wait for *any* matching log pattern:
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
+   def test_app(logot: Logot) -> None:
       app.start()
       logot.wait_for(
          logged.info("App stopped")

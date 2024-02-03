@@ -12,9 +12,9 @@ assertions:
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
-      app.start()
-      logot.wait_for(logged.info("App started"))
+   def test_app(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.info("Something was done"))
 
 
 Installing

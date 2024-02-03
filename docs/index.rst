@@ -70,8 +70,7 @@ Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or 
    from logot import Logot, logged
 
    def test_app(logot: Logot) -> None:
-      thread = Thread(target=app.start)
-      thread.start()
+      app.start()
       logot.wait_for(logged.info("App started"))
 
 .. note::

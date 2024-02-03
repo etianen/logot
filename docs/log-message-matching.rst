@@ -9,9 +9,9 @@ Log message matching
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
-      app.start()
-      logot.wait_for(logged.info("App %s"))
+   def test_something(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.info("Something %s done"))
 
 In this case, the ``%s`` placeholder will match *any* string!
 
@@ -19,8 +19,8 @@ In this case, the ``%s`` placeholder will match *any* string!
 Available placeholders
 ----------------------
 
-The following placeholders are available, each corresponding to a formatting option available in the stdlib
-:mod:`logging` module:
+The following placeholders are available, each corresponding to a formatting option from the stdlib :mod:`logging`
+module:
 
 ===========  ===========================================================================================================
 Placeholder  Matches
