@@ -15,7 +15,7 @@ during tests and can be used to make log assertions:
 
    class MyAppTest(LogotTestCase):
 
-      def test_app(self) -> None:
+      def test_something(self) -> None:
          do_something()
          self.logot.assert_logged(logged.info("App started"))
 
