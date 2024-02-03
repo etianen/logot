@@ -9,9 +9,9 @@ Log-based testing 🪵
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
-      app.start()
-      logot.wait_for(logged.info("App started"))
+   def test_something(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.info("Something was done"))
 
 .. note::
 
@@ -22,11 +22,10 @@ Log-based testing 🪵
 Why test logging? 🤔
 --------------------
 
-Good logging ensures your code is debuggable at runtime, but why bother actually *testing* your logs? After all...
-surely the worst that can happen is your logs are a bit *wonky*? 🥴
+Good logging ensures your code is debuggable at runtime, but why bother actually *testing* your logs?
 
 Sometimes, testing logs is the only *reasonable* way to known your code has actually run correctly! This is particularly
-the case in *threaded* or *asynchronous* code where work is carried out at unpredictable times by background workers.
+the case in *threaded* or *asynchronous* code.
 
 For example, imagine the following code running in a thread:
 
@@ -45,9 +44,8 @@ For example, imagine the following code running in a thread:
 
 .. note::
 
-   It's certainly *possible* to rewrite this code in a way that can be tested without :mod:`logot`, but that often makes
-   the code less clear or more verbose. For complex threaded or asynchronous code, this can quickly become burdensome.
-   👎
+   While it's *possible* to rewrite this code in a way that can be tested without :mod:`logot`, that risks making the
+   code less clear or more verbose. For complex threaded or asynchronous code, this can quickly become burdensome. 👎
 
 Testing this code with :mod:`logot` is easy!
 
@@ -65,14 +63,15 @@ Testing this code with :mod:`logot` is easy!
 Testing threaded code
 ---------------------
 
-Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or the timeout expires:
+Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or the ``timeout`` expires:
 
 .. code:: python
 
    from logot import Logot, logged
 
-   def test_my_app(logot: Logot) -> None:
-      app.start()
+   def test_app(logot: Logot) -> None:
+      thread = Thread(target=app.start)
+      thread.start()
       logot.wait_for(logged.info("App started"))
 
 .. note::
@@ -88,14 +87,14 @@ Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or 
 Testing asynchronous code
 -------------------------
 
-Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or the timeout expires:
+Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or the ``timeout`` expires:
 
 .. code:: python
 
    from logot import Logot, logged
 
-   async def test_my_app(logot: Logot) -> None:
-      app.start()
+   async def test_app(logot: Logot) -> None:
+      asyncio.create_task(app.start())
       await logot.await_for(logged.info("App started"))
 
 .. note::
@@ -106,29 +105,6 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
 .. seealso::
 
    See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
-
-
-Testing synchronous code
-------------------------
-
-Use :meth:`Logot.assert_logged` to fail *immediately* if the expected logs have not arrived:
-
-.. code:: python
-
-   from logot import Logot, logged
-
-   def test_my_app(logot: Logot) -> None:
-      app.run()
-      logot.assert_logged(logged.info("App started"))
-
-.. note::
-
-   You can also use :meth:`Logot.wait_for` to test for expected logs, but since this only fails after a ``timeout``,
-   using :meth:`Logot.assert_logged` will give more immediate feedback if your test fails.
-
-.. seealso::
-
-   Use :meth:`Logot.assert_not_logged` to fail *immediately* if the expected logs *do* arrive.
 
 
 Further reading
