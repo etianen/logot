@@ -60,6 +60,7 @@ Use the ``&`` operator to wait for logs that must arrive in *any* order:
 
    def test_app(logot: Logot) -> None:
       app.start()
+      other_app.start()
       logot.wait_for(
          logged.info("App started")
          & logged.info("Other app started")
