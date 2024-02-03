@@ -106,6 +106,29 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
    See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
 
+Testing synchronous code
+------------------------
+
+Use :meth:`Logot.assert_logged` to fail *immediately* if the expected logs have not arrived:
+
+.. code:: python
+
+   from logot import Logot, logged
+
+   def test_something(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.info("Something was done"))
+
+.. note::
+
+   You can also use :meth:`Logot.wait_for` to test for expected logs, but since this only fails after a ``timeout``,
+   using :meth:`Logot.assert_logged` will give more immediate feedback if your test fails.
+
+.. seealso::
+
+   Use :meth:`Logot.assert_not_logged` to fail *immediately* if the expected logs *do* arrive.
+
+
 Further reading
 ---------------
 
