@@ -10,4 +10,5 @@ else:
     from typing_extensions import ParamSpec as ParamSpec
     from typing_extensions import TypeAlias as TypeAlias
 
+P = ParamSpec("P")
 T = TypeVar("T")
