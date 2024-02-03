@@ -9,11 +9,8 @@ from functools import wraps
 from time import sleep
 from typing import Any, Callable
 
-from typing_extensions import ParamSpec
-
 from logot import Captured, Logot
-
-P = ParamSpec("P")
+from logot._typing import P
 
 logger = logging.getLogger("logot")
 
