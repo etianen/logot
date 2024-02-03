@@ -115,6 +115,28 @@ class Logot:
             # Otherwise, buffer the captured log.
             self._queue.append(captured)
 
+    def assert_logged(self, logged: Logged) -> None:
+        """
+        Fails *immediately* if the expected ``log`` pattern has not arrived.
+
+        :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
+        :raises AssertionError: If the expected ``log`` pattern has not arrived.
+        """
+        reduced = self._reduce(logged)
+        if reduced is not None:
+            raise AssertionError(f"Not logged:\n\n{reduced}")
+
+    def assert_not_logged(self, logged: Logged) -> None:
+        """
+        Fails *immediately* if the expected ``log`` pattern **has** arrived.
+
+        :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
+        :raises AssertionError: If the expected ``log`` pattern **has** arrived.
+        """
+        reduced = self._reduce(logged)
+        if reduced is None:
+            raise AssertionError(f"Logged:\n\n{logged}")
+
     def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
@@ -142,28 +164,6 @@ class Logot:
             await waiter.wait()
         finally:
             self._close_waiter(waiter)
-
-    def assert_logged(self, logged: Logged) -> None:
-        """
-        Fails *immediately* if the expected ``log`` pattern has not arrived.
-
-        :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :raises AssertionError: If the expected ``log`` pattern has not arrived.
-        """
-        reduced = self._reduce(logged)
-        if reduced is not None:
-            raise AssertionError(f"Not logged:\n\n{reduced}")
-
-    def assert_not_logged(self, logged: Logged) -> None:
-        """
-        Fails *immediately* if the expected ``log`` pattern **has** arrived.
-
-        :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :raises AssertionError: If the expected ``log`` pattern **has** arrived.
-        """
-        reduced = self._reduce(logged)
-        if reduced is None:
-            raise AssertionError(f"Logged:\n\n{logged}")
 
     def clear(self) -> None:
         """
