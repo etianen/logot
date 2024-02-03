@@ -159,6 +159,5 @@ Learn more about :mod:`logot` with the following guides:
    :caption: Project links
 
    GitHub repository <https://github.com/etianen/logot>
-   Issue tracker <https://github.com/etianen/logot/issues>
    Changelog <https://github.com/etianen/logot/releases>
    PyPI project <https://pypi.org/project/logot/>
