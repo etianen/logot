@@ -5,14 +5,13 @@ from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import ClassVar, TypeVar
+from typing import ClassVar
 
+from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._waiter import AsyncWaiter, SyncWaiter, Waiter
-
-W = TypeVar("W", bound=Waiter)
+from logot._wait import AbstractWaiter, ThreadedWaiter
 
 
 class Logot:
@@ -60,7 +59,7 @@ class Logot:
         self.timeout = validate_timeout(timeout)
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
-        self._waiter: Waiter | None = None
+        self._waiter: AbstractWaiter | None = None
 
     def capturing(
         self,
@@ -106,10 +105,10 @@ class Logot:
         """
         with self._lock:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
-            if self._waiter is not None and self._waiter.logged is not None:
-                self._waiter.logged = self._waiter.logged._reduce(captured)
+            if self._waiter is not None and self._waiter._logged is not None:
+                self._waiter._logged = self._waiter._logged._reduce(captured)
                 # If the waiter has fully reduced, notify the blocked caller.
-                if self._waiter.logged is None:
+                if self._waiter._logged is None:
                     self._waiter.notify()
                 return
             # Otherwise, buffer the captured log.
@@ -145,11 +144,12 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._open_waiter(logged, SyncWaiter, timeout=timeout)
+        waiter = ThreadedWaiter()
+        timeout = self._start_waiting(logged, waiter, timeout=timeout)
         try:
-            waiter.wait()
+            waiter.wait(timeout=timeout)
         finally:
-            self._close_waiter(waiter)
+            self._stop_waiting(waiter)
 
     async def await_for(self, logged: Logged, *, timeout: float | None = None) -> None:
         """
@@ -159,11 +159,12 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._open_waiter(logged, AsyncWaiter, timeout=timeout)
+        waiter = AsyncioWaiter()
+        timeout = self._start_waiting(logged, waiter, timeout=timeout)
         try:
-            await waiter.wait()
+            await waiter.wait(timeout=timeout)
         finally:
-            self._close_waiter(waiter)
+            self._stop_waiting(waiter)
 
     def clear(self) -> None:
         """
@@ -172,7 +173,7 @@ class Logot:
         with self._lock:
             self._queue.clear()
 
-    def _open_waiter(self, logged: Logged, waiter_cls: type[W], *, timeout: float | None) -> W:
+    def _start_waiting(self, logged: Logged | None, waiter: AbstractWaiter, *, timeout: float | None) -> float:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -182,23 +183,23 @@ class Logot:
                 timeout = validate_timeout(timeout)
             # Ensure no other waiters.
             if self._waiter is not None:  # pragma: no cover
-                raise RuntimeError("Multiple waiters are not supported")
+                raise RuntimeError("Multiple concurrent waiters are not supported")
             # Set a waiter.
-            waiter = self._waiter = waiter_cls(logged, timeout=timeout)
+            waiter = self._waiter = waiter
             # Apply an immediate reduction.
-            waiter.logged = self._reduce(waiter.logged)
-            if waiter.logged is None:
+            logged = waiter._logged = self._reduce(logged)
+            if logged is None:
                 waiter.notify()
             # All done!
-            return waiter
+            return timeout
 
-    def _close_waiter(self, waiter: Waiter) -> None:
+    def _stop_waiting(self, waiter: AbstractWaiter) -> None:
         with self._lock:
             # Clear the waiter.
             self._waiter = None
             # Error if the waiter logs are not fully reduced.
-            if waiter.logged is not None:
-                raise AssertionError(f"Not logged:\n\n{waiter.logged}")
+            if waiter._logged is not None:
+                raise AssertionError(f"Not logged:\n\n{waiter._logged}")
 
     def _reduce(self, logged: Logged | None) -> Logged | None:
         # Drain the queue until the log is fully reduced.
