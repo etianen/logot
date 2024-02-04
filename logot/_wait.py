@@ -76,6 +76,14 @@ class AsyncWaiter(AbstractWaiter):
 
 
 class ThreadedWaiter(Waiter):
+    """
+    A :class:`logot.Waiter` implementation for :mod:`threading`.
+
+    .. note::
+
+        This is the default :class:`logot.Waiter` implementation for :mod:`logot`.
+    """
+
     __slots__ = ("_lock",)
 
     def __init__(self) -> None:
