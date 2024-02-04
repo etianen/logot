@@ -22,7 +22,7 @@ class AbstractWaiter(ABC):
 
 class Waiter(AbstractWaiter):
     """
-    The
+    The protocol used by :meth:`Logot.wait_for` to pause tests until expected logs arrive.
     """
 
     __slots__ = ()
@@ -30,16 +30,14 @@ class Waiter(AbstractWaiter):
     @abstractmethod
     def notify(self) -> None:
         """
-        Notifies the :class:`Waiter` that the test should be resumed.
-
-        The test waiting on :meth:`wait` will resume.
+        Notifies the test waiting on :meth:`Waiter.wait` to resume immediately.
         """
         raise NotImplementedError
 
     @abstractmethod
     def wait(self, *, timeout: float) -> None:
         """
-        Waits for :meth:`notify` to be called or the ``timeout`` to expire.
+        Waits for :meth:`Waiter.notify` to be called or the ``timeout`` to expire.
 
         :param timeout: How long to wait (in seconds) before resuming.
         """
@@ -47,19 +45,26 @@ class Waiter(AbstractWaiter):
 
 
 class AsyncWaiter(AbstractWaiter):
+    """
+    The protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
+    """
+
     __slots__ = ()
 
     @abstractmethod
     def notify(self) -> None:
         """
-        Notifies the waiter that the :doc:`log pattern </log-pattern-matching>` has been fully matched.
-
-        The waiting test case will be resumed.
+        Notifies the test waiting on :meth:`AsyncWaiter.wait` to resume immediately.
         """
         raise NotImplementedError
 
     @abstractmethod
     async def wait(self, *, timeout: float) -> None:
+        """
+        Waits *asynchronously* for :meth:`AsyncWaiter.notify` to be called or the ``timeout`` to expire.
+
+        :param timeout: How long to wait (in seconds) before resuming.
+        """
         raise NotImplementedError
 
 
