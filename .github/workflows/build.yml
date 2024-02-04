@@ -7,19 +7,17 @@ permissions:
 
 jobs:
   test:
-    name: test (python~=${{ matrix.python-version }}, pytest${{ matrix.pytest-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version:
-        - "3.8"
-        - "3.9"
-        - "3.10"
-        - "3.11"
-        - "3.12"
-        pytest-version:
-        - "~=7.0"
-        - "~=8.0"
+        include:
+          - python-version: "3.8"
+          - python-version: "3.9"
+          - python-version: "3.10"
+          - python-version: "3.11"
+          - python-version: "3.12"
+          - lib-versions: "pytest~=7.0"
+          - lib-versions: "pytest~=8.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.python~=${{ matrix.python-version }}.pytest${{ matrix.pytest-version }}
@@ -36,9 +34,10 @@ jobs:
     # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
     # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
     - name: Install dependencies
-      run: |
-        poetry install --no-root
-        poetry run pip install -e .[pytest] "pytest${{ matrix.pytest-version }}"
+      run: poetry install --all-extras
+    - name: Install lib versions
+      run: poetry run pip install -e .[pytest] ${{ matrix.lib-versions }}
+      if: ${{ matrix.lib-versions }}
     # Run checks.
     - name: Check (ruff)
       run: poetry run ruff check
