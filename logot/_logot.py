@@ -5,13 +5,13 @@ from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import ClassVar
+from typing import Callable, ClassVar
 
 from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AbstractWaiter, ThreadedWaiter
+from logot._wait import AbstractWaiter, AsyncWaiter, ThreadedWaiter, Waiter
 
 
 class Logot:
@@ -25,7 +25,7 @@ class Logot:
     :param timeout: See :attr:`Logot.timeout`.
     """
 
-    __slots__ = ("timeout", "_lock", "_queue", "_waiter")
+    __slots__ = ("timeout", "_lock", "_queue", "_waiter", "waiter_factory", "awaiter_factory")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -51,12 +51,20 @@ class Logot:
     Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
     """
 
+    waiter_factory: Callable[[], Waiter]
+
+    awaiter_factory: Callable[[], AsyncWaiter]
+
     def __init__(
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
+        waiter_factory: Callable[[], Waiter] = ThreadedWaiter,
+        awaiter_factory: Callable[[], AsyncWaiter] = AsyncioWaiter,
     ) -> None:
         self.timeout = validate_timeout(timeout)
+        self.waiter_factory = waiter_factory
+        self.awaiter_factory = awaiter_factory
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
         self._waiter: AbstractWaiter | None = None
@@ -136,7 +144,13 @@ class Logot:
         if reduced is None:
             raise AssertionError(f"Logged:\n\n{logged}")
 
-    def wait_for(self, logged: Logged, *, timeout: float | None = None) -> None:
+    def wait_for(
+        self,
+        logged: Logged,
+        *,
+        timeout: float | None = None,
+        waiter_factory: Callable[[], Waiter] | None = None,
+    ) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
@@ -144,14 +158,22 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = ThreadedWaiter()
+        if waiter_factory is None:
+            waiter_factory = self.waiter_factory
+        waiter = waiter_factory()
         timeout = self._start_waiting(logged, waiter, timeout=timeout)
         try:
             waiter.wait(timeout=timeout)
         finally:
             self._stop_waiting(waiter)
 
-    async def await_for(self, logged: Logged, *, timeout: float | None = None) -> None:
+    async def await_for(
+        self,
+        logged: Logged,
+        *,
+        timeout: float | None = None,
+        awaiter_factory: Callable[[], AsyncWaiter] | None = None,
+    ) -> None:
         """
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
@@ -159,7 +181,9 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = AsyncioWaiter()
+        if awaiter_factory is None:
+            awaiter_factory = self.awaiter_factory
+        waiter = awaiter_factory()
         timeout = self._start_waiting(logged, waiter, timeout=timeout)
         try:
             await waiter.wait(timeout=timeout)
