@@ -17,8 +17,6 @@ API reference
 
 .. autoclass:: Waiter
    :members:
-   :inherited-members:
 
 .. autoclass:: AsyncWaiter
    :members:
-   :inherited-members:

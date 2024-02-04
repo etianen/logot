@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from threading import Lock
+from threading import Event
 
 from logot._logged import Logged
 
@@ -21,10 +21,26 @@ class AbstractWaiter(ABC):
 
 
 class Waiter(AbstractWaiter):
+    """
+    A
+    """
+
     __slots__ = ()
 
     @abstractmethod
+    def notify(self) -> None:
+        """
+        Notifies the :class:`Waiter` that the test should be resumed.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def wait(self, *, timeout: float) -> None:
+        """
+        Waits for :meth:`notify` to be called or the ``timeout`` to expire.
+
+        :param timeout: How long to wait (in seconds) before resuming.
+        """
         raise NotImplementedError
 
 
@@ -32,20 +48,27 @@ class AsyncWaiter(AbstractWaiter):
     __slots__ = ()
 
     @abstractmethod
+    def notify(self) -> None:
+        """
+        Notifies the waiter that the :doc:`log pattern </log-pattern-matching>` has been fully matched.
+
+        The waiting test case will be resumed.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     async def wait(self, *, timeout: float) -> None:
         raise NotImplementedError
 
 
 class ThreadedWaiter(Waiter):
-    __slots__ = ("_lock",)
+    __slots__ = ("_event",)
 
     def __init__(self) -> None:
-        # Create an already-acquired lock. This will be released by `notify()`.
-        self._lock = Lock()
-        self._lock.acquire()
+        self._event = Event()
 
     def notify(self) -> None:
-        self._lock.release()
+        self._event.set()
 
     def wait(self, *, timeout: float) -> None:
-        self._lock.acquire(timeout=timeout)
+        self._event.wait(timeout=timeout)
