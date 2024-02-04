@@ -27,14 +27,14 @@ class Waiter(AbstractWaiter):
     @abstractmethod
     def notify(self) -> None:
         """
-        Notifies the test waiting on :meth:`Waiter.wait` to resume immediately.
+        Notifies the test waiting on :meth:`wait` to resume immediately.
         """
         raise NotImplementedError
 
     @abstractmethod
     def wait(self, *, timeout: float) -> None:
         """
-        Waits for :meth:`Waiter.notify` to be called or the ``timeout`` to expire.
+        Waits for :meth:`notify` to be called or the ``timeout`` to expire.
 
         :param timeout: How long to wait (in seconds) before resuming.
         """
@@ -51,14 +51,14 @@ class AsyncWaiter(AbstractWaiter):
     @abstractmethod
     def notify(self) -> None:
         """
-        Notifies the test waiting on :meth:`AsyncWaiter.wait` to resume immediately.
+        Notifies the test waiting on :meth:`wait` to resume immediately.
         """
         raise NotImplementedError
 
     @abstractmethod
     async def wait(self, *, timeout: float) -> None:
         """
-        Waits *asynchronously* for :meth:`AsyncWaiter.notify` to be called or the ``timeout`` to expire.
+        Waits *asynchronously* for :meth:`notify` to be called or the ``timeout`` to expire.
 
         :param timeout: How long to wait (in seconds) before resuming.
         """
