@@ -1,6 +1,6 @@
 name: Build
 
-on: push
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -12,14 +12,14 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "3.12"
+        - "3.8"
+        - "3.9"
+        - "3.10"
+        - "3.11"
+        - "3.12"
         pytest-version:
-          - "~=7.0"
-          - "~=8.0"
+        - "~=7.0"
+        - "~=8.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.python~=${{ matrix.python-version }}.pytest${{ matrix.pytest-version }}
