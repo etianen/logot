@@ -27,7 +27,7 @@ class Logot:
     :param awaiter_factory: See :attr:`Logot.awaiter_factory`.
     """
 
-    __slots__ = ("timeout", "_lock", "_queue", "_waiter", "waiter_factory", "awaiter_factory")
+    __slots__ = ("timeout", "waiter_factory", "awaiter_factory", "_lock", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
