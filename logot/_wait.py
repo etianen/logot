@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from threading import Lock
+from typing import Callable
 
 from logot._logged import Logged
+from logot._typing import TypeAlias
 
 
 class AbstractWaiter(ABC):
@@ -46,6 +48,9 @@ class Waiter(AbstractWaiter):
         raise NotImplementedError
 
 
+WaiterFactory: TypeAlias = Callable[[], Waiter]
+
+
 class AsyncWaiter(AbstractWaiter):
     """
     Protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
@@ -73,6 +78,9 @@ class AsyncWaiter(AbstractWaiter):
         :param timeout: How long to wait (in seconds) before resuming.
         """
         raise NotImplementedError
+
+
+AsyncWaiterFactory: TypeAlias = Callable[[], AsyncWaiter]
 
 
 class ThreadingWaiter(Waiter):

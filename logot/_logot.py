@@ -5,13 +5,13 @@ from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import Callable, ClassVar
+from typing import ClassVar
 
 from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AbstractWaiter, AsyncWaiter, ThreadingWaiter, Waiter
+from logot._wait import AbstractWaiter, AsyncWaiterFactory, ThreadingWaiter, WaiterFactory
 
 
 class Logot:
@@ -46,12 +46,12 @@ class Logot:
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
     """
 
-    DEFAULT_WAITER_FACTORY: ClassVar[Callable[[], Waiter]] = ThreadingWaiter
+    DEFAULT_WAITER_FACTORY: ClassVar[WaiterFactory] = ThreadingWaiter
     """
     The default ``waiter_factory`` factory for new :class:`Logot` instances.
     """
 
-    DEFAULT_AWAITER_FACTORY: ClassVar[Callable[[], AsyncWaiter]] = AsyncioWaiter
+    DEFAULT_AWAITER_FACTORY: ClassVar[AsyncWaiterFactory] = AsyncioWaiter
     """
     The default ``awaiter_factory`` factory for new :class:`Logot` instances.
     """
@@ -63,14 +63,14 @@ class Logot:
     Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
     """
 
-    waiter_factory: Callable[[], Waiter]
+    waiter_factory: WaiterFactory
     """
     The default ``waiter_factory`` for calls to :meth:`wait_for`.
 
     Defaults to :attr:`Logot.DEFAULT_WAITER_FACTORY`.
     """
 
-    awaiter_factory: Callable[[], AsyncWaiter]
+    awaiter_factory: AsyncWaiterFactory
     """
     The default ``awaiter_factory`` for calls to :meth:`await_for`.
 
@@ -81,8 +81,8 @@ class Logot:
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
-        waiter_factory: Callable[[], Waiter] = DEFAULT_WAITER_FACTORY,
-        awaiter_factory: Callable[[], AsyncWaiter] = DEFAULT_AWAITER_FACTORY,
+        waiter_factory: WaiterFactory = DEFAULT_WAITER_FACTORY,
+        awaiter_factory: AsyncWaiterFactory = DEFAULT_AWAITER_FACTORY,
     ) -> None:
         self.timeout = validate_timeout(timeout)
         self.waiter_factory = waiter_factory
@@ -171,7 +171,7 @@ class Logot:
         logged: Logged,
         *,
         timeout: float | None = None,
-        waiter_factory: Callable[[], Waiter] | None = None,
+        waiter_factory: WaiterFactory | None = None,
     ) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
@@ -196,7 +196,7 @@ class Logot:
         logged: Logged,
         *,
         timeout: float | None = None,
-        awaiter_factory: Callable[[], AsyncWaiter] | None = None,
+        awaiter_factory: AsyncWaiterFactory | None = None,
     ) -> None:
         """
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
