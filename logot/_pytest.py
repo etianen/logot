@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from pkgutil import resolve_name
 from typing import Any, Callable
 
 import pytest
 
 from logot._logot import Logot
 from logot._typing import T
+from logot._wait import AsyncWaiterFactory, WaiterFactory
 
 MISSING: Any = object()
 
@@ -29,16 +31,39 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         parser,
         group,
         name="timeout",
-        help="The `default` timeout (in seconds) for `logot`",
+        help="The default `timeout` (in seconds) for `logot`",
+    )
+    _add_option(
+        parser,
+        group,
+        name="waiter_factory",
+        help="The default `waiter_factory` for `logot`",
+    )
+    _add_option(
+        parser,
+        group,
+        name="awaiter_factory",
+        help="The default `awaiter_factory` for `logot`",
     )
 
 
 @pytest.fixture()
-def logot(logot_level: str | int, logot_logger: str | None, logot_timeout: float) -> Generator[Logot, None, None]:
+def logot(
+    logot_level: str | int,
+    logot_logger: str | None,
+    logot_timeout: float,
+    logot_waiter_factory: WaiterFactory,
+    logot_awaiter_factory: AsyncWaiterFactory,
+) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
-    with Logot(timeout=logot_timeout).capturing(level=logot_level, logger=logot_logger) as logot:
+    logot = Logot(
+        timeout=logot_timeout,
+        waiter_factory=logot_waiter_factory,
+        awaiter_factory=logot_awaiter_factory,
+    )
+    with logot.capturing(level=logot_level, logger=logot_logger) as logot:
         yield logot
 
 
@@ -64,6 +89,22 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
     The default `timeout` (in seconds) for `logot`.
     """
     return _get_option(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
+
+
+@pytest.fixture(scope="session")
+def logot_waiter_factory(request: pytest.FixtureRequest) -> WaiterFactory:
+    """
+    The default `waiter_factory` for `logot`.
+    """
+    return _get_option(request, name="waiter_factory", parser=resolve_name, default=Logot.DEFAULT_WAITER_FACTORY)
+
+
+@pytest.fixture(scope="session")
+def logot_awaiter_factory(request: pytest.FixtureRequest) -> AsyncWaiterFactory:
+    """
+    The default `awaiter_factory` for `logot`.
+    """
+    return _get_option(request, name="awaiter_factory", parser=resolve_name, default=Logot.DEFAULT_AWAITER_FACTORY)
 
 
 def get_qualname(name: str) -> str:
