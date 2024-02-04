@@ -1,7 +1,6 @@
 inputs:
   python-version:
     type: string
-    default: "3.x"
 runs:
   using: composite
   steps:
@@ -10,7 +9,7 @@ runs:
       shell: bash
     - uses: actions/setup-python@v5
       with:
-        python-version: ${{ inputs.python-version }}
+        python-version: ${{ inputs.python-version || '3.12' }}
         cache: poetry
     # Run pre-install checks.
     - run: poetry check
