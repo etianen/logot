@@ -48,12 +48,12 @@ class Logot:
 
     DEFAULT_WAITER_FACTORY: ClassVar[WaiterFactory] = ThreadingWaiter
     """
-    The default ``waiter_factory`` factory for new :class:`Logot` instances.
+    The default ``waiter_factory`` for new :class:`Logot` instances.
     """
 
     DEFAULT_AWAITER_FACTORY: ClassVar[AsyncWaiterFactory] = AsyncioWaiter
     """
-    The default ``awaiter_factory`` factory for new :class:`Logot` instances.
+    The default ``awaiter_factory`` for new :class:`Logot` instances.
     """
 
     timeout: float
