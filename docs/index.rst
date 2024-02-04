@@ -60,6 +60,8 @@ Testing this code with :mod:`logot` is easy!
          logot.wait_for(logged.info("Poll finished"))
 
 
+.. _index-testing-threaded:
+
 Testing threaded code
 ---------------------
 
@@ -82,6 +84,8 @@ Use :meth:`Logot.wait_for` to pause your test until the expected logs arrive or 
 
    See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
+
+.. _index-testing-async:
 
 Testing asynchronous code
 -------------------------

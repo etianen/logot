@@ -14,3 +14,11 @@ API reference
 
 .. autoclass:: Captured
    :members:
+
+.. autoclass:: Waiter
+   :members:
+   :inherited-members:
+
+.. autoclass:: AsyncWaiter
+   :members:
+   :inherited-members:
