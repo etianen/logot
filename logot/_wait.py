@@ -22,7 +22,7 @@ class AbstractWaiter(ABC):
 
 class Waiter(AbstractWaiter):
     """
-    A
+    The
     """
 
     __slots__ = ()
@@ -31,6 +31,8 @@ class Waiter(AbstractWaiter):
     def notify(self) -> None:
         """
         Notifies the :class:`Waiter` that the test should be resumed.
+
+        The test waiting on :meth:`wait` will resume.
         """
         raise NotImplementedError
 
