@@ -16,9 +16,6 @@ class AbstractWaiter(ABC):
     def notify(self) -> None:
         raise NotImplementedError
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
-
 
 class Waiter(AbstractWaiter):
     """
