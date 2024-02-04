@@ -178,6 +178,8 @@ class Logot:
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
+        :param waiter_factory: Protocol used to pause tests until expected logs arrive. Defaults to
+            :attr:`Logot.DEFAULT_WAITER_FACTORY`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         if waiter_factory is None:
@@ -201,6 +203,8 @@ class Logot:
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
+        :param waiter_factory: Protocol used to pause tests until expected logs arrive. Defaults to
+            :attr:`Logot.DEFAULT_AWAITER_FACTORY`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         if awaiter_factory is None:
