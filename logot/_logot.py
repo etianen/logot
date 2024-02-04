@@ -81,8 +81,8 @@ class Logot:
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
-        waiter_factory: Callable[[], Waiter] = ThreadingWaiter,
-        awaiter_factory: Callable[[], AsyncWaiter] = AsyncioWaiter,
+        waiter_factory: Callable[[], Waiter] = DEFAULT_WAITER_FACTORY,
+        awaiter_factory: Callable[[], AsyncWaiter] = DEFAULT_AWAITER_FACTORY,
     ) -> None:
         self.timeout = validate_timeout(timeout)
         self.waiter_factory = waiter_factory
