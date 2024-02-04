@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from threading import Event
+from threading import Lock
 
 from logot._logged import Logged
 
@@ -76,13 +76,15 @@ class AsyncWaiter(AbstractWaiter):
 
 
 class ThreadedWaiter(Waiter):
-    __slots__ = ("_event",)
+    __slots__ = ("_lock",)
 
     def __init__(self) -> None:
-        self._event = Event()
+        # Create an already-acquired lock. This will be released by `notify()`.
+        self._lock = Lock()
+        self._lock.acquire()
 
     def notify(self) -> None:
-        self._event.set()
+        self._lock.release()
 
     def wait(self, *, timeout: float) -> None:
-        self._event.wait(timeout=timeout)
+        self._lock.acquire(timeout=timeout)
