@@ -23,6 +23,8 @@ class Logot:
         See :doc:`/index` usage guide.
 
     :param timeout: See :attr:`Logot.timeout`.
+    :param waiter_factory: See :attr:`Logot.waiter_factory`.
+    :param awaiter_factory: See :attr:`Logot.awaiter_factory`.
     """
 
     __slots__ = ("timeout", "_lock", "_queue", "_waiter", "waiter_factory", "awaiter_factory")
@@ -41,19 +43,39 @@ class Logot:
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
-    The default timeout (in seconds) for new :class:`Logot` instances.
+    The default ``timeout`` (in seconds) for new :class:`Logot` instances.
+    """
+
+    DEFAULT_WAITER_FACTORY: ClassVar[Callable[[], Waiter]] = ThreadingWaiter
+    """
+    The default ``waiter_factory`` factory for new :class:`Logot` instances.
+    """
+
+    DEFAULT_AWAITER_FACTORY: ClassVar[Callable[[], AsyncWaiter]] = AsyncioWaiter
+    """
+    The default ``awaiter_factory`` factory for new :class:`Logot` instances.
     """
 
     timeout: float
     """
-    The default timeout (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
+    The default ``timeout`` (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
 
     Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
     """
 
     waiter_factory: Callable[[], Waiter]
+    """
+    The default ``waiter_factory`` for calls to :meth:`wait_for`.
+
+    Defaults to :attr:`Logot.DEFAULT_WAITER_FACTORY`.
+    """
 
     awaiter_factory: Callable[[], AsyncWaiter]
+    """
+    The default ``awaiter_factory`` for calls to :meth:`await_for`.
+
+    Defaults to :attr:`Logot.DEFAULT_AWAITER_FACTORY`.
+    """
 
     def __init__(
         self,
