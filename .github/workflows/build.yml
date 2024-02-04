@@ -20,7 +20,7 @@ jobs:
           - lib-versions: "pytest~=8.0"
       fail-fast: false
     env:
-      COVERAGE_FILE: .coverage.python~=${{ matrix.python-version }}.pytest${{ matrix.pytest-version }}
+      COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}
       PYTHONDEVMODE: 1
     steps:
     - name: Checkout
