@@ -20,6 +20,11 @@ class AbstractWaiter(ABC):
 class Waiter(AbstractWaiter):
     """
     Protocol used by :meth:`Logot.wait_for` to pause tests until expected logs arrive.
+
+    .. note::
+
+        This class is for integration with :ref:`3rd-party threading frameworks <index-testing-threaded>`. It is
+        not generally used when writing tests.
     """
 
     __slots__ = ()
@@ -44,6 +49,11 @@ class Waiter(AbstractWaiter):
 class AsyncWaiter(AbstractWaiter):
     """
     Protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
+
+    .. note::
+
+        This class is for integration with :ref:`3rd-party asynchronous frameworks <index-testing-async>`. It is
+        not generally used when writing tests.
     """
 
     __slots__ = ()
