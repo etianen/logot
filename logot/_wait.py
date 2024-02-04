@@ -19,7 +19,7 @@ class AbstractWaiter(ABC):
 
 class Waiter(AbstractWaiter):
     """
-    The protocol used by :meth:`Logot.wait_for` to pause tests until expected logs arrive.
+    Protocol used by :meth:`Logot.wait_for` to pause tests until expected logs arrive.
     """
 
     __slots__ = ()
@@ -43,7 +43,7 @@ class Waiter(AbstractWaiter):
 
 class AsyncWaiter(AbstractWaiter):
     """
-    The protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
+    Protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
     """
 
     __slots__ = ()
