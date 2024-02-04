@@ -6,6 +6,14 @@ from logot._wait import AsyncWaiter
 
 
 class AsyncioWaiter(AsyncWaiter):
+    """
+    A :class:`logot.AsyncWaiter` implementation for :mod:`asyncio`.
+
+    .. note::
+
+        This is the default :class:`logot.AsyncWaiter` implementation for :mod:`logot`.
+    """
+
     __slots__ = ("_loop", "_event")
 
     def __init__(self) -> None:
