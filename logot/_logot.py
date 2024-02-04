@@ -11,7 +11,7 @@ from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AbstractWaiter, AsyncWaiter, ThreadedWaiter, Waiter
+from logot._wait import AbstractWaiter, AsyncWaiter, ThreadingWaiter, Waiter
 
 
 class Logot:
@@ -59,7 +59,7 @@ class Logot:
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
-        waiter_factory: Callable[[], Waiter] = ThreadedWaiter,
+        waiter_factory: Callable[[], Waiter] = ThreadingWaiter,
         awaiter_factory: Callable[[], AsyncWaiter] = AsyncioWaiter,
     ) -> None:
         self.timeout = validate_timeout(timeout)

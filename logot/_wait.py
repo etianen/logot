@@ -75,7 +75,7 @@ class AsyncWaiter(AbstractWaiter):
         raise NotImplementedError
 
 
-class ThreadedWaiter(Waiter):
+class ThreadingWaiter(Waiter):
     """
     A :class:`logot.Waiter` implementation for :mod:`threading`.
 

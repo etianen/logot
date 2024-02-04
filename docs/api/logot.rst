@@ -21,6 +21,6 @@ API reference
 .. autoclass:: AsyncWaiter
    :members:
 
-.. autoclass:: ThreadedWaiter
+.. autoclass:: ThreadingWaiter
    :members:
    :exclude-members: notify,wait
