@@ -117,14 +117,8 @@ def test_waiter_factory_cli(pytester: pytest.Pytester) -> None:
             assert logot_waiter_factory is ThreadingWaiter
         """
     )
-    pytester.makeini(
-        """
-        [pytest]
-        logot_waiter_factory = logot.ThreadingWaiter
-        """
-    )
     # Run the pytest.
-    result = pytester.runpytest()
+    result = pytester.runpytest("--logot-waiter-factory=logot.ThreadingWaiter")
     result.assert_outcomes(passed=1)
 
 
