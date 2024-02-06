@@ -53,17 +53,17 @@ class LogotTestCase(TestCase):
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
-    logot_awaiter_factory: ClassVar[Callable[[], AsyncWaiter]] = Logot.DEFAULT_AWAITER_FACTORY
+    logot_async_waiter: ClassVar[Callable[[], AsyncWaiter]] = Logot.DEFAULT_ASYNC_WAITER
     """
-    The default ``awaiter_factory`` for :attr:`LogotTestCase.logot`.
+    The default ``async_waiter`` for :attr:`LogotTestCase.logot`.
 
-    Defaults to :attr:`logot.Logot.DEFAULT_AWAITER_FACTORY`.
+    Defaults to :attr:`logot.Logot.DEFAULT_ASYNC_WAITER`.
     """
 
     def _logot_setup(self) -> None:
         self.logot = Logot(
             timeout=self.__class__.logot_timeout,
-            awaiter_factory=self.__class__.logot_awaiter_factory,
+            async_waiter=self.__class__.logot_async_waiter,
         )
         ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
         ctx.__enter__()

@@ -23,11 +23,10 @@ class Logot:
         See :doc:`/index` usage guide.
 
     :param timeout: See :attr:`Logot.timeout`.
-    :param waiter_factory: See :attr:`Logot.waiter_factory`.
-    :param awaiter_factory: See :attr:`Logot.awaiter_factory`.
+    :param async_waiter: See :attr:`Logot.async_waiter`.
     """
 
-    __slots__ = ("timeout", "awaiter_factory", "_lock", "_queue", "_waiter_state")
+    __slots__ = ("timeout", "async_waiter", "_lock", "_queue", "_wait")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -46,9 +45,9 @@ class Logot:
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
     """
 
-    DEFAULT_AWAITER_FACTORY: ClassVar[Callable[[], AsyncWaiter]] = AsyncioWaiter
+    DEFAULT_ASYNC_WAITER: ClassVar[Callable[[], AsyncWaiter]] = AsyncioWaiter
     """
-    The default ``awaiter_factory`` for new :class:`Logot` instances.
+    The default ``async_waiter`` for new :class:`Logot` instances.
     """
 
     timeout: float
@@ -58,24 +57,24 @@ class Logot:
     Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
     """
 
-    awaiter_factory: Callable[[], AsyncWaiter]
+    async_waiter: Callable[[], AsyncWaiter]
     """
-    The default ``awaiter_factory`` for calls to :meth:`await_for`.
+    The default ``async_waiter`` for calls to :meth:`await_for`.
 
-    Defaults to :attr:`Logot.DEFAULT_AWAITER_FACTORY`.
+    Defaults to :attr:`Logot.DEFAULT_ASYNC_WAITER`.
     """
 
     def __init__(
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
-        awaiter_factory: Callable[[], AsyncWaiter] = DEFAULT_AWAITER_FACTORY,
+        async_waiter: Callable[[], AsyncWaiter] = DEFAULT_ASYNC_WAITER,
     ) -> None:
         self.timeout = validate_timeout(timeout)
-        self.awaiter_factory = awaiter_factory
+        self.async_waiter = async_waiter
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
-        self._waiter_state: _WaiterState[Any] | None = None
+        self._wait: _Wait[Any] | None = None
 
     def capturing(
         self,
@@ -121,11 +120,11 @@ class Logot:
         """
         with self._lock:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
-            if self._waiter_state is not None and self._waiter_state.logged is not None:
-                self._waiter_state.logged = self._waiter_state.logged._reduce(captured)
+            if self._wait is not None and self._wait.logged is not None:
+                self._wait.logged = self._wait.logged._reduce(captured)
                 # If the waiter has fully reduced, notify the blocked caller.
-                if self._waiter_state.logged is None:
-                    self._waiter_state.waiter.release()
+                if self._wait.logged is None:
+                    self._wait.waiter.release()
                 return
             # Otherwise, buffer the captured log.
             self._queue.append(captured)
@@ -178,20 +177,20 @@ class Logot:
         logged: Logged,
         *,
         timeout: float | None = None,
-        awaiter_factory: Callable[[], AsyncWaiter] | None = None,
+        async_waiter: Callable[[], AsyncWaiter] | None = None,
     ) -> None:
         """
         Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
-        :param awaiter_factory: Protocol used to pause tests until expected logs arrive. Defaults to
-            :attr:`Logot.DEFAULT_AWAITER_FACTORY`.
+        :param async_waiter: Protocol used to pause tests until expected logs arrive. Defaults to
+            :attr:`Logot.DEFAULT_ASYNC_WAITER`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        if awaiter_factory is None:
-            awaiter_factory = self.awaiter_factory
-        waiter = self._start_waiting(logged, awaiter_factory, timeout=timeout)
+        if async_waiter is None:
+            async_waiter = self.async_waiter
+        waiter = self._start_waiting(logged, async_waiter, timeout=timeout)
         if waiter is None:
             return
         try:
@@ -206,8 +205,8 @@ class Logot:
         self._queue.clear()
 
     def _start_waiting(
-        self, logged: Logged | None, waiter_factory: Callable[[], W], *, timeout: float | None
-    ) -> _WaiterState[W] | None:
+        self, logged: Logged | None, waiter: Callable[[], W], *, timeout: float | None
+    ) -> _Wait[W] | None:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -216,21 +215,20 @@ class Logot:
             else:
                 timeout = validate_timeout(timeout)
             # Ensure no other waiters.
-            if self._waiter_state is not None:  # pragma: no cover
+            if self._wait is not None:  # pragma: no cover
                 raise RuntimeError("Multiple concurrent waiters are not supported")
             # Apply an immediate reduction.
             logged = self._reduce(logged)
             if logged is None:
                 return None
-            # Set a waiter.
-            waiter = self._waiter_state = _WaiterState(logged=logged, timeout=timeout, waiter=waiter_factory())
             # All done!
-            return waiter
+            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter=waiter())
+            return wait
 
-    def _stop_waiting(self, waiter: _WaiterState[Any]) -> None:
+    def _stop_waiting(self, waiter: _Wait[Any]) -> None:
         with self._lock:
             # Clear the waiter.
-            self._waiter_state = None
+            self._wait = None
             # Error if the waiter logs are not fully reduced.
             if waiter.logged is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.logged}")
@@ -292,7 +290,7 @@ class _Handler(logging.Handler):
         self._logot.capture(captured)
 
 
-class _WaiterState(Generic[W]):
+class _Wait(Generic[W]):
     __slots__ = ("logged", "timeout", "waiter")
 
     def __init__(self, *, logged: Logged | None, timeout: float, waiter: W) -> None:

@@ -42,8 +42,8 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
     _add_option(
         parser,
         group,
-        name="awaiter_factory",
-        help="The default `awaiter_factory` for `logot`",
+        name="async_waiter",
+        help="The default `async_waiter` for `logot`",
     )
 
 
@@ -52,14 +52,14 @@ def logot(
     logot_level: str | int,
     logot_logger: str | None,
     logot_timeout: float,
-    logot_awaiter_factory: Callable[[], AsyncWaiter],
+    logot_async_waiter: Callable[[], AsyncWaiter],
 ) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
     logot = Logot(
         timeout=logot_timeout,
-        awaiter_factory=logot_awaiter_factory,
+        async_waiter=logot_async_waiter,
     )
     with logot.capturing(level=logot_level, logger=logot_logger) as logot:
         yield logot
@@ -90,11 +90,11 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
 
 
 @pytest.fixture(scope="session")
-def logot_awaiter_factory(request: pytest.FixtureRequest) -> Callable[[], AsyncWaiter]:
+def logot_async_waiter(request: pytest.FixtureRequest) -> Callable[[], AsyncWaiter]:
     """
-    The default `awaiter_factory` for `logot`.
+    The default `async_waiter` for `logot`.
     """
-    return _get_option(request, name="awaiter_factory", parser=resolve_name, default=Logot.DEFAULT_AWAITER_FACTORY)
+    return _get_option(request, name="async_waiter", parser=resolve_name, default=Logot.DEFAULT_ASYNC_WAITER)
 
 
 def get_qualname(name: str) -> str:

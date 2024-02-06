@@ -84,5 +84,5 @@ def test_timeout_cli(pytester: pytest.Pytester) -> None:
     assert_fixture_cli(pytester, "timeout", "boom!", passed=False)
 
 
-def test_awaiter_factory_default(logot_awaiter_factory: Callable[[], AsyncWaiter]) -> None:
-    assert logot_awaiter_factory is AsyncioWaiter
+def test_async_waiter_default(logot_async_waiter: Callable[[], AsyncWaiter]) -> None:
+    assert logot_async_waiter is AsyncioWaiter

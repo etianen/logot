@@ -52,15 +52,10 @@ Use the following CLI and :external+pytest:doc:`configuration <reference/customi
 
    Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
 
-``--logot-waiter-factory``, ``logot_waiter_factory``
-   The default ``waiter_factory`` for the ``logot`` fixture.
+``--logot-async-waiter``, ``logot_async_waiter``
+   The default ``async_waiter`` for the ``logot`` fixture.
 
-   Defaults to :attr:`logot.Logot.DEFAULT_WAITER_FACTORY`.
-
-``--logot-awaiter-factory``, ``logot_awaiter_factory``
-   The default ``awaiter_factory`` for the ``logot`` fixture.
-
-   Defaults to :attr:`logot.Logot.DEFAULT_AWAITER_FACTORY`.
+   Defaults to :attr:`logot.Logot.DEFAULT_ASYNC_WAITER`.
 
 
 Available fixtures
@@ -88,12 +83,7 @@ The following fixtures are available in the :mod:`pytest` plugin:
 
    Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`
 
-``logot_waiter_factory:`` ``Callable`` [[], :class:`Waiter` ]
-   The default ``waiter_factory`` for the ``logot`` fixture.
+``logot_async_waiter:`` ``Callable`` [[], :class:`AsyncWaiter` ]
+   The default ``async_waiter`` for the ``logot`` fixture.
 
-   Defaults to :attr:`logot.Logot.DEFAULT_WAITER_FACTORY`.
-
-``logot_awaiter_factory:`` ``Callable`` [[], :class:`AsyncWaiter` ]
-   The default ``awaiter_factory`` for the ``logot`` fixture.
-
-   Defaults to :attr:`logot.Logot.DEFAULT_AWAITER_FACTORY`.
+   Defaults to :attr:`logot.Logot.DEFAULT_ASYNC_WAITER`.
