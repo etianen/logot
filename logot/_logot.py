@@ -229,13 +229,13 @@ class Logot:
             wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter=waiter())
             return wait
 
-    def _stop_waiting(self, waiter: _Wait[Any]) -> None:
+    def _stop_waiting(self, wait: _Wait[Any]) -> None:
         with self._lock:
             # Clear the waiter.
             self._wait = None
             # Error if the waiter logs are not fully reduced.
-            if waiter.logged is not None:
-                raise AssertionError(f"Not logged:\n\n{waiter.logged}")
+            if wait.logged is not None:
+                raise AssertionError(f"Not logged:\n\n{wait.logged}")
 
     def _reduce(self, logged: Logged | None) -> Logged | None:
         # Drain the queue until the log is fully reduced.
