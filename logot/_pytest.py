@@ -8,7 +8,7 @@ import pytest
 
 from logot._logot import Logot
 from logot._typing import T
-from logot._wait import AsyncWaiterFactory
+from logot._wait import AsyncWaiter
 
 MISSING: Any = object()
 
@@ -52,7 +52,7 @@ def logot(
     logot_level: str | int,
     logot_logger: str | None,
     logot_timeout: float,
-    logot_awaiter_factory: AsyncWaiterFactory,
+    logot_awaiter_factory: Callable[[], AsyncWaiter],
 ) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
@@ -90,7 +90,7 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
 
 
 @pytest.fixture(scope="session")
-def logot_awaiter_factory(request: pytest.FixtureRequest) -> AsyncWaiterFactory:
+def logot_awaiter_factory(request: pytest.FixtureRequest) -> Callable[[], AsyncWaiter]:
     """
     The default `awaiter_factory` for `logot`.
     """

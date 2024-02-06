@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from threading import Lock
-from typing import Callable, Protocol, TypeVar
-
-from logot._typing import TypeAlias
+from typing import Protocol, TypeVar
 
 
 class Waiter(Protocol):
@@ -50,6 +48,3 @@ class AsyncWaiter(ABC):
         :param timeout: How long to wait (in seconds) before resuming.
         """
         raise NotImplementedError
-
-
-AsyncWaiterFactory: TypeAlias = Callable[[], AsyncWaiter]

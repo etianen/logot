@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from shlex import quote
-from typing import Any
+from typing import Any, Callable
 
 import pytest
 
 from logot import Logot
 from logot._pytest import get_optname, get_qualname
-from logot._wait import AsyncWaiterFactory
+from logot._wait import AsyncWaiter
 from logot.asyncio import AsyncioWaiter
 
 
@@ -84,5 +84,5 @@ def test_timeout_cli(pytester: pytest.Pytester) -> None:
     assert_fixture_cli(pytester, "timeout", "boom!", passed=False)
 
 
-def test_awaiter_factory_default(logot_awaiter_factory: AsyncWaiterFactory) -> None:
+def test_awaiter_factory_default(logot_awaiter_factory: Callable[[], AsyncWaiter]) -> None:
     assert logot_awaiter_factory is AsyncioWaiter

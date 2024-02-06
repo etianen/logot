@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import logging
-from typing import ClassVar
+from typing import Callable, ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Logot
-from logot._wait import AsyncWaiterFactory
+from logot._wait import AsyncWaiter
 
 
 class LogotTestCase(TestCase):
@@ -53,7 +53,7 @@ class LogotTestCase(TestCase):
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
-    logot_awaiter_factory: ClassVar[AsyncWaiterFactory] = Logot.DEFAULT_AWAITER_FACTORY
+    logot_awaiter_factory: ClassVar[Callable[[], AsyncWaiter]] = Logot.DEFAULT_AWAITER_FACTORY
     """
     The default ``awaiter_factory`` for :attr:`LogotTestCase.logot`.
 
