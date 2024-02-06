@@ -12,7 +12,7 @@ from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AsyncWaiterFactory, W
+from logot._wait import AsyncWaiterFactory, W, create_threading_waiter
 
 
 class Logot:
@@ -166,11 +166,9 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        with self._lock:
-            waiter = self._start_waiting(logged, Lock, timeout=timeout)
-            if waiter is None:
-                return
-            waiter.waiter.acquire()
+        waiter = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
+        if waiter is None:
+            return
         try:
             waiter.waiter.acquire(timeout=waiter.timeout)
         finally:
@@ -194,10 +192,9 @@ class Logot:
         """
         if awaiter_factory is None:
             awaiter_factory = self.awaiter_factory
-        with self._lock:
-            waiter = self._start_waiting(logged, awaiter_factory, timeout=timeout)
-            if waiter is None:
-                return
+        waiter = self._start_waiting(logged, awaiter_factory, timeout=timeout)
+        if waiter is None:
+            return
         try:
             await waiter.waiter.wait(timeout=waiter.timeout)
         finally:
@@ -207,29 +204,29 @@ class Logot:
         """
         Clears any captured logs.
         """
-        with self._lock:
-            self._queue.clear()
+        self._queue.clear()
 
     def _start_waiting(
         self, logged: Logged | None, waiter_factory: Callable[[], W], *, timeout: float | None
     ) -> _Waiter[W] | None:
-        # If no timeout is provided, use the default timeout.
-        # Otherwise, validate and use the provided timeout.
-        if timeout is None:
-            timeout = self.timeout
-        else:
-            timeout = validate_timeout(timeout)
-        # Ensure no other waiters.
-        if self._waiter is not None:  # pragma: no cover
-            raise RuntimeError("Multiple concurrent waiters are not supported")
-        # Apply an immediate reduction.
-        logged = self._reduce(logged)
-        if logged is None:
-            return None
-        # Set a waiter.
-        waiter = self._waiter = _Waiter(logged=logged, timeout=timeout, waiter=waiter_factory())
-        # All done!
-        return waiter
+        with self._lock:
+            # If no timeout is provided, use the default timeout.
+            # Otherwise, validate and use the provided timeout.
+            if timeout is None:
+                timeout = self.timeout
+            else:
+                timeout = validate_timeout(timeout)
+            # Ensure no other waiters.
+            if self._waiter is not None:  # pragma: no cover
+                raise RuntimeError("Multiple concurrent waiters are not supported")
+            # Apply an immediate reduction.
+            logged = self._reduce(logged)
+            if logged is None:
+                return None
+            # Set a waiter.
+            waiter = self._waiter = _Waiter(logged=logged, timeout=timeout, waiter=waiter_factory())
+            # All done!
+            return waiter
 
     def _stop_waiting(self, waiter: _Waiter[Any]) -> None:
         with self._lock:

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from threading import Lock
 from typing import Callable, Protocol, TypeVar
 
 from logot._typing import TypeAlias
@@ -13,6 +14,13 @@ class AbstractWaiter(Protocol):
 
 
 W = TypeVar("W", bound=AbstractWaiter)
+
+
+def create_threading_waiter() -> Lock:
+    # Create an already-acquired lock. This will be released by `release()`.
+    lock = Lock()
+    lock.acquire()
+    return lock
 
 
 class AsyncWaiter(ABC):
