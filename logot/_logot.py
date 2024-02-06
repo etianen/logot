@@ -7,8 +7,8 @@ from threading import Lock
 from types import TracebackType
 from typing import Any, Callable, ClassVar, Generic
 
-from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
+from logot._import import LazyCallable
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
@@ -45,7 +45,7 @@ class Logot:
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
     """
 
-    DEFAULT_ASYNC_WAITER: ClassVar[Callable[[], AsyncWaiter]] = AsyncioWaiter
+    DEFAULT_ASYNC_WAITER: ClassVar[Callable[[], AsyncWaiter]] = LazyCallable("logot.asyncio", "AsyncioWaiter")
     """
     The default ``async_waiter`` for new :class:`Logot` instances.
     """
