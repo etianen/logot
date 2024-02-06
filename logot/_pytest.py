@@ -36,12 +36,6 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
     _add_option(
         parser,
         group,
-        name="waiter_factory",
-        help="The default `waiter_factory` for `logot`",
-    )
-    _add_option(
-        parser,
-        group,
         name="async_waiter",
         help="The default `async_waiter` for `logot`",
     )
