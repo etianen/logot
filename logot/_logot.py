@@ -122,7 +122,7 @@ class Logot:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
             if self._wait is not None and self._wait.logged is not None:
                 self._wait.logged = self._wait.logged._reduce(captured)
-                # If the waiter has fully reduced, notify the blocked caller.
+                # If the waiter has fully reduced, release the blocked caller.
                 if self._wait.logged is None:
                     self._wait.waiter.release()
                 return

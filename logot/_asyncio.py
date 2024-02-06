@@ -17,7 +17,7 @@ class AsyncioWaiter(AsyncWaiter):
     __slots__ = ("_loop", "_future")
 
     def __init__(self) -> None:
-        # Create an unresolved `asyncio.Future`. This will be resolved by `notify()`.
+        # Create an unresolved `asyncio.Future`. This will be resolved by `release()`.
         self._loop = asyncio.get_running_loop()
         self._future: asyncio.Future[None] = self._loop.create_future()
 
@@ -35,5 +35,5 @@ class AsyncioWaiter(AsyncWaiter):
         try:
             self._future.set_result(None)
         except asyncio.InvalidStateError:  # pragma: no cover
-            # It's possible that the timeout and the `notify()` will both occur in the same tick of the event loop.
+            # It's possible that the timeout and the `release()` will both occur in the same tick of the event loop.
             pass

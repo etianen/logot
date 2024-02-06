@@ -9,4 +9,4 @@ API reference
 
 .. autoclass:: AsyncioWaiter
    :members:
-   :exclude-members: notify,wait
+   :exclude-members: release,wait

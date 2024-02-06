@@ -43,7 +43,7 @@ class AsyncWaiter(ABC):
     @abstractmethod
     async def wait(self, *, timeout: float) -> None:
         """
-        Waits *asynchronously* for :meth:`notify` to be called or the ``timeout`` to expire.
+        Waits *asynchronously* for :meth:`release` to be called or the ``timeout`` to expire.
 
         :param timeout: How long to wait (in seconds) before resuming.
         """
