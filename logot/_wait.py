@@ -7,13 +7,13 @@ from typing import Callable, Protocol, TypeVar
 from logot._typing import TypeAlias
 
 
-class AbstractWaiter(Protocol):
+class Waiter(Protocol):
     @abstractmethod
     def release(self) -> None:
         raise NotImplementedError
 
 
-W = TypeVar("W", bound=AbstractWaiter)
+W = TypeVar("W", bound=Waiter)
 
 
 def create_threading_waiter() -> Lock:
