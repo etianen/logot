@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import logging
 from collections import deque
 from contextlib import AbstractContextManager
@@ -293,9 +292,10 @@ class _Handler(logging.Handler):
         self._logot.capture(captured)
 
 
-@dataclasses.dataclass()
 class _WaiterState(Generic[W]):
     __slots__ = ("logged", "timeout", "waiter")
-    logged: Logged | None
-    timeout: float
-    waiter: W
+
+    def __init__(self, *, logged: Logged | None, timeout: float, waiter: W) -> None:
+        self.logged = logged
+        self.timeout = timeout
+        self.waiter = waiter
