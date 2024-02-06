@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 import pytest
 
-from logot._import import import_name
+from logot._import import import_any_parsed
 from logot._logot import Logot
 from logot._typing import T
 from logot._wait import AsyncWaiter
@@ -88,7 +88,7 @@ def logot_async_waiter(request: pytest.FixtureRequest) -> Callable[[], AsyncWait
     """
     The default `async_waiter` for the `logot` fixture.
     """
-    return _get_option(request, name="async_waiter", parser=import_name, default=Logot.DEFAULT_ASYNC_WAITER)
+    return _get_option(request, name="async_waiter", parser=import_any_parsed, default=Logot.DEFAULT_ASYNC_WAITER)
 
 
 def get_qualname(name: str) -> str:

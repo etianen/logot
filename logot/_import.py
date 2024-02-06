@@ -9,6 +9,6 @@ def import_any(module: str, name: str) -> Any:
     return getattr(module_obj, name)
 
 
-def import_name(name: str) -> Any:
+def import_any_parsed(name: str) -> Any:
     module, name = name.rsplit(".", 1)
     return import_any(module, name)
