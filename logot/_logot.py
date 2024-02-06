@@ -12,7 +12,7 @@ from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AsyncWaiterFactory, ThreadingWaiter, W
+from logot._wait import AsyncWaiterFactory, W, create_threading_waiter
 
 
 class Logot:
@@ -166,11 +166,11 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._start_waiting(logged, ThreadingWaiter, timeout=timeout)
+        waiter = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
         if waiter is None:
             return
         try:
-            waiter.waiter.wait(timeout=waiter.timeout)
+            waiter.waiter.acquire(timeout=waiter.timeout)
         finally:
             self._stop_waiting(waiter)
 

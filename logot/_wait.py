@@ -16,19 +16,11 @@ class AbstractWaiter(Protocol):
 W = TypeVar("W", bound=AbstractWaiter)
 
 
-class ThreadingWaiter:
-    __slots__ = ("_lock",)
-
-    def __init__(self) -> None:
-        # Create an already-acquired lock. This will be released by `notify()`.
-        self._lock = Lock()
-        self._lock.acquire()
-
-    def release(self) -> None:
-        self._lock.release()
-
-    def wait(self, *, timeout: float) -> None:
-        self._lock.acquire(timeout=timeout)
+def create_threading_waiter() -> Lock:
+    # Create an already-acquired lock. This will be released by `release()`.
+    lock = Lock()
+    lock.acquire()
+    return lock
 
 
 class AsyncWaiter(ABC):
