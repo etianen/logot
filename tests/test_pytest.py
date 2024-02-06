@@ -84,7 +84,7 @@ def test_timeout_config_fail(pytester: pytest.Pytester) -> None:
 
 
 def test_async_waiter_default(logot_async_waiter: Callable[[], AsyncWaiter]) -> None:
-    assert logot_async_waiter is AsyncioWaiter
+    assert logot_async_waiter is Logot.DEFAULT_ASYNC_WAITER
 
 
 def test_async_waiter_config_pass(pytester: pytest.Pytester) -> None:
