@@ -61,6 +61,10 @@ class Logot:
     """
     The default ``async_waiter`` for calls to :meth:`await_for`.
 
+    .. note::
+
+        This is for integration with 3rd-party asynchronous frameworks.
+
     Defaults to :attr:`Logot.DEFAULT_ASYNC_WAITER`.
     """
 
@@ -184,8 +188,8 @@ class Logot:
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
-        :param async_waiter: Protocol used to pause tests until expected logs arrive. Defaults to
-            :attr:`Logot.DEFAULT_ASYNC_WAITER`.
+        :param async_waiter: Protocol used to pause tests until expected logs arrive. This is for integration with
+            3rd-party asynchronous frameworks. Defaults to :attr:`Logot.async_waiter`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         if async_waiter is None:

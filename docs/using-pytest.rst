@@ -57,6 +57,11 @@ Use the following CLI and :external+pytest:doc:`configuration <reference/customi
 
    Defaults to :attr:`logot.Logot.DEFAULT_ASYNC_WAITER`.
 
+.. note::
+
+   When both CLI and :external+pytest:doc:`configuration <reference/customize>` options are given, the CLI option takes
+   precidence.
+
 
 Available fixtures
 ------------------
@@ -66,24 +71,14 @@ The following fixtures are available in the :mod:`pytest` plugin:
 ``logot:`` :class:`logot.Logot`
    An initialized :class:`logot.Logot` instance with :doc:`log capturing </log-capturing>` enabled.
 
-   Use this to make log assertions in your tests.
-
 ``logot_level:`` :class:`str` | :class:`int`
    The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
-
-   Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
 
 ``logot_logger:`` :class:`str` | :data:`None`
    The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
-   Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
-
 ``logot_timeout:`` :class:`float`
    The default ``timeout`` (in seconds) for the ``logot`` fixture.
 
-   Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`
-
 ``logot_async_waiter:`` ``Callable`` [[], :class:`AsyncWaiter` ]
    The default ``async_waiter`` for the ``logot`` fixture.
-
-   Defaults to :attr:`logot.Logot.DEFAULT_ASYNC_WAITER`.

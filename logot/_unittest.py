@@ -25,10 +25,6 @@ class LogotTestCase(TestCase):
     The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
-
-    .. note::
-
-        Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
     logot_logger: ClassVar[logging.Logger | str | None] = Logot.DEFAULT_LOGGER
@@ -36,10 +32,6 @@ class LogotTestCase(TestCase):
     The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
-
-    .. note::
-
-        Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
@@ -47,10 +39,6 @@ class LogotTestCase(TestCase):
     The default ``timeout`` (in seconds) for :attr:`LogotTestCase.logot`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_TIMEOUT`.
-
-    .. note::
-
-        Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
     logot_async_waiter: ClassVar[Callable[[], AsyncWaiter]] = Logot.DEFAULT_ASYNC_WAITER
