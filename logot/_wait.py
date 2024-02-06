@@ -2,28 +2,21 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from threading import Lock
-from typing import Callable, TypeVar
+from typing import Callable, Protocol, TypeVar
 
-from logot._logged import Logged
 from logot._typing import TypeAlias
 
 
-class AbstractWaiter(ABC):
-    __slots__ = ("_logged", "_timeout")
-
-    # These protected attrs are populated by `Logot._start_waiting()`.
-    _logged: Logged | None
-    _timeout: float
-
+class AbstractWaiter(Protocol):
     @abstractmethod
-    def notify(self) -> None:
+    def release(self) -> None:
         raise NotImplementedError
 
 
 W = TypeVar("W", bound=AbstractWaiter)
 
 
-class ThreadingWaiter(AbstractWaiter):
+class ThreadingWaiter:
     __slots__ = ("_lock",)
 
     def __init__(self) -> None:
@@ -31,14 +24,14 @@ class ThreadingWaiter(AbstractWaiter):
         self._lock = Lock()
         self._lock.acquire()
 
-    def notify(self) -> None:
+    def release(self) -> None:
         self._lock.release()
 
     def wait(self, *, timeout: float) -> None:
         self._lock.acquire(timeout=timeout)
 
 
-class AsyncWaiter(AbstractWaiter):
+class AsyncWaiter(ABC):
     """
     Protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
 
@@ -51,7 +44,7 @@ class AsyncWaiter(AbstractWaiter):
     __slots__ = ()
 
     @abstractmethod
-    def notify(self) -> None:
+    def release(self) -> None:
         """
         Notifies the test waiting on :meth:`wait` to resume immediately.
         """

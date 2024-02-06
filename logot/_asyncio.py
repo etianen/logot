@@ -21,7 +21,7 @@ class AsyncioWaiter(AsyncWaiter):
         self._loop = asyncio.get_running_loop()
         self._future: asyncio.Future[None] = self._loop.create_future()
 
-    def notify(self) -> None:
+    def release(self) -> None:
         self._loop.call_soon_threadsafe(self._resolve)
 
     async def wait(self, *, timeout: float) -> None:
