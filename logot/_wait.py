@@ -4,11 +4,16 @@ from abc import ABC, abstractmethod
 from threading import Lock
 from typing import Callable, TypeVar
 
+from logot._logged import Logged
 from logot._typing import TypeAlias
 
 
 class AbstractWaiter(ABC):
-    __slots__ = ()
+    __slots__ = ("_logged", "_timeout")
+
+    # These protected attrs are populated by `Logot._start_waiting()`.
+    _logged: Logged | None
+    _timeout: float
 
     @abstractmethod
     def notify(self) -> None:
