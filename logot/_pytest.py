@@ -31,13 +31,13 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         parser,
         group,
         name="timeout",
-        help="The default `timeout` (in seconds) for `logot`",
+        help="The default `timeout` (in seconds) for the `logot` fixture",
     )
     _add_option(
         parser,
         group,
         name="async_waiter",
-        help="The default `async_waiter` for `logot`",
+        help="The default `async_waiter` for the `logot` fixture",
     )
 
 
@@ -78,7 +78,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
 @pytest.fixture(scope="session")
 def logot_timeout(request: pytest.FixtureRequest) -> float:
     """
-    The default `timeout` (in seconds) for `logot`.
+    The default `timeout` (in seconds) for the `logot` fixture.
     """
     return _get_option(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
 
@@ -86,7 +86,7 @@ def logot_timeout(request: pytest.FixtureRequest) -> float:
 @pytest.fixture(scope="session")
 def logot_async_waiter(request: pytest.FixtureRequest) -> Callable[[], AsyncWaiter]:
     """
-    The default `async_waiter` for `logot`.
+    The default `async_waiter` for the `logot` fixture.
     """
     return _get_option(request, name="async_waiter", parser=resolve_name, default=Logot.DEFAULT_ASYNC_WAITER)
 
