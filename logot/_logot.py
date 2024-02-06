@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-import logging
+from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
 from types import TracebackType
-from typing import Any, Callable, ClassVar, Generic
+from typing import Any, Callable, ClassVar, Generic, overload
 
 from logot._capture import Captured
 from logot._import import LazyCallable
 from logot._logged import Logged
-from logot._validate import validate_level, validate_logger, validate_timeout
+from logot._typing import P
+from logot._validate import validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
 
 
@@ -80,11 +81,31 @@ class Logot:
         self._queue: deque[Captured] = deque()
         self._wait: _Wait[Any] | None = None
 
+    @overload
     def capturing(
         self,
-        *,
+        capturer: Callable[P, Capturer],
+        /,
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> AbstractContextManager[Logot]:
+        ...
+
+    @overload
+    def capturing(
+        self,
+        /,
         level: str | int = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
+        logger: str | None = DEFAULT_LOGGER,
+    ) -> AbstractContextManager[Logot]:
+        ...
+
+    def capturing(
+        self,
+        capturer: Callable[..., Capturer] = LazyCallable("logot.logged", "Capturer"),
+        /,
+        *args: Any,
+        **kwargs: Any,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
@@ -100,9 +121,7 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
-        level = validate_level(level)
-        logger = validate_logger(logger)
-        return _Capturing(self, _Handler(level, self), logger=logger)
+        return _Capturing(self, capturer(*args, **kwargs))
 
     def capture(self, captured: Captured) -> None:
         """
@@ -253,21 +272,27 @@ class Logot:
         return f"Logot(timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
 
 
-class _Capturing:
-    __slots__ = ("_logot", "_handler", "_logger", "_prev_levelno")
+class Capturer(ABC):
+    __slots__ = ()
 
-    def __init__(self, logot: Logot, handler: logging.Handler, *, logger: logging.Logger) -> None:
+    @abstractmethod
+    def start_capturing(self, logot: Logot) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stop_capturing(self) -> None:
+        raise NotImplementedError
+
+
+class _Capturing:
+    __slots__ = ("_logot", "_capturer")
+
+    def __init__(self, logot: Logot, capturer: Capturer) -> None:
         self._logot = logot
-        self._handler = handler
-        self._logger = logger
+        self._capturer = capturer
 
     def __enter__(self) -> Logot:
-        # If the logger is less verbose than the handler, force it to the necessary verboseness.
-        self._prev_levelno = self._logger.level
-        if self._handler.level < self._logger.level:
-            self._logger.setLevel(self._handler.level)
-        # Add the handler.
-        self._logger.addHandler(self._handler)
+        self._capturer.start_capturing(self._logot)
         return self._logot
 
     def __exit__(
@@ -276,22 +301,7 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
-        # Remove the handler.
-        self._logger.removeHandler(self._handler)
-        # Restore the previous level.
-        self._logger.setLevel(self._prev_levelno)
-
-
-class _Handler(logging.Handler):
-    __slots__ = ("_logot",)
-
-    def __init__(self, level: str | int, logot: Logot) -> None:
-        super().__init__(level)
-        self._logot = logot
-
-    def emit(self, record: logging.LogRecord) -> None:
-        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno)
-        self._logot.capture(captured)
+        self._capturer.stop_capturing()
 
 
 class _Wait(Generic[W]):

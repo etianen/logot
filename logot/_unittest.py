@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from typing import Callable, ClassVar
 from unittest import TestCase, TestResult
 
@@ -27,7 +26,7 @@ class LogotTestCase(TestCase):
     Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
     """
 
-    logot_logger: ClassVar[logging.Logger | str | None] = Logot.DEFAULT_LOGGER
+    logot_logger: ClassVar[str | None] = Logot.DEFAULT_LOGGER
     """
     The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
