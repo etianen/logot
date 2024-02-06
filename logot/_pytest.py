@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Callable
+from typing import Callable
 
 import pytest
 
 from logot._import import import_any_parsed
 from logot._logot import Logot
-from logot._typing import T
+from logot._typing import MISSING, T
 from logot._wait import AsyncWaiter
-
-MISSING: Any = object()
 
 
 def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginManager) -> None:
