@@ -28,7 +28,7 @@ class Logot:
     :param awaiter_factory: See :attr:`Logot.awaiter_factory`.
     """
 
-    __slots__ = ("timeout", "awaiter_factory", "_lock", "_queue", "_waiter")
+    __slots__ = ("timeout", "awaiter_factory", "_lock", "_queue", "_waiter_state")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -76,7 +76,7 @@ class Logot:
         self.awaiter_factory = awaiter_factory
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
-        self._waiter: _Waiter[Any] | None = None
+        self._waiter_state: _WaiterState[Any] | None = None
 
     def capturing(
         self,
@@ -122,11 +122,11 @@ class Logot:
         """
         with self._lock:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
-            if self._waiter is not None and self._waiter.logged is not None:
-                self._waiter.logged = self._waiter.logged._reduce(captured)
+            if self._waiter_state is not None and self._waiter_state.logged is not None:
+                self._waiter_state.logged = self._waiter_state.logged._reduce(captured)
                 # If the waiter has fully reduced, notify the blocked caller.
-                if self._waiter.logged is None:
-                    self._waiter.waiter.release()
+                if self._waiter_state.logged is None:
+                    self._waiter_state.waiter.release()
                 return
             # Otherwise, buffer the captured log.
             self._queue.append(captured)
@@ -208,7 +208,7 @@ class Logot:
 
     def _start_waiting(
         self, logged: Logged | None, waiter_factory: Callable[[], W], *, timeout: float | None
-    ) -> _Waiter[W] | None:
+    ) -> _WaiterState[W] | None:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -217,21 +217,21 @@ class Logot:
             else:
                 timeout = validate_timeout(timeout)
             # Ensure no other waiters.
-            if self._waiter is not None:  # pragma: no cover
+            if self._waiter_state is not None:  # pragma: no cover
                 raise RuntimeError("Multiple concurrent waiters are not supported")
             # Apply an immediate reduction.
             logged = self._reduce(logged)
             if logged is None:
                 return None
             # Set a waiter.
-            waiter = self._waiter = _Waiter(logged=logged, timeout=timeout, waiter=waiter_factory())
+            waiter = self._waiter_state = _WaiterState(logged=logged, timeout=timeout, waiter=waiter_factory())
             # All done!
             return waiter
 
-    def _stop_waiting(self, waiter: _Waiter[Any]) -> None:
+    def _stop_waiting(self, waiter: _WaiterState[Any]) -> None:
         with self._lock:
             # Clear the waiter.
-            self._waiter = None
+            self._waiter_state = None
             # Error if the waiter logs are not fully reduced.
             if waiter.logged is not None:
                 raise AssertionError(f"Not logged:\n\n{waiter.logged}")
@@ -294,7 +294,7 @@ class _Handler(logging.Handler):
 
 
 @dataclasses.dataclass()
-class _Waiter(Generic[W]):
+class _WaiterState(Generic[W]):
     __slots__ = ("logged", "timeout", "waiter")
     logged: Logged | None
     timeout: float
