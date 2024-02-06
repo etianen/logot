@@ -9,7 +9,7 @@ from logot._typing import TypeAlias
 
 
 class AbstractWaiter(ABC):
-    __slots__ = ("_logged", "_timeout")
+    __slots__ = ("_logged",)
 
     # This protected attr is populated by `Logot._start_waiting`.
     _logged: Logged | None
@@ -19,36 +19,19 @@ class AbstractWaiter(ABC):
         raise NotImplementedError
 
 
-class Waiter(AbstractWaiter):
-    """
-    Protocol used by :meth:`Logot.wait_for` to pause tests until expected logs arrive.
+class ThreadingWaiter(AbstractWaiter):
+    __slots__ = ("_lock",)
 
-    .. note::
+    def __init__(self) -> None:
+        # Create an already-acquired lock. This will be released by `notify()`.
+        self._lock = Lock()
+        self._lock.acquire()
 
-        This class is for integration with :ref:`3rd-party threading frameworks <index-testing-threaded>`. It is
-        not generally used when writing tests.
-    """
-
-    __slots__ = ()
-
-    @abstractmethod
     def notify(self) -> None:
-        """
-        Notifies the test waiting on :meth:`wait` to resume immediately.
-        """
-        raise NotImplementedError
+        self._lock.release()
 
-    @abstractmethod
     def wait(self, *, timeout: float) -> None:
-        """
-        Waits for :meth:`notify` to be called or the ``timeout`` to expire.
-
-        :param timeout: How long to wait (in seconds) before resuming.
-        """
-        raise NotImplementedError
-
-
-WaiterFactory: TypeAlias = Callable[[], Waiter]
+        self._lock.acquire(timeout=timeout)
 
 
 class AsyncWaiter(AbstractWaiter):
@@ -81,26 +64,3 @@ class AsyncWaiter(AbstractWaiter):
 
 
 AsyncWaiterFactory: TypeAlias = Callable[[], AsyncWaiter]
-
-
-class ThreadingWaiter(Waiter):
-    """
-    A :class:`logot.Waiter` implementation for :mod:`threading`.
-
-    .. note::
-
-        This is the default :class:`logot.Waiter` implementation for :mod:`logot`.
-    """
-
-    __slots__ = ("_lock",)
-
-    def __init__(self) -> None:
-        # Create an already-acquired lock. This will be released by `notify()`.
-        self._lock = Lock()
-        self._lock.acquire()
-
-    def notify(self) -> None:
-        self._lock.release()
-
-    def wait(self, *, timeout: float) -> None:
-        self._lock.acquire(timeout=timeout)

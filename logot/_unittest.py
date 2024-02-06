@@ -5,7 +5,7 @@ from typing import ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Logot
-from logot._wait import AsyncWaiterFactory, WaiterFactory
+from logot._wait import AsyncWaiterFactory
 
 
 class LogotTestCase(TestCase):
@@ -53,13 +53,6 @@ class LogotTestCase(TestCase):
         Override this in subclasses to configure automatic :doc:`log capturing </log-capturing>`.
     """
 
-    logot_waiter_factory: ClassVar[WaiterFactory] = Logot.DEFAULT_WAITER_FACTORY
-    """
-    The default ``waiter_factory`` for :attr:`LogotTestCase.logot`.
-
-    Defaults to :attr:`logot.Logot.DEFAULT_WAITER_FACTORY`.
-    """
-
     logot_awaiter_factory: ClassVar[AsyncWaiterFactory] = Logot.DEFAULT_AWAITER_FACTORY
     """
     The default ``awaiter_factory`` for :attr:`LogotTestCase.logot`.
@@ -70,7 +63,6 @@ class LogotTestCase(TestCase):
     def _logot_setup(self) -> None:
         self.logot = Logot(
             timeout=self.__class__.logot_timeout,
-            waiter_factory=self.__class__.logot_waiter_factory,
             awaiter_factory=self.__class__.logot_awaiter_factory,
         )
         ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)

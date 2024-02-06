@@ -11,7 +11,7 @@ from logot._asyncio import AsyncioWaiter
 from logot._capture import Captured
 from logot._logged import Logged
 from logot._validate import validate_level, validate_logger, validate_timeout
-from logot._wait import AbstractWaiter, AsyncWaiterFactory, ThreadingWaiter, WaiterFactory
+from logot._wait import AbstractWaiter, AsyncWaiterFactory, ThreadingWaiter
 
 
 class Logot:
@@ -27,7 +27,7 @@ class Logot:
     :param awaiter_factory: See :attr:`Logot.awaiter_factory`.
     """
 
-    __slots__ = ("timeout", "waiter_factory", "awaiter_factory", "_lock", "_queue", "_waiter")
+    __slots__ = ("timeout", "awaiter_factory", "_lock", "_queue", "_waiter")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -46,11 +46,6 @@ class Logot:
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
     """
 
-    DEFAULT_WAITER_FACTORY: ClassVar[WaiterFactory] = ThreadingWaiter
-    """
-    The default ``waiter_factory`` for new :class:`Logot` instances.
-    """
-
     DEFAULT_AWAITER_FACTORY: ClassVar[AsyncWaiterFactory] = AsyncioWaiter
     """
     The default ``awaiter_factory`` for new :class:`Logot` instances.
@@ -61,13 +56,6 @@ class Logot:
     The default ``timeout`` (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
 
     Defaults to :attr:`Logot.DEFAULT_TIMEOUT`.
-    """
-
-    waiter_factory: WaiterFactory
-    """
-    The default ``waiter_factory`` for calls to :meth:`wait_for`.
-
-    Defaults to :attr:`Logot.DEFAULT_WAITER_FACTORY`.
     """
 
     awaiter_factory: AsyncWaiterFactory
@@ -81,11 +69,9 @@ class Logot:
         self,
         *,
         timeout: float = DEFAULT_TIMEOUT,
-        waiter_factory: WaiterFactory = DEFAULT_WAITER_FACTORY,
         awaiter_factory: AsyncWaiterFactory = DEFAULT_AWAITER_FACTORY,
     ) -> None:
         self.timeout = validate_timeout(timeout)
-        self.waiter_factory = waiter_factory
         self.awaiter_factory = awaiter_factory
         self._lock = Lock()
         self._queue: deque[Captured] = deque()
@@ -171,20 +157,15 @@ class Logot:
         logged: Logged,
         *,
         timeout: float | None = None,
-        waiter_factory: WaiterFactory | None = None,
     ) -> None:
         """
         Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
-        :param waiter_factory: Protocol used to pause tests until expected logs arrive. Defaults to
-            :attr:`Logot.DEFAULT_WAITER_FACTORY`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        if waiter_factory is None:
-            waiter_factory = self.waiter_factory
-        waiter = waiter_factory()
+        waiter = ThreadingWaiter()
         timeout = self._start_waiting(logged, waiter, timeout=timeout)
         try:
             waiter.wait(timeout=timeout)

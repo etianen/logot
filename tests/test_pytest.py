@@ -5,9 +5,9 @@ from typing import Any
 
 import pytest
 
-from logot import Logot, ThreadingWaiter
+from logot import Logot
 from logot._pytest import get_optname, get_qualname
-from logot._wait import AsyncWaiterFactory, WaiterFactory
+from logot._wait import AsyncWaiterFactory
 from logot.asyncio import AsyncioWaiter
 
 
@@ -82,44 +82,6 @@ def test_timeout_ini(pytester: pytest.Pytester) -> None:
 def test_timeout_cli(pytester: pytest.Pytester) -> None:
     assert_fixture_cli(pytester, "timeout", 9999.0)
     assert_fixture_cli(pytester, "timeout", "boom!", passed=False)
-
-
-def test_waiter_factory_default(logot_waiter_factory: WaiterFactory) -> None:
-    assert logot_waiter_factory is ThreadingWaiter
-
-
-def test_waiter_factory_ini(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        from logot import ThreadingWaiter
-
-        def test_waiter_factory(logot_waiter_factory):
-            assert logot_waiter_factory is ThreadingWaiter
-        """
-    )
-    pytester.makeini(
-        """
-        [pytest]
-        logot_waiter_factory = logot.ThreadingWaiter
-        """
-    )
-    # Run the pytest.
-    result = pytester.runpytest()
-    result.assert_outcomes(passed=1)
-
-
-def test_waiter_factory_cli(pytester: pytest.Pytester) -> None:
-    pytester.makepyfile(
-        """
-        from logot import ThreadingWaiter
-
-        def test_waiter_factory(logot_waiter_factory):
-            assert logot_waiter_factory is ThreadingWaiter
-        """
-    )
-    # Run the pytest.
-    result = pytester.runpytest("--logot-waiter-factory=logot.ThreadingWaiter")
-    result.assert_outcomes(passed=1)
 
 
 def test_awaiter_factory_default(logot_awaiter_factory: AsyncWaiterFactory) -> None:
