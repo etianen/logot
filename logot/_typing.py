@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TypeVar
+from typing import Any, TypeVar
 
 if sys.version_info >= (3, 10):
     from typing import ParamSpec as ParamSpec
@@ -12,3 +12,5 @@ else:
 
 P = ParamSpec("P")
 T = TypeVar("T")
+
+MISSING: Any = object()

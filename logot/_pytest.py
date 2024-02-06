@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Callable
+from typing import Callable
 
 import pytest
 
+from logot._import import import_any_parsed
 from logot._logot import Logot
-from logot._typing import T
-
-MISSING: Any = object()
+from logot._typing import MISSING, T
+from logot._wait import AsyncWaiter
 
 
 def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginManager) -> None:
@@ -29,16 +29,31 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         parser,
         group,
         name="timeout",
-        help="The `default` timeout (in seconds) for `logot`",
+        help="The default `timeout` (in seconds) for the `logot` fixture",
+    )
+    _add_option(
+        parser,
+        group,
+        name="async_waiter",
+        help="The default `async_waiter` for the `logot` fixture",
     )
 
 
 @pytest.fixture()
-def logot(logot_level: str | int, logot_logger: str | None, logot_timeout: float) -> Generator[Logot, None, None]:
+def logot(
+    logot_level: str | int,
+    logot_logger: str | None,
+    logot_timeout: float,
+    logot_async_waiter: Callable[[], AsyncWaiter],
+) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
-    with Logot(timeout=logot_timeout).capturing(level=logot_level, logger=logot_logger) as logot:
+    logot = Logot(
+        timeout=logot_timeout,
+        async_waiter=logot_async_waiter,
+    )
+    with logot.capturing(level=logot_level, logger=logot_logger) as logot:
         yield logot
 
 
@@ -61,9 +76,17 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
 @pytest.fixture(scope="session")
 def logot_timeout(request: pytest.FixtureRequest) -> float:
     """
-    The default `timeout` (in seconds) for `logot`.
+    The default `timeout` (in seconds) for the `logot` fixture.
     """
     return _get_option(request, name="timeout", parser=float, default=Logot.DEFAULT_TIMEOUT)
+
+
+@pytest.fixture(scope="session")
+def logot_async_waiter(request: pytest.FixtureRequest) -> Callable[[], AsyncWaiter]:
+    """
+    The default `async_waiter` for the `logot` fixture.
+    """
+    return _get_option(request, name="async_waiter", parser=import_any_parsed, default=Logot.DEFAULT_ASYNC_WAITER)
 
 
 def get_qualname(name: str) -> str:
@@ -98,5 +121,5 @@ def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[
     # Parse and return the value.
     try:
         return parser(value)
-    except (ValueError, TypeError) as ex:
-        raise pytest.UsageError(f"Invalid {qualname}: {ex}")
+    except Exception as ex:
+        raise pytest.UsageError(f"Invalid {qualname}: {ex}") from ex

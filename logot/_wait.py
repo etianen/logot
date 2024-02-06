@@ -2,47 +2,49 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from threading import Lock
+from typing import Protocol, TypeVar
 
-from logot._logged import Logged
 
-
-class AbstractWaiter(ABC):
-    __slots__ = ("_logged", "_timeout")
-
-    # This protected attr is populated by `Logot._start_waiting`.
-    _logged: Logged | None
-
+class Waiter(Protocol):
     @abstractmethod
-    def notify(self) -> None:
+    def release(self) -> None:
         raise NotImplementedError
 
 
-class Waiter(AbstractWaiter):
+W = TypeVar("W", bound=Waiter)
+
+
+def create_threading_waiter() -> Lock:
+    # Create an already-acquired lock. This will be released by `release()`.
+    lock = Lock()
+    lock.acquire()
+    return lock
+
+
+class AsyncWaiter(ABC):
+    """
+    Protocol used by :meth:`Logot.await_for` to pause tests until expected logs arrive.
+
+    .. note::
+
+        This class is for integration with 3rd-party asynchronous frameworks. It is not generally used when writing
+        tests.
+    """
+
     __slots__ = ()
 
     @abstractmethod
-    def wait(self, *, timeout: float) -> None:
+    def release(self) -> None:
+        """
+        Releases the test waiting on :meth:`wait`, allowing it to resume immediately.
+        """
         raise NotImplementedError
-
-
-class AsyncWaiter(AbstractWaiter):
-    __slots__ = ()
 
     @abstractmethod
     async def wait(self, *, timeout: float) -> None:
+        """
+        Waits *asynchronously* for :meth:`release` to be called or the ``timeout`` to expire.
+
+        :param timeout: How long to wait (in seconds) before resuming.
+        """
         raise NotImplementedError
-
-
-class ThreadedWaiter(Waiter):
-    __slots__ = ("_lock",)
-
-    def __init__(self) -> None:
-        # Create an already-acquired lock. This will be released by `notify()`.
-        self._lock = Lock()
-        self._lock.acquire()
-
-    def notify(self) -> None:
-        self._lock.release()
-
-    def wait(self, *, timeout: float) -> None:
-        self._lock.acquire(timeout=timeout)

@@ -14,3 +14,6 @@ API reference
 
 .. autoclass:: Captured
    :members:
+
+.. autoclass:: AsyncWaiter
+   :members:
