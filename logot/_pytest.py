@@ -123,5 +123,5 @@ def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[
     # Parse and return the value.
     try:
         return parser(value)
-    except Exception as ex:
+    except ValueError as ex:
         raise pytest.UsageError(f"Invalid {qualname}: {ex}")
