@@ -27,8 +27,8 @@ class AsyncWaiter(ABC):
 
     .. note::
 
-        This class is for integration with :ref:`3rd-party asynchronous frameworks <index-testing-async>`. It is
-        not generally used when writing tests.
+        This class is for integration with 3rd-party asynchronous frameworks. It is not generally used when writing
+        tests.
     """
 
     __slots__ = ()
@@ -36,7 +36,7 @@ class AsyncWaiter(ABC):
     @abstractmethod
     def release(self) -> None:
         """
-        Notifies the test waiting on :meth:`wait` to resume immediately.
+        Releases the test waiting on :meth:`wait`, allowing it to resume immediately.
         """
         raise NotImplementedError
 

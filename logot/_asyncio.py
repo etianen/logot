@@ -11,7 +11,7 @@ class AsyncioWaiter(AsyncWaiter):
 
     .. note::
 
-        This is the default :class:`logot.AsyncWaiter` implementation for :mod:`logot`.
+        This is the default :class:`logot.AsyncWaiter` implementation.
     """
 
     __slots__ = ("_loop", "_future")
