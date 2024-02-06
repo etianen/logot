@@ -2,21 +2,20 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from threading import Lock
-from typing import Callable
+from typing import Callable, TypeVar
 
-from logot._logged import Logged
 from logot._typing import TypeAlias
 
 
 class AbstractWaiter(ABC):
-    __slots__ = ("_logged",)
-
-    # This protected attr is populated by `Logot._start_waiting`.
-    _logged: Logged | None
+    __slots__ = ()
 
     @abstractmethod
     def notify(self) -> None:
         raise NotImplementedError
+
+
+W = TypeVar("W", bound=AbstractWaiter)
 
 
 class ThreadingWaiter(AbstractWaiter):
