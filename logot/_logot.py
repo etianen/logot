@@ -276,7 +276,7 @@ class Logot:
         return logged
 
     def __repr__(self) -> str:
-        return f"Logot(timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
+        return f"Logot(capturer={self.capturer!r}, timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
 
 
 class Capturer(ABC):
