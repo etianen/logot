@@ -29,7 +29,7 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         parser,
         group,
         name="capturer",
-        help="The `capturer` used for automatic log capturing.",
+        help="The default `capturer` for the `logot` fixture",
     )
     _add_option(
         parser,
@@ -80,7 +80,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
 @pytest.fixture(scope="session")
 def logot_capturer(request: pytest.FixtureRequest) -> Callable[[], Capturer]:
     """
-    The `capturer` used for automatic log capturing.
+    The default `capturer` for the `logot` fixture.
     """
     return _get_option(request, name="capturer", parser=import_any_parsed, default=Logot.DEFAULT_CAPTURER)
 

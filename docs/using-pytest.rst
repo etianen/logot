@@ -47,6 +47,11 @@ Use the following CLI and :external+pytest:doc:`configuration <reference/customi
 
    Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
 
+``--logot-capturer``, ``logot_capturer``
+   The default ``capturer`` for the ``logot`` fixture.
+
+   Defaults to :attr:`logot.Logot.DEFAULT_CAPTURER`.
+
 ``--logot-timeout``, ``logot_timeout``
    The default ``timeout`` (in seconds) for the ``logot`` fixture.
 
@@ -76,6 +81,9 @@ The following fixtures are available in the :mod:`pytest` plugin:
 
 ``logot_logger:`` :class:`str` | :data:`None`
    The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
+
+``logot_capturer:`` ``Callable`` [[], :class:`Capturer` ]
+   The default ``capturer`` for the ``logot`` fixture.
 
 ``logot_timeout:`` :class:`float`
    The default ``timeout`` (in seconds) for the ``logot`` fixture.
