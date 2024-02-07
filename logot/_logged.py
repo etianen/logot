@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from logot._capture import Captured
 from logot._format import format_level, format_log
-from logot._match import compile_matcher
+from logot._msg import compile_msg_matcher
 from logot._validate import validate_level
 
 
@@ -120,12 +120,12 @@ def critical(msg: str) -> Logged:
 
 
 class _RecordLogged(Logged):
-    __slots__ = ("_level", "_msg", "_matcher")
+    __slots__ = ("_level", "_msg", "_msg_matcher")
 
     def __init__(self, level: str | int, msg: str) -> None:
         self._level = level
         self._msg = msg
-        self._matcher = compile_matcher(msg)
+        self._msg_matcher = compile_msg_matcher(msg)
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, _RecordLogged) and other._level == self._level and other._msg == self._msg
@@ -145,7 +145,7 @@ class _RecordLogged(Logged):
         else:  # pragma: no cover
             raise TypeError(f"Invalid level: {self._level!r}")
         # Match message.
-        if not self._matcher(captured.msg):
+        if not self._msg_matcher(captured.msg):
             return self
         # We matched!
         return None
