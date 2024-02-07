@@ -55,6 +55,7 @@ class LogotTestCase(TestCase):
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
+        # TODO: Use `TestCase.enterContext()` when we only need to support Python 3.11+.
         ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
         ctx.__enter__()
         self.addCleanup(ctx.__exit__, None, None, None)
