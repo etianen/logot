@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from logot._typing import Level
 
-def format_level(level: str | int) -> str:
+
+def format_level(level: Level) -> str:
     # Format `str` level.
     if isinstance(level, str):
         return level
