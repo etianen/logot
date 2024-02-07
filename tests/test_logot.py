@@ -45,4 +45,7 @@ def test_clear(logot: Logot) -> None:
 
 
 def test_repr(logot: Logot) -> None:
-    assert repr(logot) == "Logot(timeout=3.0, async_waiter=logot.asyncio.AsyncioWaiter)"
+    assert (
+        repr(logot)
+        == "Logot(capturer=logot.logging.LoggingCapturer, timeout=3.0, async_waiter=logot.asyncio.AsyncioWaiter)"
+    )
