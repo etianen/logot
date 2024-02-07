@@ -55,11 +55,8 @@ class LogotTestCase(TestCase):
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
-        # Start automatic log capturing.
-        # Use the `Capturer` directly, rather than `Logot.capturing()`, to save a few CPU cycles.
-        capturer_obj = self.__class__.logot_capturer()
-        capturer_obj.start_capturing(self.logot, level=self.logot_level, logger=self.logot_logger)
-        self.addCleanup(capturer_obj.stop_capturing)
+        ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
+        self.addCleanup(ctx.__exit__, None, None, None)
 
     def run(self, result: TestResult | None = None) -> TestResult | None:
         self._logot_setup()
