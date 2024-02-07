@@ -43,17 +43,17 @@ class Logot:
 
     DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
     """
-    The default ``capturer`` for new :class:`Logot` instances.
+    The default :attr:`capturer` for new :class:`Logot` instances.
     """
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
-    The default ``timeout`` (in seconds) for new :class:`Logot` instances.
+    The default :attr:`timeout` (in seconds) for new :class:`Logot` instances.
     """
 
     DEFAULT_ASYNC_WAITER: ClassVar[Callable[[], AsyncWaiter]] = LazyCallable("logot.asyncio", "AsyncioWaiter")
     """
-    The default ``async_waiter`` for new :class:`Logot` instances.
+    The default :attr:`async_waiter` for new :class:`Logot` instances.
     """
 
     capturer: Callable[[], Capturer]
