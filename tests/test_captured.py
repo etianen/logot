@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 from logot import Captured
 
 
@@ -15,7 +13,7 @@ def test_eq_fail() -> None:
     # Different messages are not equal.
     assert Captured("INFO", "foo bar") != Captured("INFO", "foo")
     # Different levelnos are not equal.
-    assert Captured("INFO", "foo bar") != Captured("INFO", "foo bar", levelno=logging.DEBUG)
+    assert Captured("INFO", "foo bar") != Captured("INFO", "foo bar", levelno=10)
 
 
 def test_repr() -> None:
