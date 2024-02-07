@@ -118,7 +118,7 @@ class Logot:
 
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
             :attr:`Logot.DEFAULT_LEVEL`.
-        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
+        :param logger: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         :param capturer: Protocol used to capture logs. This is for integration with 3rd-party logging frameworks.
             Defaults to :attr:`Logot.capturer`.
         """
@@ -280,14 +280,34 @@ class Logot:
 
 
 class Capturer(ABC):
+    """
+    Protocol used by :meth:`Logot.capturing` to capture logs.
+
+    .. note::
+
+        This class is for integration with 3rd-party logging frameworks. It is not generally used when writing tests.
+    """
+
     __slots__ = ()
 
     @abstractmethod
     def start_capturing(self, logot: Logot, /, *, level: str | int, logger: str | None) -> None:
+        """
+        Starts capturing logs for the given :class:`Logot`.
+
+        Captured logs should be converted to a :class:`Captured` log and sent to :meth:`Logot.capture`.
+
+        :param logot: The :class:`Logot` instance.
+        :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
+        :param logger: A logger name to capture logs from.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def stop_capturing(self) -> None:
+        """
+        Stops capturing logs.
+        """
         raise NotImplementedError
 
 
