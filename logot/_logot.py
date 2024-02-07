@@ -295,7 +295,7 @@ class Capturer(ABC):
         """
         Starts capturing logs for the given :class:`Logot`.
 
-        Captured logs should be converted to a :class:`Captured` log and sent to :meth:`Logot.capture`.
+        Captured logs should be converted to a :class:`Captured` instance and sent to :meth:`Logot.capture`.
 
         :param logot: The :class:`Logot` instance.
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
