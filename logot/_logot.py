@@ -50,6 +50,8 @@ class Logot:
     The default ``async_waiter`` for new :class:`Logot` instances.
     """
 
+    DEFAULT_CAPTURER: ClassVar[Capturer[Any]] = LazyCallable("logot.logging", "capture_logging")
+
     timeout: float
     """
     The default ``timeout`` (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
@@ -102,7 +104,7 @@ class Logot:
     @contextmanager
     def capturing(
         self,
-        capturer: Capturer[Any] = LazyCallable("logot.logging", "capture_logging"),
+        capturer: Capturer[Any] = DEFAULT_CAPTURER,
         /,
         *args: Any,
         **kwargs: Any,

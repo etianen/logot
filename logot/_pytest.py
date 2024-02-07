@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Callable
+from typing import Any, Callable
 
 import pytest
 
 from logot._import import import_any_parsed
-from logot._logot import Logot
+from logot._logot import Capturer, Logot
 from logot._typing import MISSING, T
 from logot._wait import AsyncWaiter
 
@@ -37,6 +37,12 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         name="async_waiter",
         help="The default `async_waiter` for the `logot` fixture",
     )
+    _add_option(
+        parser,
+        group,
+        name="capturer",
+        help="The default `capturer` for the `logot` fixture",
+    )
 
 
 @pytest.fixture()
@@ -45,6 +51,7 @@ def logot(
     logot_logger: str | None,
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
+    logot_capturer: Capturer[Any],
 ) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
@@ -53,7 +60,7 @@ def logot(
         timeout=logot_timeout,
         async_waiter=logot_async_waiter,
     )
-    with logot.capturing(level=logot_level, logger=logot_logger) as logot:
+    with logot.capturing(logot_capturer, level=logot_level, logger=logot_logger) as logot:
         yield logot
 
 
@@ -87,6 +94,14 @@ def logot_async_waiter(request: pytest.FixtureRequest) -> Callable[[], AsyncWait
     The default `async_waiter` for the `logot` fixture.
     """
     return _get_option(request, name="async_waiter", parser=import_any_parsed, default=Logot.DEFAULT_ASYNC_WAITER)
+
+
+@pytest.fixture(scope="session")
+def logot_capturer(request: pytest.FixtureRequest) -> Capturer[Any]:
+    """
+    The default `capturer` for the `logot` fixture.
+    """
+    return _get_option(request, name="capturer", parser=import_any_parsed, default=Logot.DEFAULT_CAPTURER)
 
 
 def get_qualname(name: str) -> str:
