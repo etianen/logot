@@ -7,7 +7,7 @@ from logot._typing import TypeAlias
 
 # Compiled matcher callable.
 # The returned `object` is truthy on successful match and falsy on failed match.
-Matcher: TypeAlias = Callable[[str], object]
+MessageMatcher: TypeAlias = Callable[[str], object]
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -41,7 +41,7 @@ _CONVERSION_MAP = {
 }
 
 
-def compile_matcher(pattern: str) -> Matcher:
+def compile_msg_matcher(pattern: str) -> MessageMatcher:
     parts: list[str] = _RE_CONVERSION.split(pattern)
     parts_len = len(parts)
     # If there is more than one part, at least one conversion specifier was found and we might need a regex matcher.
