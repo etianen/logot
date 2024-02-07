@@ -26,7 +26,7 @@ class Logot:
     :param async_waiter: See :attr:`Logot.async_waiter`.
     """
 
-    __slots__ = ("timeout", "async_waiter", "_lock", "_queue", "_wait")
+    __slots__ = ("capturer", "timeout", "async_waiter", "_lock", "_queue", "_wait")
 
     DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
 
@@ -52,6 +52,8 @@ class Logot:
     The default ``async_waiter`` for new :class:`Logot` instances.
     """
 
+    capturer: Callable[[], Capturer]
+
     timeout: float
     """
     The default ``timeout`` (in seconds) for calls to :meth:`wait_for` and :meth:`await_for`.
@@ -73,9 +75,11 @@ class Logot:
     def __init__(
         self,
         *,
+        capturer: Callable[[], Capturer] = DEFAULT_CAPTURER,
         timeout: float = DEFAULT_TIMEOUT,
         async_waiter: Callable[[], AsyncWaiter] = DEFAULT_ASYNC_WAITER,
     ) -> None:
+        self.capturer = capturer
         self.timeout = validate_timeout(timeout)
         self.async_waiter = async_waiter
         self._lock = Lock()
@@ -84,7 +88,7 @@ class Logot:
 
     def capturing(
         self,
-        capturer: Callable[[], Capturer] = DEFAULT_CAPTURER,
+        capturer: Callable[[], Capturer] | None = None,
         /,
         level: str | int = DEFAULT_LEVEL,
         logger: str | None = DEFAULT_LOGGER,
@@ -103,6 +107,8 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
+        if capturer is None:
+            capturer = self.capturer
         capturer_obj = capturer()
         level = validate_level(level)
         logger = validate_logger(logger)
@@ -172,13 +178,13 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
-        if waiter is None:
+        wait = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
+        if wait is None:
             return
         try:
-            waiter.waiter_obj.acquire(timeout=waiter.timeout)
+            wait.waiter_obj.acquire(timeout=wait.timeout)
         finally:
-            self._stop_waiting(waiter)
+            self._stop_waiting(wait)
 
     async def await_for(
         self,
@@ -198,13 +204,13 @@ class Logot:
         """
         if async_waiter is None:
             async_waiter = self.async_waiter
-        waiter = self._start_waiting(logged, async_waiter, timeout=timeout)
-        if waiter is None:
+        wait = self._start_waiting(logged, async_waiter, timeout=timeout)
+        if wait is None:
             return
         try:
-            await waiter.waiter_obj.wait(timeout=waiter.timeout)
+            await wait.waiter_obj.wait(timeout=wait.timeout)
         finally:
-            self._stop_waiting(waiter)
+            self._stop_waiting(wait)
 
     def clear(self) -> None:
         """
