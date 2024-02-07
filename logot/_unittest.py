@@ -19,6 +19,8 @@ class LogotTestCase(TestCase):
     Use this to make log assertions in your tests.
     """
 
+    logot_capturer: ClassVar[Callable[[], Capturer]] = Logot.DEFAULT_CAPTURER
+
     logot_level: ClassVar[str | int] = Logot.DEFAULT_LEVEL
     """
     The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
@@ -32,8 +34,6 @@ class LogotTestCase(TestCase):
 
     Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
     """
-
-    logot_capturer: ClassVar[Callable[[], Capturer]] = Logot.DEFAULT_CAPTURER
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
     """
@@ -54,9 +54,9 @@ class LogotTestCase(TestCase):
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
-        capturer = self.__class__.logot_capturer()
-        capturer.start_capturing(self.logot, level=self.logot_level, logger=self.logot_logger)
-        self.addCleanup(capturer.stop_capturing)
+        capturer_obj = self.__class__.logot_capturer()
+        capturer_obj.start_capturing(self.logot, level=self.logot_level, logger=self.logot_logger)
+        self.addCleanup(capturer_obj.stop_capturing)
 
     def run(self, result: TestResult | None = None) -> TestResult | None:
         self._logot_setup()

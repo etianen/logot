@@ -9,6 +9,14 @@ def validate_level(level: str | int) -> str | int:
     raise TypeError(f"Invalid level: {level!r}")
 
 
+def validate_logger(logger: str | None) -> str | None:
+    # Handle `None` or `str` logger.
+    if logger is None or isinstance(logger, str):
+        return logger
+    # Handle invalid logger.
+    raise TypeError(f"Invalid logger: {logger!r}")
+
+
 def validate_timeout(timeout: float) -> float:
     # Handle numeric timeout.
     if isinstance(timeout, (float, int)):

@@ -10,7 +10,7 @@ from typing import Any, Callable, ClassVar, Generic
 from logot._capture import Captured
 from logot._import import LazyCallable
 from logot._logged import Logged
-from logot._validate import validate_timeout
+from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
 
 
@@ -28,6 +28,8 @@ class Logot:
 
     __slots__ = ("timeout", "async_waiter", "_lock", "_queue", "_wait")
 
+    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
+
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
     The default ``level`` used by :meth:`capturing`.
@@ -39,8 +41,6 @@ class Logot:
 
     This is the root logger.
     """
-
-    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
@@ -103,7 +103,10 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
-        return _Capturing(self, capturer(), level=level, logger=logger)
+        capturer_obj = capturer()
+        level = validate_level(level)
+        logger = validate_logger(logger)
+        return _Capturing(self, capturer_obj, level=level, logger=logger)
 
     def capture(self, captured: Captured) -> None:
         """
@@ -129,7 +132,7 @@ class Logot:
                 self._wait.logged = self._wait.logged._reduce(captured)
                 # If the waiter has fully reduced, release the blocked caller.
                 if self._wait.logged is None:
-                    self._wait.waiter.release()
+                    self._wait.waiter_obj.release()
                 return
             # Otherwise, buffer the captured log.
             self._queue.append(captured)
@@ -173,7 +176,7 @@ class Logot:
         if waiter is None:
             return
         try:
-            waiter.waiter.acquire(timeout=waiter.timeout)
+            waiter.waiter_obj.acquire(timeout=waiter.timeout)
         finally:
             self._stop_waiting(waiter)
 
@@ -199,7 +202,7 @@ class Logot:
         if waiter is None:
             return
         try:
-            await waiter.waiter.wait(timeout=waiter.timeout)
+            await waiter.waiter_obj.wait(timeout=waiter.timeout)
         finally:
             self._stop_waiting(waiter)
 
@@ -227,7 +230,8 @@ class Logot:
             if logged is None:
                 return None
             # All done!
-            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter=waiter())
+            waiter_obj = waiter()
+            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter_obj=waiter_obj)
             return wait
 
     def _stop_waiting(self, wait: _Wait[Any]) -> None:
@@ -267,16 +271,16 @@ class Capturer(ABC):
 
 
 class _Capturing:
-    __slots__ = ("_logot", "_capturer", "_level", "_logger")
+    __slots__ = ("_logot", "_capturer_obj", "_level", "_logger")
 
     def __init__(self, logot: Logot, capturer: Capturer, *, level: str | int, logger: str | None) -> None:
         self._logot = logot
-        self._capturer = capturer
+        self._capturer_obj = capturer
         self._level = level
         self._logger = logger
 
     def __enter__(self) -> Logot:
-        self._capturer.start_capturing(self._logot, level=self._level, logger=self._logger)
+        self._capturer_obj.start_capturing(self._logot, level=self._level, logger=self._logger)
         return self._logot
 
     def __exit__(
@@ -285,13 +289,13 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
-        self._capturer.stop_capturing()
+        self._capturer_obj.stop_capturing()
 
 
 class _Wait(Generic[W]):
-    __slots__ = ("logged", "timeout", "waiter")
+    __slots__ = ("logged", "timeout", "waiter_obj")
 
-    def __init__(self, *, logged: Logged | None, timeout: float, waiter: W) -> None:
+    def __init__(self, *, logged: Logged | None, timeout: float, waiter_obj: W) -> None:
         self.logged = logged
         self.timeout = timeout
-        self.waiter = waiter
+        self.waiter_obj = waiter_obj
