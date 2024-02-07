@@ -11,7 +11,7 @@ def test_capturing() -> None:
     # Set a fairly non-verbose log level.
     logger.setLevel(logging.WARNING)
     try:
-        with Logot().capturing(level="DEBUG", logger="logot") as logot:
+        with Logot().capturing(level=logging.DEBUG, logger="logot") as logot:
             # The logger will have been overridden for the required verbosity.
             assert logger.level == logging.DEBUG
             # Write a log.
