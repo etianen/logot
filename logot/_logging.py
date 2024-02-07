@@ -7,6 +7,14 @@ from logot._logot import Capturer, Logot
 
 
 class LoggingCapturer(Capturer):
+    """
+    A :class:`logot.Capturer` implementation for :mod:`logging`.
+
+    .. note::
+
+        This is the default :class:`logot.Capturer` implementation.
+    """
+
     __slots__ = ("_logger", "_handler", "_prev_levelno")
 
     def start_capturing(self, logot: Logot, /, *, level: str | int, logger: str | None) -> None:
