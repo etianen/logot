@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Callable, ClassVar
 from unittest import TestCase, TestResult
 
-from logot._logot import Logot
+from logot._logot import Capturer, Logot
 from logot._wait import AsyncWaiter
 
 
@@ -33,6 +33,8 @@ class LogotTestCase(TestCase):
     Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
     """
 
+    logot_capturer: ClassVar[Capturer[...]] = Logot.DEFAULT_CAPTURER
+
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
     """
     The default ``timeout`` (in seconds) for :attr:`LogotTestCase.logot`.
@@ -52,7 +54,7 @@ class LogotTestCase(TestCase):
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
-        ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
+        ctx = self.__class__.logot_capturer(self.logot, level=self.logot_level, logger=self.logot_logger)
         ctx.__enter__()
         self.addCleanup(ctx.__exit__, None, None, None)
 

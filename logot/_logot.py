@@ -40,7 +40,7 @@ class Logot:
     This is the root logger.
     """
 
-    DEFAULT_CAPTURER: ClassVar[Capturer[Any]] = LazyCallable("logot.logging", "capture_logging")
+    DEFAULT_CAPTURER: ClassVar[Capturer[...]] = LazyCallable("logot.logging", "capture_logging")
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
@@ -104,7 +104,7 @@ class Logot:
     @contextmanager
     def capturing(
         self,
-        capturer: Capturer[Any] = DEFAULT_CAPTURER,
+        capturer: Capturer[...] = DEFAULT_CAPTURER,
         /,
         *args: Any,
         **kwargs: Any,

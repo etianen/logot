@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from typing import Any, Callable
+from typing import Callable
 
 import pytest
 
@@ -51,7 +51,7 @@ def logot(
     logot_logger: str | None,
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
-    logot_capturer: Capturer[Any],
+    logot_capturer: Capturer[...],
 ) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
@@ -81,7 +81,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
 
 
 @pytest.fixture(scope="session")
-def logot_capturer(request: pytest.FixtureRequest) -> Capturer[Any]:
+def logot_capturer(request: pytest.FixtureRequest) -> Capturer[...]:
     """
     The `capturer` used for automatic log capturing.
     """
