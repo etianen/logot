@@ -13,6 +13,7 @@ else:
 P = ParamSpec("P")
 T = TypeVar("T")
 
+# TODO: Use `UnionType` when we only need to support Python 3.10+.
 Level: TypeAlias = Union[str, int]
 Logger: TypeAlias = Union[str, None]
 
