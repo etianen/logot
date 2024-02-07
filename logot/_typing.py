@@ -13,4 +13,7 @@ else:
 P = ParamSpec("P")
 T = TypeVar("T")
 
+Level: TypeAlias = str | int
+Logger: TypeAlias = str | None
+
 MISSING: Any = object()

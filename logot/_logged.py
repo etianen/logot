@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from logot._capture import Captured
 from logot._format import format_level, format_log
 from logot._msg import compile_msg_matcher
+from logot._typing import Level
 from logot._validate import validate_level
 
 
@@ -58,7 +59,7 @@ class Logged(ABC):
         raise NotImplementedError
 
 
-def log(level: str | int, msg: str) -> Logged:
+def log(level: Level, msg: str) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at the given ``level`` with the given
     ``msg``.
@@ -122,7 +123,7 @@ def critical(msg: str) -> Logged:
 class _RecordLogged(Logged):
     __slots__ = ("_level", "_msg", "_msg_matcher")
 
-    def __init__(self, level: str | int, msg: str) -> None:
+    def __init__(self, level: Level, msg: str) -> None:
         self._level = level
         self._msg = msg
         self._msg_matcher = compile_msg_matcher(msg)

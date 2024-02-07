@@ -10,6 +10,7 @@ from typing import Any, Callable, ClassVar, Generic
 from logot._capture import Captured
 from logot._import import LazyCallable
 from logot._logged import Logged
+from logot._typing import Level, Logger
 from logot._validate import validate_level, validate_logger, validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
 
@@ -29,12 +30,12 @@ class Logot:
 
     __slots__ = ("capturer", "timeout", "async_waiter", "_lock", "_queue", "_wait")
 
-    DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
+    DEFAULT_LEVEL: ClassVar[Level] = "DEBUG"
     """
     The default ``level`` used by :meth:`capturing`.
     """
 
-    DEFAULT_LOGGER: ClassVar[str | None] = None
+    DEFAULT_LOGGER: ClassVar[Logger] = None
     """
     The default ``logger`` used by :meth:`capturing`.
 
@@ -102,8 +103,8 @@ class Logot:
     def capturing(
         self,
         *,
-        level: str | int = DEFAULT_LEVEL,
-        logger: str | None = DEFAULT_LOGGER,
+        level: Level = DEFAULT_LEVEL,
+        logger: Logger = DEFAULT_LOGGER,
         capturer: Callable[[], Capturer] | None = None,
     ) -> AbstractContextManager[Logot]:
         """
@@ -292,7 +293,7 @@ class Capturer(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def start_capturing(self, logot: Logot, /, *, level: str | int, logger: str | None) -> None:
+    def start_capturing(self, logot: Logot, /, *, level: Level, logger: Logger) -> None:
         """
         Starts capturing logs for the given :class:`Logot`.
 
@@ -315,7 +316,7 @@ class Capturer(ABC):
 class _Capturing:
     __slots__ = ("_logot", "_capturer_obj", "_level", "_logger")
 
-    def __init__(self, logot: Logot, capturer: Capturer, *, level: str | int, logger: str | None) -> None:
+    def __init__(self, logot: Logot, capturer: Capturer, *, level: Level, logger: Logger) -> None:
         self._logot = logot
         self._capturer_obj = capturer
         self._level = level

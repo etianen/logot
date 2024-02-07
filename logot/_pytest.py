@@ -7,7 +7,7 @@ import pytest
 
 from logot._import import import_any_parsed
 from logot._logot import Capturer, Logot
-from logot._typing import MISSING, T
+from logot._typing import MISSING, Level, Logger, T
 from logot._wait import AsyncWaiter
 
 
@@ -47,8 +47,8 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
 
 @pytest.fixture()
 def logot(
-    logot_level: str | int,
-    logot_logger: str | None,
+    logot_level: Level,
+    logot_logger: Logger,
     logot_capturer: Callable[[], Capturer],
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
@@ -62,7 +62,7 @@ def logot(
 
 
 @pytest.fixture(scope="session")
-def logot_level(request: pytest.FixtureRequest) -> str | int:
+def logot_level(request: pytest.FixtureRequest) -> Level:
     """
     The `level` used for automatic log capturing.
     """
@@ -70,7 +70,7 @@ def logot_level(request: pytest.FixtureRequest) -> str | int:
 
 
 @pytest.fixture(scope="session")
-def logot_logger(request: pytest.FixtureRequest) -> str | None:
+def logot_logger(request: pytest.FixtureRequest) -> Logger:
     """
     The `logger` used for automatic log capturing.
     """
