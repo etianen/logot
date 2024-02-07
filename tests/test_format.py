@@ -15,7 +15,7 @@ def test_format_level_int() -> None:
     assert format_level(20) == "Level 20"
 
 
-def test_validate_logger_type_fail() -> None:
+def test_format_level_type_fail() -> None:
     with pytest.raises(TypeError) as ex:
         format_level(cast(str, 1.5))
     assert str(ex.value) == "Invalid level: 1.5"
