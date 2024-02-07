@@ -34,6 +34,11 @@ class LogotTestCase(TestCase):
     """
 
     logot_capturer: ClassVar[Callable[[], Capturer]] = Logot.DEFAULT_CAPTURER
+    """
+    The default ``capturer`` for :attr:`LogotTestCase.logot`.
+
+    Defaults to :attr:`logot.Logot.DEFAULT_CAPTURER`.
+    """
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
     """
