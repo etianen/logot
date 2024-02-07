@@ -6,11 +6,12 @@ from typing import Any, Callable
 
 import pytest
 
-from logot import Logot
+from logot import Capturer, Logot
 from logot._pytest import get_optname, get_qualname
 from logot._typing import MISSING
 from logot._wait import AsyncWaiter
 from logot.asyncio import AsyncioWaiter
+from logot.logging import LoggingCapturer
 
 EXPECTED_VAR: ContextVar[Any] = ContextVar(f"{__name__}.EXPECTED_VAR")
 
@@ -69,6 +70,18 @@ def test_logger_default(logot_logger: str | int) -> None:
 
 def test_logger_config_pass(pytester: pytest.Pytester) -> None:
     assert_fixture_config(pytester, "logger", "logot")
+
+
+def test_capturer_default(logot_capturer: Callable[[], Capturer]) -> None:
+    assert logot_capturer is Logot.DEFAULT_CAPTURER
+
+
+def test_capturer_config_pass(pytester: pytest.Pytester) -> None:
+    assert_fixture_config(pytester, "capturer", "logot.logging.LoggingCapturer", expected=LoggingCapturer)
+
+
+def test_capturer_config_fail(pytester: pytest.Pytester) -> None:
+    assert_fixture_config(pytester, "capturer", "boom!", passed=False)
 
 
 def test_timeout_default(logot_timeout: float) -> None:

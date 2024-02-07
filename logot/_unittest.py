@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import logging
 from typing import Callable, ClassVar
 from unittest import TestCase, TestResult
 
-from logot._logot import Logot
+from logot._logot import Capturer, Logot
 from logot._wait import AsyncWaiter
 
 
@@ -27,11 +26,18 @@ class LogotTestCase(TestCase):
     Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
     """
 
-    logot_logger: ClassVar[logging.Logger | str | None] = Logot.DEFAULT_LOGGER
+    logot_logger: ClassVar[str | None] = Logot.DEFAULT_LOGGER
     """
     The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
 
     Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
+    """
+
+    logot_capturer: ClassVar[Callable[[], Capturer]] = Logot.DEFAULT_CAPTURER
+    """
+    The default ``capturer`` for :attr:`LogotTestCase.logot`.
+
+    Defaults to :attr:`logot.Logot.DEFAULT_CAPTURER`.
     """
 
     logot_timeout: ClassVar[float] = Logot.DEFAULT_TIMEOUT
@@ -50,9 +56,11 @@ class LogotTestCase(TestCase):
 
     def _logot_setup(self) -> None:
         self.logot = Logot(
+            capturer=self.__class__.logot_capturer,
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
+        # TODO: Use `TestCase.enterContext()` when we only need to support Python 3.11+.
         ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
         ctx.__enter__()
         self.addCleanup(ctx.__exit__, None, None, None)

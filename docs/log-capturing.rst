@@ -21,6 +21,8 @@ Use a supported test framework integration for automatic log capturing in tests:
 - :doc:`/using-unittest`
 
 
+.. _log-capturing-logging:
+
 Capturing :mod:`logging` logs
 -----------------------------
 

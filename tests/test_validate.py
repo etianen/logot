@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import logging
 from typing import cast
 
 import pytest
 
 from logot._validate import validate_level, validate_logger, validate_timeout
-from tests import logger
 
 
 def test_validate_level_str_pass() -> None:
@@ -24,15 +22,11 @@ def test_validate_level_type_fail() -> None:
 
 
 def test_validate_logger_none_pass() -> None:
-    assert validate_logger(None) is logging.getLogger()
+    assert validate_logger(None) is None
 
 
 def test_validate_logger_str_pass() -> None:
-    assert validate_logger("logot") is logger
-
-
-def test_validate_logger_logger_pass() -> None:
-    assert validate_logger(logging.getLogger("logot")) is logger
+    assert validate_logger("logot") == "logot"
 
 
 def test_validate_logger_type_fail() -> None:

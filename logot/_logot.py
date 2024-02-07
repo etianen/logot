@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
 from threading import Lock
@@ -22,11 +22,12 @@ class Logot:
 
         See :doc:`/index` usage guide.
 
+    :param capturer: See :attr:`Logot.capturer`.
     :param timeout: See :attr:`Logot.timeout`.
     :param async_waiter: See :attr:`Logot.async_waiter`.
     """
 
-    __slots__ = ("timeout", "async_waiter", "_lock", "_queue", "_wait")
+    __slots__ = ("capturer", "timeout", "async_waiter", "_lock", "_queue", "_wait")
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -40,14 +41,30 @@ class Logot:
     This is the root logger.
     """
 
+    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
+    """
+    The default :attr:`capturer` for new :class:`Logot` instances.
+    """
+
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
-    The default ``timeout`` (in seconds) for new :class:`Logot` instances.
+    The default :attr:`timeout` (in seconds) for new :class:`Logot` instances.
     """
 
     DEFAULT_ASYNC_WAITER: ClassVar[Callable[[], AsyncWaiter]] = LazyCallable("logot.asyncio", "AsyncioWaiter")
     """
-    The default ``async_waiter`` for new :class:`Logot` instances.
+    The default :attr:`async_waiter` for new :class:`Logot` instances.
+    """
+
+    capturer: Callable[[], Capturer]
+    """
+    The default ``capturer`` used by :meth:`capturing`.
+
+    .. note::
+
+        This is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`.
+
+    Defaults to :attr:`Logot.DEFAULT_CAPTURER`.
     """
 
     timeout: float
@@ -71,9 +88,11 @@ class Logot:
     def __init__(
         self,
         *,
+        capturer: Callable[[], Capturer] = DEFAULT_CAPTURER,
         timeout: float = DEFAULT_TIMEOUT,
         async_waiter: Callable[[], AsyncWaiter] = DEFAULT_ASYNC_WAITER,
     ) -> None:
+        self.capturer = capturer
         self.timeout = validate_timeout(timeout)
         self.async_waiter = async_waiter
         self._lock = Lock()
@@ -84,7 +103,8 @@ class Logot:
         self,
         *,
         level: str | int = DEFAULT_LEVEL,
-        logger: logging.Logger | str | None = DEFAULT_LOGGER,
+        logger: str | None = DEFAULT_LOGGER,
+        capturer: Callable[[], Capturer] | None = None,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
@@ -98,11 +118,16 @@ class Logot:
 
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
             :attr:`Logot.DEFAULT_LEVEL`.
-        :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
+        :param logger: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
+        :param capturer: Protocol used to capture logs. This is for integration with
+            :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. Defaults to :attr:`Logot.capturer`.
         """
+        if capturer is None:
+            capturer = self.capturer
+        capturer_obj = capturer()
         level = validate_level(level)
         logger = validate_logger(logger)
-        return _Capturing(self, _Handler(level, self), logger=logger)
+        return _Capturing(self, capturer_obj, level=level, logger=logger)
 
     def capture(self, captured: Captured) -> None:
         """
@@ -128,7 +153,7 @@ class Logot:
                 self._wait.logged = self._wait.logged._reduce(captured)
                 # If the waiter has fully reduced, release the blocked caller.
                 if self._wait.logged is None:
-                    self._wait.waiter.release()
+                    self._wait.waiter_obj.release()
                 return
             # Otherwise, buffer the captured log.
             self._queue.append(captured)
@@ -168,13 +193,13 @@ class Logot:
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
-        waiter = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
-        if waiter is None:
+        wait = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
+        if wait is None:
             return
         try:
-            waiter.waiter.acquire(timeout=waiter.timeout)
+            wait.waiter_obj.acquire(timeout=wait.timeout)
         finally:
-            self._stop_waiting(waiter)
+            self._stop_waiting(wait)
 
     async def await_for(
         self,
@@ -194,13 +219,13 @@ class Logot:
         """
         if async_waiter is None:
             async_waiter = self.async_waiter
-        waiter = self._start_waiting(logged, async_waiter, timeout=timeout)
-        if waiter is None:
+        wait = self._start_waiting(logged, async_waiter, timeout=timeout)
+        if wait is None:
             return
         try:
-            await waiter.waiter.wait(timeout=waiter.timeout)
+            await wait.waiter_obj.wait(timeout=wait.timeout)
         finally:
-            self._stop_waiting(waiter)
+            self._stop_waiting(wait)
 
     def clear(self) -> None:
         """
@@ -226,7 +251,8 @@ class Logot:
             if logged is None:
                 return None
             # All done!
-            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter=waiter())
+            waiter_obj = waiter()
+            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter_obj=waiter_obj)
             return wait
 
     def _stop_waiting(self, wait: _Wait[Any]) -> None:
@@ -253,21 +279,50 @@ class Logot:
         return f"Logot(timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
 
 
-class _Capturing:
-    __slots__ = ("_logot", "_handler", "_logger", "_prev_levelno")
+class Capturer(ABC):
+    """
+    Protocol used by :meth:`Logot.capturing` to capture logs.
 
-    def __init__(self, logot: Logot, handler: logging.Handler, *, logger: logging.Logger) -> None:
+    .. note::
+
+        This class is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
+        generally used when writing tests.
+    """
+
+    __slots__ = ()
+
+    @abstractmethod
+    def start_capturing(self, logot: Logot, /, *, level: str | int, logger: str | None) -> None:
+        """
+        Starts capturing logs for the given :class:`Logot`.
+
+        Captured logs should be converted to a :class:`Captured` instance and sent to :meth:`Logot.capture`.
+
+        :param logot: The :class:`Logot` instance.
+        :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
+        :param logger: A logger name to capture logs from.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def stop_capturing(self) -> None:
+        """
+        Stops capturing logs.
+        """
+        raise NotImplementedError
+
+
+class _Capturing:
+    __slots__ = ("_logot", "_capturer_obj", "_level", "_logger")
+
+    def __init__(self, logot: Logot, capturer: Capturer, *, level: str | int, logger: str | None) -> None:
         self._logot = logot
-        self._handler = handler
+        self._capturer_obj = capturer
+        self._level = level
         self._logger = logger
 
     def __enter__(self) -> Logot:
-        # If the logger is less verbose than the handler, force it to the necessary verboseness.
-        self._prev_levelno = self._logger.level
-        if self._handler.level < self._logger.level:
-            self._logger.setLevel(self._handler.level)
-        # Add the handler.
-        self._logger.addHandler(self._handler)
+        self._capturer_obj.start_capturing(self._logot, level=self._level, logger=self._logger)
         return self._logot
 
     def __exit__(
@@ -276,28 +331,13 @@ class _Capturing:
         exc_value: BaseException | None,
         traceback: TracebackType | None,
     ) -> None:
-        # Remove the handler.
-        self._logger.removeHandler(self._handler)
-        # Restore the previous level.
-        self._logger.setLevel(self._prev_levelno)
-
-
-class _Handler(logging.Handler):
-    __slots__ = ("_logot",)
-
-    def __init__(self, level: str | int, logot: Logot) -> None:
-        super().__init__(level)
-        self._logot = logot
-
-    def emit(self, record: logging.LogRecord) -> None:
-        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno)
-        self._logot.capture(captured)
+        self._capturer_obj.stop_capturing()
 
 
 class _Wait(Generic[W]):
-    __slots__ = ("logged", "timeout", "waiter")
+    __slots__ = ("logged", "timeout", "waiter_obj")
 
-    def __init__(self, *, logged: Logged | None, timeout: float, waiter: W) -> None:
+    def __init__(self, *, logged: Logged | None, timeout: float, waiter_obj: W) -> None:
         self.logged = logged
         self.timeout = timeout
-        self.waiter = waiter
+        self.waiter_obj = waiter_obj

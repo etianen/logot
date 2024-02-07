@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 
 def validate_level(level: str | int) -> str | int:
     # Handle `str` or `int` level.
@@ -11,12 +9,9 @@ def validate_level(level: str | int) -> str | int:
     raise TypeError(f"Invalid level: {level!r}")
 
 
-def validate_logger(logger: logging.Logger | str | None) -> logging.Logger:
+def validate_logger(logger: str | None) -> str | None:
     # Handle `None` or `str` logger.
     if logger is None or isinstance(logger, str):
-        return logging.getLogger(logger)
-    # Handle `Logger` logger.
-    if isinstance(logger, logging.Logger):
         return logger
     # Handle invalid logger.
     raise TypeError(f"Invalid logger: {logger!r}")

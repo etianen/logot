@@ -8,5 +8,3 @@ API reference
 -------------
 
 .. autoclass:: AsyncioWaiter
-   :members:
-   :exclude-members: release,wait
