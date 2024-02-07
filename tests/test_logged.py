@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 from logot import Captured, Logged, logged
 from tests import lines
 
@@ -56,9 +54,9 @@ def test_record_logged_reduce() -> None:
     )
     # Test `int` level.
     assert_reduce(
-        logged.log(logging.INFO, "foo bar"),
+        logged.log(20, "foo bar"),
         Captured("INFO", "foo bar"),  # Non-matching (needs levelno).
-        Captured("INFO", "foo bar", levelno=logging.INFO),  # Matching.
+        Captured("INFO", "foo bar", levelno=20),  # Matching.
     )
 
 
