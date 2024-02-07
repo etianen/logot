@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections import deque
-from collections.abc import Generator
-from contextlib import AbstractContextManager, contextmanager
+from contextlib import AbstractContextManager
 from threading import Lock
-from typing import Any, Callable, ClassVar, Generic, overload
+from types import TracebackType
+from typing import Any, Callable, ClassVar, Generic
 
 from logot._capture import Captured
 from logot._import import LazyCallable
 from logot._logged import Logged
-from logot._typing import Concatenate, P, TypeAlias
 from logot._validate import validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
 
@@ -40,7 +40,7 @@ class Logot:
     This is the root logger.
     """
 
-    DEFAULT_CAPTURER: ClassVar[Capturer[...]] = LazyCallable("logot.logging", "capture_logging")
+    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
 
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
@@ -82,33 +82,13 @@ class Logot:
         self._queue: deque[Captured] = deque()
         self._wait: _Wait[Any] | None = None
 
-    @overload
     def capturing(
         self,
+        capturer: Callable[[], Capturer] = DEFAULT_CAPTURER,
         /,
-        level: str | int = ...,
-        logger: str | None = ...,
+        level: str | int = DEFAULT_LEVEL,
+        logger: str | None = DEFAULT_LOGGER,
     ) -> AbstractContextManager[Logot]:
-        ...
-
-    @overload
-    def capturing(
-        self,
-        capturer: Capturer[P],
-        /,
-        *args: P.args,
-        **kwargs: P.kwargs,
-    ) -> AbstractContextManager[Logot]:
-        ...
-
-    @contextmanager
-    def capturing(
-        self,
-        capturer: Capturer[...] = DEFAULT_CAPTURER,
-        /,
-        *args: Any,
-        **kwargs: Any,
-    ) -> Generator[Logot, None, None]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
 
@@ -123,8 +103,7 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
-        with capturer(self, *args, **kwargs):
-            yield self
+        return _Capturing(self, capturer(), level=level, logger=logger)
 
     def capture(self, captured: Captured) -> None:
         """
@@ -275,7 +254,38 @@ class Logot:
         return f"Logot(timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
 
 
-Capturer: TypeAlias = Callable[Concatenate[Logot, P], AbstractContextManager[None]]
+class Capturer(ABC):
+    __slots__ = ()
+
+    @abstractmethod
+    def start_capturing(self, logot: Logot, /, *, level: str | int, logger: str | None) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stop_capturing(self) -> None:
+        raise NotImplementedError
+
+
+class _Capturing:
+    __slots__ = ("_logot", "_capturer", "_level", "_logger")
+
+    def __init__(self, logot: Logot, capturer: Capturer, *, level: str | int, logger: str | None) -> None:
+        self._logot = logot
+        self._capturer = capturer
+        self._level = level
+        self._logger = logger
+
+    def __enter__(self) -> Logot:
+        self._capturer.start_capturing(self._logot, level=self._level, logger=self._logger)
+        return self._logot
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        self._capturer.stop_capturing()
 
 
 class _Wait(Generic[W]):

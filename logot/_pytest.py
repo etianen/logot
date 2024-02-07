@@ -51,17 +51,16 @@ def logot(
     logot_logger: str | None,
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
-    logot_capturer: Capturer[...],
+    logot_capturer: Callable[[], Capturer],
 ) -> Generator[Logot, None, None]:
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
-    logot = Logot(
-        timeout=logot_timeout,
-        async_waiter=logot_async_waiter,
-    )
-    with logot_capturer(logot, level=logot_level, logger=logot_logger):
-        yield logot
+    logot = Logot(timeout=logot_timeout, async_waiter=logot_async_waiter)
+    capturer_obj = logot_capturer()
+    capturer_obj.start_capturing(logot, level=logot_level, logger=logot_logger)
+    yield logot
+    capturer_obj.stop_capturing()
 
 
 @pytest.fixture(scope="session")
@@ -81,7 +80,7 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
 
 
 @pytest.fixture(scope="session")
-def logot_capturer(request: pytest.FixtureRequest) -> Capturer[...]:
+def logot_capturer(request: pytest.FixtureRequest) -> Callable[[], Capturer]:
     """
     The `capturer` used for automatic log capturing.
     """
