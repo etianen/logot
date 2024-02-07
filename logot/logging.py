@@ -1,0 +1,3 @@
+from __future__ import annotations
+
+from logot._logging import capture_logging
