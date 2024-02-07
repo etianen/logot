@@ -57,6 +57,8 @@ def logot(
     An initialized `logot.Logot` instance with log capturing enabled.
     """
     logot = Logot(capturer=logot_capturer, timeout=logot_timeout, async_waiter=logot_async_waiter)
+    # Start automatic log capturing.
+    # Use the `Capturer` directly, rather than `Logot.capturing()`, to save a few CPU cycles.
     capturer_obj = logot_capturer()
     capturer_obj.start_capturing(logot, level=logot_level, logger=logot_logger)
     yield logot
