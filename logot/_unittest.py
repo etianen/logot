@@ -56,6 +56,7 @@ class LogotTestCase(TestCase):
             async_waiter=self.__class__.logot_async_waiter,
         )
         ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
+        ctx.__enter__()
         self.addCleanup(ctx.__exit__, None, None, None)
 
     def run(self, result: TestResult | None = None) -> TestResult | None:
