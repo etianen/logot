@@ -60,7 +60,7 @@ def logot(
         timeout=logot_timeout,
         async_waiter=logot_async_waiter,
     )
-    with logot.capturing(logot_capturer, level=logot_level, logger=logot_logger) as logot:
+    with logot_capturer(logot, level=logot_level, logger=logot_logger):
         yield logot
 
 
