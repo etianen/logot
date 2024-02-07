@@ -123,7 +123,7 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger or logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         """
-        with contextmanager(capturer)(self, *args, **kwargs):
+        with capturer(self, *args, **kwargs):
             yield self
 
     def capture(self, captured: Captured) -> None:
@@ -275,7 +275,7 @@ class Logot:
         return f"Logot(timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
 
 
-Capturer: TypeAlias = Callable[Concatenate[Logot, P], Generator[None, None, None]]
+Capturer: TypeAlias = Callable[Concatenate[Logot, P], AbstractContextManager[None]]
 
 
 class _Wait(Generic[W]):

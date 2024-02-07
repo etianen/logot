@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Generator
+from contextlib import contextmanager
 
 from logot._capture import Captured
 from logot._logot import Logot
 
 
+@contextmanager
 def capture_logging(
     logot: Logot,
     *,
