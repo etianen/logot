@@ -22,16 +22,12 @@ class Logot:
 
         See :doc:`/index` usage guide.
 
+    :param capturer: See :attr:`Logot.capturer`.
     :param timeout: See :attr:`Logot.timeout`.
     :param async_waiter: See :attr:`Logot.async_waiter`.
     """
 
     __slots__ = ("capturer", "timeout", "async_waiter", "_lock", "_queue", "_wait")
-
-    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
-    """
-    The default ``capturer`` for new :class:`Logot` instances.
-    """
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """
@@ -45,6 +41,11 @@ class Logot:
     This is the root logger.
     """
 
+    DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
+    """
+    The default ``capturer`` for new :class:`Logot` instances.
+    """
+
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
@@ -56,6 +57,11 @@ class Logot:
     """
 
     capturer: Callable[[], Capturer]
+    """
+    The default ``capturer`` used by :meth:`capturing`.
+
+    Defaults to :attr:`Logot.DEFAULT_CAPTURER`.
+    """
 
     timeout: float
     """
@@ -91,10 +97,10 @@ class Logot:
 
     def capturing(
         self,
-        capturer: Callable[[], Capturer] | None = None,
-        /,
+        *,
         level: str | int = DEFAULT_LEVEL,
         logger: str | None = DEFAULT_LOGGER,
+        capturer: Callable[[], Capturer] | None = None,
     ) -> AbstractContextManager[Logot]:
         """
         Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.

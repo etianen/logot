@@ -47,9 +47,9 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
 
 @pytest.fixture()
 def logot(
-    logot_capturer: Callable[[], Capturer],
     logot_level: str | int,
     logot_logger: str | None,
+    logot_capturer: Callable[[], Capturer],
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
 ) -> Generator[Logot, None, None]:
@@ -59,14 +59,6 @@ def logot(
     logot = Logot(capturer=logot_capturer, timeout=logot_timeout, async_waiter=logot_async_waiter)
     with logot.capturing(level=logot_level, logger=logot_logger):
         yield logot
-
-
-@pytest.fixture(scope="session")
-def logot_capturer(request: pytest.FixtureRequest) -> Callable[[], Capturer]:
-    """
-    The `capturer` used for automatic log capturing.
-    """
-    return _get_option(request, name="capturer", parser=import_any_parsed, default=Logot.DEFAULT_CAPTURER)
 
 
 @pytest.fixture(scope="session")
@@ -83,6 +75,14 @@ def logot_logger(request: pytest.FixtureRequest) -> str | None:
     The `logger` used for automatic log capturing.
     """
     return _get_option(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
+
+
+@pytest.fixture(scope="session")
+def logot_capturer(request: pytest.FixtureRequest) -> Callable[[], Capturer]:
+    """
+    The `capturer` used for automatic log capturing.
+    """
+    return _get_option(request, name="capturer", parser=import_any_parsed, default=Logot.DEFAULT_CAPTURER)
 
 
 @pytest.fixture(scope="session")
