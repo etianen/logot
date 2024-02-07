@@ -51,6 +51,7 @@ class LogotTestCase(TestCase):
 
     def _logot_setup(self) -> None:
         self.logot = Logot(
+            capturer=self.__class__.logot_capturer,
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )

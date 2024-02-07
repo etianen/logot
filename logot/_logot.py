@@ -29,6 +29,9 @@ class Logot:
     __slots__ = ("capturer", "timeout", "async_waiter", "_lock", "_queue", "_wait")
 
     DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
+    """
+    The default ``capturer`` for new :class:`Logot` instances.
+    """
 
     DEFAULT_LEVEL: ClassVar[str | int] = "DEBUG"
     """

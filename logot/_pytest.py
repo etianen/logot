@@ -56,7 +56,7 @@ def logot(
     """
     An initialized `logot.Logot` instance with log capturing enabled.
     """
-    logot = Logot(timeout=logot_timeout, async_waiter=logot_async_waiter)
+    logot = Logot(capturer=logot_capturer, timeout=logot_timeout, async_waiter=logot_async_waiter)
     capturer_obj = logot_capturer()
     capturer_obj.start_capturing(logot, level=logot_level, logger=logot_logger)
     yield logot
