@@ -28,6 +28,12 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
     _add_option(
         parser,
         group,
+        name="capturer",
+        help="The default `capturer` for the `logot` fixture",
+    )
+    _add_option(
+        parser,
+        group,
         name="timeout",
         help="The default `timeout` (in seconds) for the `logot` fixture",
     )
@@ -36,12 +42,6 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
         group,
         name="async_waiter",
         help="The default `async_waiter` for the `logot` fixture",
-    )
-    _add_option(
-        parser,
-        group,
-        name="capturer",
-        help="The default `capturer` for the `logot` fixture",
     )
 
 

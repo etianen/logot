@@ -40,6 +40,8 @@ class Logot:
     This is the root logger.
     """
 
+    DEFAULT_CAPTURER: ClassVar[Capturer[Any]] = LazyCallable("logot.logging", "capture_logging")
+
     DEFAULT_TIMEOUT: ClassVar[float] = 3.0
     """
     The default ``timeout`` (in seconds) for new :class:`Logot` instances.
@@ -49,8 +51,6 @@ class Logot:
     """
     The default ``async_waiter`` for new :class:`Logot` instances.
     """
-
-    DEFAULT_CAPTURER: ClassVar[Capturer[Any]] = LazyCallable("logot.logging", "capture_logging")
 
     timeout: float
     """
