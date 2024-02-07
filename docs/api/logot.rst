@@ -12,9 +12,6 @@ API reference
 
 .. autoclass:: Logged
 
-.. autoclass:: Capturer
-   :members:
-
 .. autoclass:: Captured
    :members:
 
