@@ -62,7 +62,7 @@ class Logot:
 
     .. note::
 
-        This is for integration with 3rd-party logging frameworks.
+        This is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`.
 
     Defaults to :attr:`Logot.DEFAULT_CAPTURER`.
     """
@@ -119,8 +119,8 @@ class Logot:
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
-        :param capturer: Protocol used to capture logs. This is for integration with 3rd-party logging frameworks.
-            Defaults to :attr:`Logot.capturer`.
+        :param capturer: Protocol used to capture logs. This is for integration with
+            :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. Defaults to :attr:`Logot.capturer`.
         """
         if capturer is None:
             capturer = self.capturer
@@ -285,7 +285,8 @@ class Capturer(ABC):
 
     .. note::
 
-        This class is for integration with 3rd-party logging frameworks. It is not generally used when writing tests.
+        This class is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
+        generally used when writing tests.
     """
 
     __slots__ = ()
