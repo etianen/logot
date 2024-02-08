@@ -63,7 +63,7 @@ class Logot:
 
     .. note::
 
-        This is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`.
+        This is for integration with :ref:`3rd-party logging frameworks <integrations-logging>`.
 
     Defaults to :attr:`Logot.DEFAULT_CAPTURER`.
     """
@@ -81,7 +81,7 @@ class Logot:
 
     .. note::
 
-        This is for integration with 3rd-party asynchronous frameworks.
+        This is for integration with :ref:`3rd-party asynchronous frameworks <integrations-async>`.
 
     Defaults to :attr:`Logot.DEFAULT_ASYNC_WAITER`.
     """
@@ -121,7 +121,7 @@ class Logot:
             :attr:`Logot.DEFAULT_LEVEL`.
         :param logger: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
         :param capturer: Protocol used to capture logs. This is for integration with
-            :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. Defaults to :attr:`Logot.capturer`.
+            :ref:`3rd-party logging frameworks <integrations-logging>`. Defaults to :attr:`Logot.capturer`.
         """
         if capturer is None:
             capturer = self.capturer
@@ -139,12 +139,8 @@ class Logot:
 
         .. note::
 
-            This method is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
+            This method is for integration with :ref:`3rd-party logging frameworks <integrations-logging>`. It is not
             generally used when writing tests.
-
-        .. seealso::
-
-            See :ref:`log-capturing-3rd-party` usage guide.
 
         :param captured: The captured log.
         """
@@ -215,7 +211,7 @@ class Logot:
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :param async_waiter: Protocol used to pause tests until expected logs arrive. This is for integration with
-            3rd-party asynchronous frameworks. Defaults to :attr:`Logot.async_waiter`.
+            :ref:`3rd-party asynchronous frameworks <integrations-async>`. Defaults to :attr:`Logot.async_waiter`.
         :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
         """
         if async_waiter is None:
@@ -286,7 +282,7 @@ class Capturer(ABC):
 
     .. note::
 
-        This class is for integration with :ref:`3rd-party logging frameworks <log-capturing-3rd-party>`. It is not
+        This class is for integration with :ref:`3rd-party logging frameworks <integrations-logging>`. It is not
         generally used when writing tests.
     """
 

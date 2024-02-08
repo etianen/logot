@@ -3,7 +3,7 @@ Integration API for :mod:`logging`.
 
 .. seealso::
 
-    See :ref:`log-capturing-logging` usage guide.
+    See :doc:`/log-capturing` usage guide.
 """
 from __future__ import annotations
 
