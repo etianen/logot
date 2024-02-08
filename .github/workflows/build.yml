@@ -40,10 +40,9 @@ jobs:
     # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
     # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
     - name: Install dependencies
-      run: poetry install --all-extras
+      run: poetry install --no-root --all-extras
     - name: Install lib versions
       run: poetry run pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
-      if: ${{ matrix.lib-versions }}
     # Run checks.
     - name: Check (ruff)
       run: poetry run ruff check
