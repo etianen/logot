@@ -18,15 +18,21 @@ Install :mod:`logot` like any other Python library:
 Installing package ``extras``
 -----------------------------
 
-:mod:`logot` provides package ``extras`` to ensure compatibility with supported 3rd-party integrations.
+:mod:`logot` provides package ``extras`` to ensure compatibility with supported
+:doc:`3rd-party integrations </integrations/index>`.
 
 .. code:: bash
 
-   pip install 'logot[pytest]'
+   pip install 'logot[pytest,trio]'
 
-Package extras for supported 3rd-party integrations:
+Use the following package ``extras`` for supported 3rd-party integrations:
 
-- ``pytest`` - :doc:`using-pytest`
+- ``pytest`` - :doc:`/using-pytest`
+- ``trio`` - :doc:`/integrations/trio`
+
+.. seealso::
+
+   See :doc:`/integrations/index` usage guide.
 
 
 Installing with Poetry

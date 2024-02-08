@@ -21,6 +21,9 @@ jobs:
           - python-version: "3.12"
           - lib-versions: "pytest~=7.0"
           - lib-versions: "pytest~=8.0"
+          - lib-versions: "trio~=0.22.0"
+          - lib-versions: "trio~=0.23.0"
+          - lib-versions: "trio~=0.24.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}
@@ -39,7 +42,7 @@ jobs:
     - name: Install dependencies
       run: poetry install --all-extras
     - name: Install lib versions
-      run: poetry run pip install -e .[pytest] ${{ matrix.lib-versions }}
+      run: poetry run pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
       if: ${{ matrix.lib-versions }}
     # Run checks.
     - name: Check (ruff)

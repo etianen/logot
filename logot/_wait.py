@@ -27,8 +27,8 @@ class AsyncWaiter(ABC):
 
     .. note::
 
-        This class is for integration with 3rd-party asynchronous frameworks. It is not generally used when writing
-        tests.
+        This class is for integration with :ref:`3rd-party asynchronous frameworks <integrations-async>`. It is not
+        generally used when writing tests.
     """
 
     __slots__ = ()

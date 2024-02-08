@@ -16,12 +16,10 @@ class Logged(ABC):
 
     .. important::
 
-        :class:`Logged` instances are immutable and can be reused between tests.
-
-    .. note::
-
         This is an abstract class and cannot be instantiated. Use the helpers in :mod:`logot.logged` to create log
         patterns.
+
+        :class:`Logged` instances are immutable and can be reused between tests.
 
     .. seealso::
 
