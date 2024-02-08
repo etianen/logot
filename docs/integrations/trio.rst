@@ -12,7 +12,7 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
    async def test_app(logot: Logot) -> None:
       async with trio.open_nursery() as nursery:
          nursery.start_soon(app.start())
-      await logot.await_for(logged.info("App started"))
+         await logot.await_for(logged.info("App started"))
 
 .. include:: /include/testing-async-notes.rst
 
