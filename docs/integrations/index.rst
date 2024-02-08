@@ -19,9 +19,10 @@ Asynchronous frameworks
 Integrations with 3rd-party asynchronous frameworks extend :meth:`Logot.await_for`, allowing you to
 :ref:`test asynchronous code <index-testing-async>` using your framework of choice. 💪
 
+Learn about supported 3rd-party asynchronous frameworks:
+
 .. toctree::
    :maxdepth: 1
-   :glob:
 
    trio
 
@@ -29,7 +30,7 @@ Integrations with 3rd-party asynchronous frameworks extend :meth:`Logot.await_fo
 
    See :ref:`index-testing-async` usage guide.
 
-   See :class:`AsyncWaiter` API reference for integrating with additional asynchronous frameworks.
+   See :class:`AsyncWaiter` API reference for integrating with 3rd-party asynchronous frameworks.
 
 
 .. _integrations-logging:
@@ -40,12 +41,13 @@ Logging frameworks
 Integrations with 3rd-party logging frameworks extend :meth:`Logot.capturing`, allowing you to
 :doc:`capture logs </log-capturing>` using your framework of choice. 💪
 
+Learn about supported 3rd-party logging frameworks:
+
 .. toctree::
    :maxdepth: 1
-   :glob:
 
 .. seealso::
 
    See :doc:`/log-capturing` usage guide.
 
-   See :class:`Capturer` API reference for integrating with additional logging frameworks.
+   See :class:`Capturer` API reference for integrating with 3rd-party logging frameworks.
