@@ -108,7 +108,8 @@ class Logot:
         capturer: Callable[[], Capturer] | None = None,
     ) -> AbstractContextManager[Logot]:
         """
-        Captures logs emitted at the given ``level`` by the given logger ``name`` for the duration of the context.
+        Captures logs emitted at the given ``level`` (or higher) by the given logger ``name`` for the duration of the
+        context.
 
         If the named logger level is less verbose than the requested ``level``, it will be temporarily adjusted to the
         requested ``level`` for the duration of the context.
