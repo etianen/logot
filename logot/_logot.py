@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from _thread import allocate_lock
 from abc import ABC, abstractmethod
 from collections import deque
 from contextlib import AbstractContextManager
-from threading import Lock
 from types import TracebackType
 from typing import Any, Callable, ClassVar, Generic
 
@@ -96,7 +96,7 @@ class Logot:
         self.capturer = capturer
         self.timeout = validate_timeout(timeout)
         self.async_waiter = async_waiter
-        self._lock = Lock()
+        self._lock = allocate_lock()
         self._queue: deque[Captured] = deque()
         self._wait: _Wait[Any] | None = None
 

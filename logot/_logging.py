@@ -23,7 +23,7 @@ class LoggingCapturer(Capturer):
         handler = self._handler = _Handler(level, logot)
         # If the logger is less verbose than the handler, force it to the necessary verboseness.
         self._prev_levelno = logger.level
-        if handler.level < logger.level:
+        if handler.level < logger.getEffectiveLevel():
             logger.setLevel(handler.level)
         # Add the handler.
         logger.addHandler(handler)

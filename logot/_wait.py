@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from _thread import LockType, allocate_lock
 from abc import ABC, abstractmethod
-from threading import Lock
 from typing import Protocol, TypeVar
 
 
@@ -14,9 +14,9 @@ class Waiter(Protocol):
 W = TypeVar("W", bound=Waiter)
 
 
-def create_threading_waiter() -> Lock:
+def create_threading_waiter() -> LockType:
     # Create an already-acquired lock. This will be released by `release()`.
-    lock = Lock()
+    lock = allocate_lock()
     lock.acquire()
     return lock
 

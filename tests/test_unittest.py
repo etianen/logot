@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import logging
+
 from logot import logged
 from logot.unittest import LogotTestCase
-from tests import logger
 
 
 class TestUnitTest(LogotTestCase):
     def test_capture(self) -> None:
-        logger.info("foo bar")
+        logging.info("foo bar")
         self.logot.assert_logged(logged.info("foo bar"))
 
     def test_debug(self) -> None:

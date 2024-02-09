@@ -12,8 +12,8 @@ def test_wait_for_pass_immediate(logot: Logot) -> None:
 
 
 def test_wait_for_pass_soon(logot: Logot) -> None:
-    with capture_soon(logot, Captured("INFO", "foo bar")):
-        logot.wait_for(logged.info("foo bar"))
+    capture_soon(logot, Captured("INFO", "foo bar"))
+    logot.wait_for(logged.info("foo bar"))
 
 
 def test_wait_for_fail(logot: Logot) -> None:
