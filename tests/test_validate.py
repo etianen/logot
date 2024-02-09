@@ -4,7 +4,7 @@ from typing import cast
 
 import pytest
 
-from logot._validate import validate_level, validate_logger, validate_timeout
+from logot._validate import validate_level, validate_name, validate_timeout
 
 
 def test_validate_level_str_pass() -> None:
@@ -21,18 +21,18 @@ def test_validate_level_type_fail() -> None:
     assert str(ex.value) == "Invalid level: 1.5"
 
 
-def test_validate_logger_none_pass() -> None:
-    assert validate_logger(None) is None
+def test_validate_name_none_pass() -> None:
+    assert validate_name(None) is None
 
 
-def test_validate_logger_str_pass() -> None:
-    assert validate_logger("logot") == "logot"
+def test_validate_name_str_pass() -> None:
+    assert validate_name("logot") == "logot"
 
 
-def test_validate_logger_type_fail() -> None:
+def test_validate_name_type_fail() -> None:
     with pytest.raises(TypeError) as ex:
-        validate_logger(cast(str, 1.5))
-    assert str(ex.value) == "Invalid logger: 1.5"
+        validate_name(cast(str, 1.5))
+    assert str(ex.value) == "Invalid name: 1.5"
 
 
 def test_validate_timeout_numeric_pass() -> None:

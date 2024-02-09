@@ -4,7 +4,7 @@ from typing import Callable, ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Capturer, Logot
-from logot._typing import Level, Logger
+from logot._typing import Level, Name
 from logot._wait import AsyncWaiter
 
 
@@ -27,11 +27,11 @@ class LogotTestCase(TestCase):
     Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
     """
 
-    logot_logger: ClassVar[Logger] = Logot.DEFAULT_LOGGER
+    logot_name: ClassVar[Name] = Logot.DEFAULT_NAME
     """
-    The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
+    The ``name`` used for automatic :doc:`log capturing </log-capturing>`.
 
-    Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
+    Defaults to :attr:`logot.Logot.DEFAULT_NAME`.
     """
 
     logot_capturer: ClassVar[Callable[[], Capturer]] = Logot.DEFAULT_CAPTURER
@@ -62,7 +62,7 @@ class LogotTestCase(TestCase):
             async_waiter=self.__class__.logot_async_waiter,
         )
         # TODO: Use `TestCase.enterContext()` when we only need to support Python 3.11+.
-        ctx = self.logot.capturing(level=self.logot_level, logger=self.logot_logger)
+        ctx = self.logot.capturing(level=self.logot_level, name=self.logot_name)
         ctx.__enter__()
         self.addCleanup(ctx.__exit__, None, None, None)
 

@@ -29,11 +29,11 @@ Configuring
 -----------
 
 The :meth:`Logot.capturing` method defaults to capturing **all** records from the root logger. Customize this with the
-``level`` and ``logger`` arguments to :meth:`Logot.capturing`:
+``level`` and ``name`` arguments to :meth:`Logot.capturing`:
 
 .. code:: python
 
-   with Logot().capturing(level=logging.WARNING, logger="app") as logot:
+   with Logot().capturing(level=logging.WARNING, name="app") as logot:
       do_something()
       logot.assert_logged(logged.info("App started"))
 

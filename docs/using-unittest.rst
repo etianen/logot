@@ -30,7 +30,7 @@ Override ``logot``-prefixed attributes in your test case to configure the
 
    class MyAppTest(LogotTestCase):
       logot_level = "WARNING"
-      logot_logger = "app"
+      logot_name = "app"
       logot_timeout = 10.0
 
 .. seealso::
