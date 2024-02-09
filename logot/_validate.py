@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from logot._typing import Level, Logger
+from logot._typing import Level, Name
 
 
 def validate_level(level: Level) -> Level:
@@ -11,12 +11,12 @@ def validate_level(level: Level) -> Level:
     raise TypeError(f"Invalid level: {level!r}")
 
 
-def validate_logger(logger: Logger) -> Logger:
-    # Handle `None` or `str` logger.
-    if logger is None or isinstance(logger, str):
-        return logger
-    # Handle invalid logger.
-    raise TypeError(f"Invalid logger: {logger!r}")
+def validate_name(name: Name) -> Name:
+    # Handle `None` or `str` name.
+    if name is None or isinstance(name, str):
+        return name
+    # Handle invalid name.
+    raise TypeError(f"Invalid name: {name!r}")
 
 
 def validate_timeout(timeout: float) -> float:

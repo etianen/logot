@@ -4,7 +4,7 @@ import logging
 
 from logot._capture import Captured
 from logot._logot import Capturer, Logot
-from logot._typing import Level, Logger
+from logot._typing import Level, Name
 
 
 class LoggingCapturer(Capturer):
@@ -18,8 +18,8 @@ class LoggingCapturer(Capturer):
 
     __slots__ = ("_logger", "_handler", "_prev_levelno")
 
-    def start_capturing(self, logot: Logot, /, *, level: Level, logger: Logger) -> None:
-        logger = self._logger = logging.getLogger(logger)
+    def start_capturing(self, logot: Logot, /, *, level: Level, name: Name) -> None:
+        logger = self._logger = logging.getLogger(name)
         handler = self._handler = _Handler(level, logot)
         # If the logger is less verbose than the handler, force it to the necessary verboseness.
         self._prev_levelno = logger.level

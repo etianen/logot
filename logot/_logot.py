@@ -10,8 +10,8 @@ from typing import Any, Callable, ClassVar, Generic
 from logot._capture import Captured
 from logot._import import LazyCallable
 from logot._logged import Logged
-from logot._typing import Level, Logger
-from logot._validate import validate_level, validate_logger, validate_timeout
+from logot._typing import Level, Name
+from logot._validate import validate_level, validate_name, validate_timeout
 from logot._wait import AsyncWaiter, W, create_threading_waiter
 
 
@@ -35,11 +35,11 @@ class Logot:
     The default ``level`` used by :meth:`capturing`.
     """
 
-    DEFAULT_LOGGER: ClassVar[Logger] = None
+    DEFAULT_NAME: ClassVar[Name] = None
     """
-    The default ``logger`` used by :meth:`capturing`.
+    The default ``name`` used by :meth:`capturing`.
 
-    This is the root logger.
+    Defaults to :data:`None`, representing the root logger.
     """
 
     DEFAULT_CAPTURER: ClassVar[Callable[[], Capturer]] = LazyCallable("logot.logging", "LoggingCapturer")
@@ -104,14 +104,15 @@ class Logot:
         self,
         *,
         level: Level = DEFAULT_LEVEL,
-        logger: Logger = DEFAULT_LOGGER,
+        name: Name = DEFAULT_NAME,
         capturer: Callable[[], Capturer] | None = None,
     ) -> AbstractContextManager[Logot]:
         """
-        Captures logs emitted at the given ``level`` by the given ``logger`` for the duration of the context.
+        Captures logs emitted at the given ``level`` (or higher) by the given logger ``name`` for the duration of the
+        context.
 
-        If the given ``logger`` level is less verbose than the requested ``level``, it will be temporarily adjusted to
-        the requested ``level`` for the duration of the context.
+        If the named logger level is less verbose than the requested ``level``, it will be temporarily adjusted to the
+        requested ``level`` for the duration of the context.
 
         .. seealso::
 
@@ -119,7 +120,7 @@ class Logot:
 
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`). Defaults to
             :attr:`Logot.DEFAULT_LEVEL`.
-        :param logger: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_LOGGER`.
+        :param name: A logger name to capture logs from. Defaults to :attr:`Logot.DEFAULT_NAME`.
         :param capturer: Protocol used to capture logs. This is for integration with
             :ref:`3rd-party logging frameworks <integrations-logging>`. Defaults to :attr:`Logot.capturer`.
         """
@@ -127,8 +128,8 @@ class Logot:
             capturer = self.capturer
         capturer_obj = capturer()
         level = validate_level(level)
-        logger = validate_logger(logger)
-        return _Capturing(self, capturer_obj, level=level, logger=logger)
+        name = validate_name(name)
+        return _Capturing(self, capturer_obj, level=level, name=name)
 
     def capture(self, captured: Captured) -> None:
         """
@@ -289,7 +290,7 @@ class Capturer(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def start_capturing(self, logot: Logot, /, *, level: Level, logger: Logger) -> None:
+    def start_capturing(self, logot: Logot, /, *, level: Level, name: Name) -> None:
         """
         Starts capturing logs for the given :class:`Logot`.
 
@@ -297,7 +298,7 @@ class Capturer(ABC):
 
         :param logot: The :class:`Logot` instance.
         :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
-        :param logger: A logger name to capture logs from.
+        :param name: A logger name to capture logs from.
         """
         raise NotImplementedError
 
@@ -310,16 +311,16 @@ class Capturer(ABC):
 
 
 class _Capturing:
-    __slots__ = ("_logot", "_capturer_obj", "_level", "_logger")
+    __slots__ = ("_logot", "_capturer_obj", "_level", "_name")
 
-    def __init__(self, logot: Logot, capturer: Capturer, *, level: Level, logger: Logger) -> None:
+    def __init__(self, logot: Logot, capturer: Capturer, *, level: Level, name: Name) -> None:
         self._logot = logot
         self._capturer_obj = capturer
         self._level = level
-        self._logger = logger
+        self._name = name
 
     def __enter__(self) -> Logot:
-        self._capturer_obj.start_capturing(self._logot, level=self._level, logger=self._logger)
+        self._capturer_obj.start_capturing(self._logot, level=self._level, name=self._name)
         return self._logot
 
     def __exit__(

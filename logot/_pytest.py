@@ -7,7 +7,7 @@ import pytest
 
 from logot._import import import_any_parsed
 from logot._logot import Capturer, Logot
-from logot._typing import MISSING, Level, Logger, T
+from logot._typing import MISSING, Level, Name, T
 from logot._wait import AsyncWaiter
 
 
@@ -22,8 +22,8 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
     _add_option(
         parser,
         group,
-        name="logger",
-        help="The `logger` used for automatic `logot` log capturing",
+        name="name",
+        help="The `name` used for automatic `logot` log capturing",
     )
     _add_option(
         parser,
@@ -48,7 +48,7 @@ def pytest_addoption(parser: pytest.Parser, pluginmanager: pytest.PytestPluginMa
 @pytest.fixture()
 def logot(
     logot_level: Level,
-    logot_logger: Logger,
+    logot_name: Name,
     logot_capturer: Callable[[], Capturer],
     logot_timeout: float,
     logot_async_waiter: Callable[[], AsyncWaiter],
@@ -57,7 +57,7 @@ def logot(
     An initialized `logot.Logot` instance with log capturing enabled.
     """
     logot = Logot(capturer=logot_capturer, timeout=logot_timeout, async_waiter=logot_async_waiter)
-    with logot.capturing(level=logot_level, logger=logot_logger):
+    with logot.capturing(level=logot_level, name=logot_name):
         yield logot
 
 
@@ -70,11 +70,11 @@ def logot_level(request: pytest.FixtureRequest) -> Level:
 
 
 @pytest.fixture(scope="session")
-def logot_logger(request: pytest.FixtureRequest) -> Logger:
+def logot_name(request: pytest.FixtureRequest) -> Name:
     """
-    The `logger` used for automatic log capturing.
+    The `name` used for automatic log capturing.
     """
-    return _get_option(request, name="logger", parser=str, default=Logot.DEFAULT_LOGGER)
+    return _get_option(request, name="name", parser=str, default=Logot.DEFAULT_NAME)
 
 
 @pytest.fixture(scope="session")

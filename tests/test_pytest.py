@@ -8,7 +8,7 @@ import pytest
 
 from logot import Capturer, Logot
 from logot._pytest import get_optname, get_qualname
-from logot._typing import MISSING, Level, Logger
+from logot._typing import MISSING, Level, Name
 from logot._wait import AsyncWaiter
 from logot.asyncio import AsyncioWaiter
 from logot.logging import LoggingCapturer
@@ -64,12 +64,12 @@ def test_level_config_pass(pytester: pytest.Pytester) -> None:
     assert_fixture_config(pytester, "level", "INFO")
 
 
-def test_logger_default(logot_logger: Logger) -> None:
-    assert logot_logger == Logot.DEFAULT_LOGGER
+def test_name_default(logot_name: Name) -> None:
+    assert logot_name == Logot.DEFAULT_NAME
 
 
-def test_logger_config_pass(pytester: pytest.Pytester) -> None:
-    assert_fixture_config(pytester, "logger", "logot")
+def test_name_config_pass(pytester: pytest.Pytester) -> None:
+    assert_fixture_config(pytester, "name", "logot")
 
 
 def test_capturer_default(logot_capturer: Callable[[], Capturer]) -> None:

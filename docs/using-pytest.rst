@@ -42,10 +42,10 @@ Use the following CLI and :external+pytest:doc:`configuration <reference/customi
 
    Defaults to :attr:`logot.Logot.DEFAULT_LEVEL`.
 
-``--logot-logger``, ``logot_logger``
-   The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
+``--logot-name``, ``logot_name``
+   The ``name`` used for automatic :doc:`log capturing </log-capturing>`.
 
-   Defaults to :attr:`logot.Logot.DEFAULT_LOGGER`.
+   Defaults to :attr:`logot.Logot.DEFAULT_NAME`.
 
 ``--logot-capturer``, ``logot_capturer``
    The default ``capturer`` for the ``logot`` fixture.
@@ -79,8 +79,8 @@ The following fixtures are available in the :mod:`pytest` plugin:
 ``logot_level:`` :class:`str` | :class:`int`
    The ``level`` used for automatic :doc:`log capturing </log-capturing>`.
 
-``logot_logger:`` :class:`str` | :data:`None`
-   The ``logger`` used for automatic :doc:`log capturing </log-capturing>`.
+``logot_name:`` :class:`str` | :data:`None`
+   The ``name`` used for automatic :doc:`log capturing </log-capturing>`.
 
 ``logot_capturer:`` ``Callable`` [[], :class:`Capturer` ]
    The default ``capturer`` for the ``logot`` fixture.
