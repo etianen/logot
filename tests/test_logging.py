@@ -39,7 +39,7 @@ def test_capturing_level_reset() -> None:
         assert logger.level == logging.WARNING
     finally:
         # Whatever this test does, reset the logger to what it was!
-        logger.setLevel(logging.NOTSET)
+        logger.setLevel(logging.WARNING)
 
 
 def test_capturing_logger_pass() -> None:
