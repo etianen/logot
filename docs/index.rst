@@ -100,7 +100,16 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
       asyncio.create_task(app.start())
       await logot.await_for(logged.info("App started"))
 
-.. include:: /include/testing-async-notes.rst
+.. note::
+
+   Use the ``timeout`` argument to :meth:`Logot.await_for` to configure how long to wait before the test fails. This can
+   be configured globally with the ``timeout`` argument to :class:`Logot`, defaulting to :attr:`Logot.DEFAULT_TIMEOUT`.
+
+.. seealso::
+
+   See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
+
+   See :ref:`integrations-async` for other supported asynchronous frameworks (e.g. :doc:`trio </integrations/trio>`).
 
 
 Testing synchronous code
