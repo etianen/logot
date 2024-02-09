@@ -16,6 +16,8 @@ def test_something(logot: Logot) -> None:
     logot.assert_logged(logged.info("Something was done"))
 ```
 
+`logot` has can be used with [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html), or any other testing framework. It has built-in integrations for [`asyncio`](https://logot.readthedocs.io/latest/index.html#testing-asynchronous-code), [`trio`](https://logot.readthedocs.io/latest/integrations/trio.html), [`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [`loguru`](https://logot.readthedocs.io/latest/integrations/loguru.html), and can be extended to support many other frameworks.
+
 
 ## Documentation 📖
 
