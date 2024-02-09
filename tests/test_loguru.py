@@ -37,13 +37,13 @@ def test_capturing_level_fail() -> None:
 
 
 def test_capturing_logger_pass() -> None:
-    with Logot().capturing(logger="tests") as logot:
+    with Logot(capturer=LoguruCapturer).capturing(logger="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
 def test_capturing_logger_fail() -> None:
-    with Logot().capturing(logger="boom") as logot:
+    with Logot(capturer=LoguruCapturer).capturing(logger="boom") as logot:
         logger.info("foo bar")
         logot.assert_not_logged(logged.info("foo bar"))
 
