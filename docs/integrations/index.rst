@@ -46,6 +46,8 @@ Learn about supported 3rd-party logging frameworks:
 .. toctree::
    :maxdepth: 1
 
+   loguru
+
 .. seealso::
 
    See :doc:`/log-capturing` usage guide.
