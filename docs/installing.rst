@@ -23,10 +23,11 @@ Installing package ``extras``
 
 .. code:: bash
 
-   pip install 'logot[pytest,trio]'
+   pip install 'logot[loguru,pytest,trio]'
 
 Use the following package ``extras`` for supported 3rd-party integrations:
 
+- ``loguru`` - :doc:`/integrations/loguru`
 - ``pytest`` - :doc:`/using-pytest`
 - ``trio`` - :doc:`/integrations/trio`
 

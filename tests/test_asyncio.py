@@ -28,8 +28,8 @@ async def test_await_for_pass_immediate(logot: Logot) -> None:
 
 @asyncio_test
 async def test_await_for_pass_soon(logot: Logot) -> None:
-    with capture_soon(logot, Captured("INFO", "foo bar")):
-        await logot.await_for(logged.info("foo bar"))
+    capture_soon(logot, Captured("INFO", "foo bar"))
+    await logot.await_for(logged.info("foo bar"))
 
 
 @asyncio_test

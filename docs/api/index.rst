@@ -13,7 +13,7 @@ Import the :mod:`logot` API in your tests:
 Modules
 -------
 
-Learn about the public :mod:`logot` modules with the following reference guides:
+Learn about public :mod:`logot` modules with the following reference guides:
 
 .. toctree::
    :maxdepth: 1

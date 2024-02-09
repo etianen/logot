@@ -25,9 +25,10 @@ extensions = [
 autodoc_member_order = "bysource"
 
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
+    "python": ("https://docs.python.org/3/", None),
+    "loguru": ("https://loguru.readthedocs.io/en/latest/", None),
     "pytest": ("https://docs.pytest.org/en/latest/", None),
-    "trio": ("https://trio.readthedocs.io/en/latest", None),
+    "trio": ("https://trio.readthedocs.io/en/latest/", None),
 }
 
 nitpicky = True

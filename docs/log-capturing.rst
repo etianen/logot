@@ -11,6 +11,10 @@ Log capturing
       do_something()
       logot.assert_logged(logged.info("App started"))
 
+.. seealso::
+
+   See :ref:`integrations-logging` for other supported logging frameworks (e.g. :doc:`loguru </integrations/loguru>`).
+
 
 Test framework integrations
 ---------------------------

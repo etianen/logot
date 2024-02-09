@@ -1,14 +1,21 @@
 from __future__ import annotations
 
-import logging
+from typing import Callable
+
+import pytest
+from loguru import logger
 
 from logot import Logot, logged
+from logot.loguru import LoguruCapturer
 
-logger = logging.getLogger("tests")
+
+@pytest.fixture(scope="session")
+def logot_capturer() -> Callable[[], LoguruCapturer]:
+    return LoguruCapturer
 
 
 def test_capturing() -> None:
-    with Logot().capturing() as logot:
+    with Logot(capturer=LoguruCapturer).capturing() as logot:
         # Ensure log capturing is enabled.
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
@@ -18,39 +25,25 @@ def test_capturing() -> None:
 
 
 def test_capturing_level_pass() -> None:
-    with Logot().capturing(level=logging.INFO) as logot:
+    with Logot(capturer=LoguruCapturer).capturing(level="INFO") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
 def test_capturing_level_fail() -> None:
-    with Logot().capturing(level=logging.INFO) as logot:
+    with Logot(capturer=LoguruCapturer).capturing(level="INFO") as logot:
         logger.debug("foo bar")
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
-def test_capturing_level_reset() -> None:
-    assert logger.level == logging.NOTSET
-    # Set a fairly non-verbose log level.
-    try:
-        with Logot().capturing(level=logging.INFO, logger="tests"):
-            # The logger will have been overridden for the required verbosity.
-            assert logger.level == logging.INFO
-        # When the capture ends, the logging verbosity is restored.
-        assert logger.level == logging.NOTSET
-    finally:
-        # Whatever this test does, reset the logger to what it was!
-        logger.setLevel(logging.NOTSET)
-
-
 def test_capturing_logger_pass() -> None:
-    with Logot().capturing(logger="tests") as logot:
+    with Logot(capturer=LoguruCapturer).capturing(logger="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
 def test_capturing_logger_fail() -> None:
-    with Logot().capturing(logger="boom") as logot:
+    with Logot(capturer=LoguruCapturer).capturing(logger="boom") as logot:
         logger.info("foo bar")
         logot.assert_not_logged(logged.info("foo bar"))
 
@@ -61,5 +54,5 @@ def test_capture(logot: Logot) -> None:
 
 
 def test_capture_levelno(logot: Logot) -> None:
-    logger.log(logging.INFO, "foo bar")
-    logot.assert_logged(logged.log(logging.INFO, "foo bar"))
+    logger.log(20, "foo bar")
+    logot.assert_logged(logged.log(20, "foo bar"))
