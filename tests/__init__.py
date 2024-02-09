@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from _thread import start_new_thread
+from threading import Thread
 from time import sleep
 
 from logot import Captured, Logot
@@ -11,7 +11,8 @@ def lines(*lines: str) -> str:
 
 
 def capture_soon(logot: Logot, captured: Captured) -> None:
-    start_new_thread(_capture_soon, (logot, captured))
+    thread = Thread(target=_capture_soon, args=(logot, captured), daemon=True)
+    thread.start()
 
 
 def _capture_soon(logot: Logot, captured: Captured) -> None:
