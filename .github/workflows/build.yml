@@ -102,9 +102,6 @@ jobs:
       run: poetry run coverage report
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
-      with:
-        disable_search: true
-        file: .coverage
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     # Fail if any `needs` job was not a success.
