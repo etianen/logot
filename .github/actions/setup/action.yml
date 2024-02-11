@@ -16,3 +16,9 @@ runs:
       shell: bash
     - run: poetry check --lock
       shell: bash
+    # Activate venv.
+    - run: |
+        VIRTUAL_ENV=$(poetry env info --path)
+        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
+        echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
+      shell: bash
