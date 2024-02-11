@@ -10,6 +10,7 @@ repository = "https://github.com/etianen/logot"
 documentation = "https://logot.readthedocs.io"
 keywords = ["test", "unittest", "pytest", "logging"]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
     "Framework :: Pytest",
     "Framework :: Trio",
