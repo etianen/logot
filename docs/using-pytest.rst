@@ -116,5 +116,4 @@ The following fixtures are available in the :mod:`pytest` plugin:
    The default ``async_waiter`` for the ``logot`` fixture.
 
 
-.. |caplog| replace:: ``caplog``
-.. _caplog: https://docs.pytest.org/en/latest/logging.html?highlight=caplog#caplog-fixture
+.. include:: _refs.rst
