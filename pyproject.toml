@@ -33,22 +33,15 @@ loguru = ["loguru"]
 pytest = ["pytest"]
 trio = ["trio"]
 
-[tool.poetry.group.coverage.dependencies]
-coverage = "^7.4.1"
-
 [tool.poetry.group.dev.dependencies]
+coverage = "^7.4.1"
+furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.96.1"
 mypy = "^1.8.0"
 ruff = "^0.1.11"
-trio-typing = "^0.10.0"
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-furo = { version = "*", python = "^3.12" }
 sphinx = { version = "7.2.6", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
+trio-typing = "^0.10.0"
 
 [tool.poetry.plugins.pytest11]
 logot = "logot._pytest"
