@@ -71,7 +71,7 @@ jobs:
       uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
-      run: poetry install --all-extras --only main --only docs
+      run: poetry install --all-extras --with docs
     # Build docs.
     - name: Build docs
       run: sphinx-build -W docs docs/_build
@@ -89,7 +89,7 @@ jobs:
       uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
-      run: poetry install --only coverage
+      run: poetry install --with coverage
     # Report coverage.
     - name: Download coverage
       uses: actions/download-artifact@v4
