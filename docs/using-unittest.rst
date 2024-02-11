@@ -28,14 +28,17 @@ testing. The above example can be rewritten using :meth:`assertLogs() <unittest.
 
 .. code:: python
 
-   def test_something(caplog: pytest.LogCaptureFixture) -> None:
-      do_something()
-      assert any(
-         record.levelno == logging.INFO and record.message == "Something was done"
-         for record in caplog.records
-      )
+   class MyAppTest(TestCase):
 
-:mod:`logot` improves on ``caplog`` with:
+      def test_something(self) -> None:
+         with self.assertLogs(level=logging.DEBUG) as cm:
+            do_something()
+         assert any(
+            record.levelno == logging.INFO and record.message == "Something was done"
+            for record in cm.records
+         )
+
+:mod:`logot` improves on :meth:`assertLogs() <unittest.TestCase.assertLogs>` with:
 
 - Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
 - Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
