@@ -2,6 +2,7 @@
 
 [![Poetry](https://img.shields.io/endpoint?url=https://python-poetry.org/badge/v0.json)](https://python-poetry.org/)
 [![Build](https://github.com/etianen/logot/actions/workflows/build.yml/badge.svg)](https://github.com/etianen/logot/actions/workflows/build.yml)
+[![codecov](https://codecov.io/gh/etianen/logot/graph/badge.svg?token=J5K0LOOSTZ)](https://codecov.io/gh/etianen/logot)
 [![Docs](https://readthedocs.org/projects/logot/badge/)](https://logot.readthedocs.io)
 [![PyPI version](https://img.shields.io/pypi/v/logot.svg)](https://pypi.org/project/logot/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/logot.svg)](https://pypi.org/project/logot/)
