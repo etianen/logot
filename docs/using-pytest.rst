@@ -17,11 +17,11 @@ assertions:
       logot.assert_logged(logged.info("Something was done"))
 
 
-Comparison to ``caplog``
-------------------------
+Comparison to |caplog|_
+-----------------------
 
-:mod:`pytest` includes a ``caplog`` fixture that supports log capture and testing. The above example can be rewritten
-using ``caplog`` as:
+:mod:`pytest` includes a |caplog|_ fixture that supports log capture and testing. The above example can be rewritten
+using |caplog|_ as:
 
 .. code:: python
 
@@ -32,7 +32,7 @@ using ``caplog`` as:
          for record in caplog.records
       )
 
-:mod:`logot` improves on ``caplog`` with:
+:mod:`logot` improves on |caplog|_ with:
 
 - Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
 - Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
@@ -114,3 +114,7 @@ The following fixtures are available in the :mod:`pytest` plugin:
 
 ``logot_async_waiter:`` ``Callable`` [[], :class:`AsyncWaiter` ]
    The default ``async_waiter`` for the ``logot`` fixture.
+
+
+.. |caplog| replace:: ``caplog``
+.. _caplog: https://docs.pytest.org/en/latest/logging.html?highlight=caplog#caplog-fixture
