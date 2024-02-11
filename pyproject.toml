@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logot"
-version = "0.4.0"
+version = "1.0.0"
 description = "Test whether your code is logging correctly 🪵"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
@@ -10,6 +10,7 @@ repository = "https://github.com/etianen/logot"
 documentation = "https://logot.readthedocs.io"
 keywords = ["test", "unittest", "pytest", "logging"]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
     "Framework :: Pytest",
     "Framework :: Trio",
