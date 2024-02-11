@@ -17,6 +17,30 @@ assertions:
       logot.assert_logged(logged.info("Something was done"))
 
 
+Comparison to |caplog|_
+-----------------------
+
+:mod:`pytest` includes a |caplog|_ fixture that supports log capture and testing. The above example can be rewritten
+using |caplog|_ as:
+
+.. code:: python
+
+   def test_something(caplog: pytest.LogCaptureFixture) -> None:
+      do_something()
+      assert any(
+         record.levelno == logging.INFO and record.message == "Something was done"
+         for record in caplog.records
+      )
+
+:mod:`logot` improves on |caplog|_ with:
+
+- Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
+- Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
+- Support for testing :ref:`threaded <index-testing-threaded>` and :ref:`async <index-testing-async>` code.
+- Support for :ref:`3rd-party logging frameworks <integrations-logging>` (e.g. :doc:`loguru </integrations/loguru>`).
+- A cleaner, clearer syntax.
+
+
 Installing
 ----------
 
@@ -90,3 +114,7 @@ The following fixtures are available in the :mod:`pytest` plugin:
 
 ``logot_async_waiter:`` ``Callable`` [[], :class:`AsyncWaiter` ]
    The default ``async_waiter`` for the ``logot`` fixture.
+
+
+.. |caplog| replace:: ``caplog``
+.. _caplog: https://docs.pytest.org/en/latest/logging.html?highlight=caplog#caplog-fixture

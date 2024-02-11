@@ -43,19 +43,19 @@ jobs:
     # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
     # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
     - name: Install dependencies
-      run: poetry install --no-root --all-extras
+      run: poetry install --all-extras --no-root
     - name: Install lib versions
-      run: poetry run pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
+      run: pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
     # Run checks.
     - name: Check (ruff)
-      run: poetry run ruff check
+      run: ruff check
     - name: Check (ruff format)
-      run: poetry run ruff format --check
+      run: ruff format --check
     - name: Check (mypy)
-      run: poetry run mypy
+      run: mypy
     # Run tests.
     - name: Test
-      run: poetry run coverage run -m pytest
+      run: coverage run -m pytest
     # Upload coverage.
     - name: Upload coverage
       uses: actions/upload-artifact@v4
@@ -72,10 +72,10 @@ jobs:
       uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
-      run: poetry install --all-extras --only main --only docs
+      run: poetry install --all-extras
     # Build docs.
     - name: Build docs
-      run: poetry run sphinx-build -W docs docs/_build
+      run: sphinx-build -W docs docs/_build
 
   report:
     runs-on: ubuntu-latest
@@ -90,7 +90,7 @@ jobs:
       uses: ./.github/actions/setup
     # Install dependencies.
     - name: Install dependencies
-      run: poetry install --only coverage
+      run: poetry install --all-extras
     # Report coverage.
     - name: Download coverage
       uses: actions/download-artifact@v4
@@ -98,9 +98,13 @@ jobs:
         pattern: .coverage.*
         merge-multiple: true
     - name: Combine coverage
-      run: poetry run coverage combine .coverage.*
+      run: coverage combine .coverage.*
     - name: Report coverage
-      run: poetry run coverage report
+      run: coverage report
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     # Fail if any `needs` job was not a success.
     # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
     - name: Fail on workflow error

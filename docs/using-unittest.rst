@@ -20,6 +20,33 @@ during tests and can be used to make log assertions:
          self.logot.assert_logged(logged.info("App started"))
 
 
+Comparison to :meth:`assertLogs() <unittest.TestCase.assertLogs>`
+-----------------------------------------------------------------
+
+:mod:`unittest` includes a :meth:`assertLogs() <unittest.TestCase.assertLogs>` method that supports log capture and
+testing. The above example can be rewritten using :meth:`assertLogs() <unittest.TestCase.assertLogs>` as:
+
+.. code:: python
+
+   class MyAppTest(TestCase):
+
+      def test_something(self) -> None:
+         with self.assertLogs(level=logging.DEBUG) as cm:
+            do_something()
+         assert any(
+            record.levelno == logging.INFO and record.message == "Something was done"
+            for record in cm.records
+         )
+
+:mod:`logot` improves on :meth:`assertLogs() <unittest.TestCase.assertLogs>` with:
+
+- Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
+- Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
+- Support for testing :ref:`threaded <index-testing-threaded>` and :ref:`async <index-testing-async>` code.
+- Support for :ref:`3rd-party logging frameworks <integrations-logging>` (e.g. :doc:`loguru </integrations/loguru>`).
+- A cleaner, clearer syntax.
+
+
 Configuring
 -----------
 
