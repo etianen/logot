@@ -36,86 +36,86 @@ jobs:
       COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}
       PYTHONDEVMODE: 1
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: ./.github/actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-      # Install dependencies.
-      # This is done in two steps - first we install the `poetry` dev dependencies, then we install the project in
-      # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
-      # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
-      - name: Install dependencies
-        run: poetry install --all-extras --no-root
-      - name: Install lib versions
-        run: pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
-      # Run checks.
-      - name: Check (ruff)
-        run: ruff check
-      - name: Check (ruff format)
-        run: ruff format --check
-      - name: Check (mypy)
-        run: mypy
-      # Run tests.
-      - name: Test
-        run: coverage run -m pytest
-      # Upload coverage.
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.COVERAGE_FILE }}
-          path: ${{ env.COVERAGE_FILE }}
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
+      with:
+        python-version: ${{ matrix.python-version }}
+    # Install dependencies.
+    # This is done in two steps - first we install the `poetry` dev dependencies, then we install the project in
+    # editable mode with compatible `extra` dependencies from the test matrix. This is a compromise that allows us to
+    # largely rely on the `poetry` lockfile while still testing against multiple `extra` library versions.
+    - name: Install dependencies
+      run: poetry install --all-extras --no-root
+    - name: Install lib versions
+      run: pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
+    # Run checks.
+    - name: Check (ruff)
+      run: ruff check
+    - name: Check (ruff format)
+      run: ruff format --check
+    - name: Check (mypy)
+      run: mypy
+    # Run tests.
+    - name: Test
+      run: coverage run -m pytest
+    # Upload coverage.
+    - name: Upload coverage
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.COVERAGE_FILE }}
+        path: ${{ env.COVERAGE_FILE }}
 
   docs:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: ./.github/actions/setup
-      # Install dependencies.
-      - name: Install dependencies
-        run: poetry install --all-extras
-      # Build docs.
-      - name: Build docs
-        run: sphinx-build -W docs docs/_build
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
+    # Install dependencies.
+    - name: Install dependencies
+      run: poetry install --all-extras
+    # Build docs.
+    - name: Build docs
+      run: sphinx-build -W docs docs/_build
 
   report:
     runs-on: ubuntu-latest
     needs:
-      - test
-      - docs
+    - test
+    - docs
     if: always()
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup
-        uses: ./.github/actions/setup
-      # Install dependencies.
-      - name: Install dependencies
-        run: poetry install --all-extras
-      # Report coverage.
-      - name: Download coverage
-        uses: actions/download-artifact@v4
-        with:
-          pattern: .coverage.*
-          merge-multiple: true
-      - name: Combine coverage
-        run: coverage combine .coverage.*
-      - name: Report coverage
-        run: coverage report
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      # Fail if any `needs` job was not a success.
-      # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
-      - name: Fail on workflow error
-        run: exit 1
-        if: >-
-          ${{
-            contains(needs.*.result, 'failure')
-            || contains(needs.*.result, 'cancelled')
-            || contains(needs.*.result, 'skipped')
-          }}
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Setup
+      uses: ./.github/actions/setup
+    # Install dependencies.
+    - name: Install dependencies
+      run: poetry install --all-extras
+    # Report coverage.
+    - name: Download coverage
+      uses: actions/download-artifact@v4
+      with:
+        pattern: .coverage.*
+        merge-multiple: true
+    - name: Combine coverage
+      run: coverage combine .coverage.*
+    - name: Report coverage
+      run: coverage report
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    # Fail if any `needs` job was not a success.
+    # Along with `if: always()`, this allows this job to act as a single required status check for the entire workflow.
+    - name: Fail on workflow error
+      run: exit 1
+      if: >-
+        ${{
+          contains(needs.*.result, 'failure')
+          || contains(needs.*.result, 'cancelled')
+          || contains(needs.*.result, 'skipped')
+        }}
