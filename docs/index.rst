@@ -18,7 +18,8 @@ Log-based testing 🪵
    :mod:`logot` integrates with popular testing (e.g. :doc:`pytest </using-pytest>`,
    :doc:`unittest </using-unittest>`), asynchronous (e.g. :ref:`asyncio <index-testing-threaded>`,
    :doc:`trio </integrations/trio>`) and logging frameworks (e.g. :doc:`logging </log-capturing>`,
-   :doc:`loguru </integrations/loguru>`). It can be extended to support many others. 💪
+   :doc:`loguru </integrations/loguru>`, :doc:`structlog </integrations/structlog>`). It can be extended
+   to support many others. 💪
 
 
 Why test logging? 🤔

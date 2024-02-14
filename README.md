@@ -9,7 +9,7 @@
 
 `logot` makes it easy to test whether your code is logging correctly:
 
-``` python
+```python
 from logot import Logot, logged
 
 def test_something(logot: Logot) -> None:
@@ -17,23 +17,19 @@ def test_something(logot: Logot) -> None:
     logot.assert_logged(logged.info("Something was done"))
 ```
 
-`logot` integrates with popular testing (e.g. [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)), asynchronous (e.g. [`asyncio`](https://logot.readthedocs.io/latest/index.html#index-testing-threaded), [`trio`](https://logot.readthedocs.io/latest/integrations/trio.html)) and logging frameworks (e.g. [`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [`loguru`](https://logot.readthedocs.io/latest/integrations/loguru.html)). It can be extended to support many others. 💪
-
+`logot` integrates with popular testing (e.g. [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)), asynchronous (e.g. [`asyncio`](https://logot.readthedocs.io/latest/index.html#index-testing-threaded), [`trio`](https://logot.readthedocs.io/latest/integrations/trio.html)) and logging frameworks (e.g. [`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [`loguru`](https://logot.readthedocs.io/latest/integrations/loguru.html), [`structlog`](https://logot.readthedocs.io/latest/integrations/structlog.html)). It can be extended to support many others. 💪
 
 ## Documentation 📖
 
 Full documentation is published on [Read the Docs](https://logot.readthedocs.io).
 
-
 ## Bugs / feedback 🐛
 
 Issue tracking is hosted on [GitHub](https://github.com/etianen/logot/issues).
 
-
 ## Changelog 🏗️
 
 Release notes are published on [GitHub](https://github.com/etianen/logot/releases).
-
 
 ## License ⚖️
 

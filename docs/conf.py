@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import tomllib
 from datetime import date
 from pathlib import Path
-
-import tomllib
 
 _root = Path(__file__).parent.parent
 _poetry = tomllib.loads((_root / "pyproject.toml").read_text())["tool"]["poetry"]
@@ -27,6 +26,7 @@ autodoc_member_order = "bysource"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "loguru": ("https://loguru.readthedocs.io/en/latest/", None),
+    "structlog": ("https://www.structlog.org/en/stable/", None),
     "pytest": ("https://docs.pytest.org/en/latest/", None),
     "trio": ("https://trio.readthedocs.io/en/latest/", None),
 }
