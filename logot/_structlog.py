@@ -1,15 +1,38 @@
 from __future__ import annotations
 
 from functools import partial
+from typing import Any, MutableMapping
 
 import structlog
 from structlog.exceptions import DropEvent
-from structlog.processors import NAME_TO_LEVEL
-from structlog.typing import EventDict, WrappedLogger
 
 from logot._capture import Captured
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
+
+EventDict = MutableMapping[str, Any]
+WrappedLogger = Any
+
+
+CRITICAL = 50
+FATAL = CRITICAL
+ERROR = 40
+WARNING = 30
+WARN = WARNING
+INFO = 20
+DEBUG = 10
+NOTSET = 0
+
+NAME_TO_LEVEL = {
+    "critical": CRITICAL,
+    "exception": ERROR,
+    "error": ERROR,
+    "warn": WARNING,
+    "warning": WARNING,
+    "info": INFO,
+    "debug": DEBUG,
+    "notset": NOTSET,
+}
 
 
 class StructlogCapturer(Capturer):
