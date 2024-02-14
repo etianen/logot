@@ -25,7 +25,7 @@ packages = [{ include = "logot" }]
 [tool.poetry.dependencies]
 python = "^3.8"
 loguru = { version = ">=0.6,<0.8", optional = true }
-structlog = { version = ">=20.2,<23", optional = true }
+structlog = { version = ">=20.2,<25", optional = true }
 pytest = { version = ">=7,<9", optional = true }
 trio = { version = ">=0.22,<0.25", optional = true }
 typing-extensions = { version = ">=4.9", python = "<3.10" }
