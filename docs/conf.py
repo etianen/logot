@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import tomllib
 from datetime import date
 from pathlib import Path
+
+import tomllib
 
 _root = Path(__file__).parent.parent
 _poetry = tomllib.loads((_root / "pyproject.toml").read_text())["tool"]["poetry"]

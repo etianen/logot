@@ -46,14 +46,14 @@ def test_capturing_level_fail() -> None:
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
-def test_capturing_name_pass(stdlib_logger) -> None:
+def test_capturing_name_pass(stdlib_logger: None) -> None:
     logger = get_logger("tests")
     with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
-def test_capturing_name_fail(stdlib_logger) -> None:
+def test_capturing_name_fail(stdlib_logger: None) -> None:
     logger = get_logger("tests")
     with Logot(capturer=StructlogCapturer).capturing(name="boom") as logot:
         logger.info("foo bar")
