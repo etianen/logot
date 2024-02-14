@@ -1,5 +1,5 @@
 Using with :mod:`structlog`
-========================
+============================
 
 .. currentmodule:: logot
 

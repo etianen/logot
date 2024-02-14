@@ -1,5 +1,5 @@
 :mod:`logot.structlog`
-===================
+=======================
 
 .. automodule:: logot.structlog
 

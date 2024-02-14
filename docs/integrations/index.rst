@@ -47,6 +47,7 @@ Supported frameworks:
    :maxdepth: 1
 
    loguru
+   structlog
 
 .. seealso::
 
