@@ -148,7 +148,7 @@ class Logot:
         with self._lock:
             # If there is a waiter that has not been fully reduced, attempt to reduce it.
             if self._wait is not None and self._wait.logged is not None:
-                self._wait.logged = self._wait.logged._reduce(captured)
+                self._wait.logged = self._wait.logged.reduce(captured)
                 # If the waiter has fully reduced, release the blocked caller.
                 if self._wait.logged is None:
                     self._wait.waiter_obj.release()
@@ -158,23 +158,23 @@ class Logot:
 
     def assert_logged(self, logged: Logged) -> None:
         """
-        Fails *immediately* if the expected ``log`` pattern has not arrived.
+        Fails *immediately* if the expected log pattern has not arrived.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :raises AssertionError: If the expected ``log`` pattern has not arrived.
+        :raises AssertionError: If the expected log pattern has not arrived.
         """
-        reduced = self._reduce(logged)
+        reduced = self.reduce(logged)
         if reduced is not None:
             raise AssertionError(f"Not logged:\n\n{reduced}")
 
     def assert_not_logged(self, logged: Logged) -> None:
         """
-        Fails *immediately* if the expected ``log`` pattern **has** arrived.
+        Fails *immediately* if the expected log pattern **has** arrived.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
-        :raises AssertionError: If the expected ``log`` pattern **has** arrived.
+        :raises AssertionError: If the expected log pattern **has** arrived.
         """
-        reduced = self._reduce(logged)
+        reduced = self.reduce(logged)
         if reduced is None:
             raise AssertionError(f"Logged:\n\n{logged}")
 
@@ -185,11 +185,11 @@ class Logot:
         timeout: float | None = None,
     ) -> None:
         """
-        Waits for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
+        Waits for the expected log pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
-        :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
+        :raises AssertionError: If the expected log pattern does not arrive within ``timeout`` seconds.
         """
         wait = self._start_waiting(logged, create_threading_waiter, timeout=timeout)
         if wait is None:
@@ -207,13 +207,13 @@ class Logot:
         async_waiter: Callable[[], AsyncWaiter] | None = None,
     ) -> None:
         """
-        Waits *asynchronously* for the expected ``log`` pattern to arrive or the ``timeout`` to expire.
+        Waits *asynchronously* for the expected log pattern to arrive or the ``timeout`` to expire.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         :param timeout: How long to wait (in seconds) before failing the test. Defaults to :attr:`Logot.timeout`.
         :param async_waiter: Protocol used to pause tests until expected logs arrive. This is for integration with
             :ref:`3rd-party asynchronous frameworks <integrations-async>`. Defaults to :attr:`Logot.async_waiter`.
-        :raises AssertionError: If the expected ``log`` pattern does not arrive within ``timeout`` seconds.
+        :raises AssertionError: If the expected log pattern does not arrive within ``timeout`` seconds.
         """
         if async_waiter is None:
             async_waiter = self.async_waiter
@@ -231,6 +231,34 @@ class Logot:
         """
         self._queue.clear()
 
+    def reduce(self, logged: Logged) -> Logged | None:
+        """
+        Reduces the expected log pattern using captured logs.
+
+        This method returns immediately with:
+
+        - The same :doc:`log pattern </log-pattern-matching>` - no match, *all* captured logs consumed.
+        - A smaller :doc:`log pattern </log-pattern-matching>` - partial match, *all* captured logs consumed.
+        - :data:`None` - full match, *some* captured logs consumed
+
+        .. note::
+
+            This method is for building higher-level log assertions. It is not generally used when writing tests.
+
+        :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
+        """
+        reduced: Logged | None = logged
+        # Drain the queue until the log is fully reduced.
+        # This does not need a lock, since `deque.popleft()` is thread-safe.
+        while reduced is not None:
+            try:
+                captured = self._queue.popleft()
+            except IndexError:
+                break
+            reduced = reduced.reduce(captured)
+        # All done!
+        return reduced
+
     def _start_waiting(
         self, logged: Logged | None, waiter: Callable[[], W], *, timeout: float | None
     ) -> _Wait[W] | None:
@@ -245,7 +273,7 @@ class Logot:
             if self._wait is not None:  # pragma: no cover
                 raise RuntimeError("Multiple concurrent waiters are not supported")
             # Apply an immediate reduction.
-            logged = self._reduce(logged)
+            logged = self.reduce(logged)
             if logged is None:
                 return None
             # All done!
@@ -260,18 +288,6 @@ class Logot:
             # Error if the waiter logs are not fully reduced.
             if wait.logged is not None:
                 raise AssertionError(f"Not logged:\n\n{wait.logged}")
-
-    def _reduce(self, logged: Logged | None) -> Logged | None:
-        # Drain the queue until the log is fully reduced.
-        # This does not need a lock, since `deque.popleft()` is thread-safe.
-        while logged is not None:
-            try:
-                captured = self._queue.popleft()
-            except IndexError:
-                break
-            logged = logged._reduce(captured)
-        # All done!
-        return logged
 
     def __repr__(self) -> str:
         return f"Logot(capturer={self.capturer!r}, timeout={self.timeout!r}, async_waiter={self.async_waiter!r})"
