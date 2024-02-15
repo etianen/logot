@@ -50,7 +50,19 @@ class Logged(ABC):
 
     @abstractmethod
     def reduce(self, captured: Captured) -> Logged | None:
-        """ """
+        """
+        Reduces this :doc:`log pattern </log-pattern-matching>` using the given :class:`Captured` log.
+
+        - No match - The same :doc:`log pattern </log-pattern-matching>` is returned.
+        - Partial match - A smaller :doc:`log pattern </log-pattern-matching>` is returned.
+        - Full match - :data:`None` is returned.
+
+        .. note::
+
+            This method is for building high-level log assertions. It is not generally used when writing tests.
+
+        :param captured: The :class:`Captured` log.
+        """
         raise NotImplementedError
 
     @abstractmethod

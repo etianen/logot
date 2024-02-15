@@ -225,25 +225,17 @@ class Logot:
         finally:
             self._stop_waiting(wait)
 
-    def clear(self) -> None:
-        """
-        Clears any captured logs.
-        """
-        self._queue.clear()
-
     def reduce(self, logged: Logged) -> Logged | None:
         """
         Reduces the expected log pattern using captured logs.
 
-        This method returns immediately with:
-
-        - The same :doc:`log pattern </log-pattern-matching>` - no match, *all* captured logs consumed.
-        - A smaller :doc:`log pattern </log-pattern-matching>` - partial match, *all* captured logs consumed.
-        - :data:`None` - full match, *some* captured logs consumed
+        - No match - The same :doc:`log pattern </log-pattern-matching>` is returned.
+        - Partial match - A smaller :doc:`log pattern </log-pattern-matching>` is returned.
+        - Full match - :data:`None` is returned.
 
         .. note::
 
-            This method is for building higher-level log assertions. It is not generally used when writing tests.
+            This method is for building high-level log assertions. It is not generally used when writing tests.
 
         :param logged: The expected :doc:`log pattern </log-pattern-matching>`.
         """
@@ -259,9 +251,13 @@ class Logot:
         # All done!
         return reduced
 
-    def _start_waiting(
-        self, logged: Logged | None, waiter: Callable[[], W], *, timeout: float | None
-    ) -> _Wait[W] | None:
+    def clear(self) -> None:
+        """
+        Clears any captured logs.
+        """
+        self._queue.clear()
+
+    def _start_waiting(self, logged: Logged, waiter: Callable[[], W], *, timeout: float | None) -> _Wait[W] | None:
         with self._lock:
             # If no timeout is provided, use the default timeout.
             # Otherwise, validate and use the provided timeout.
@@ -273,12 +269,12 @@ class Logot:
             if self._wait is not None:  # pragma: no cover
                 raise RuntimeError("Multiple concurrent waiters are not supported")
             # Apply an immediate reduction.
-            logged = self.reduce(logged)
-            if logged is None:
+            reduced = self.reduce(logged)
+            if reduced is None:
                 return None
             # All done!
             waiter_obj = waiter()
-            wait = self._wait = _Wait(logged=logged, timeout=timeout, waiter_obj=waiter_obj)
+            wait = self._wait = _Wait(logged=reduced, timeout=timeout, waiter_obj=waiter_obj)
             return wait
 
     def _stop_waiting(self, wait: _Wait[Any]) -> None:
