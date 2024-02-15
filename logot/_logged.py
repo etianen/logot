@@ -49,7 +49,20 @@ class Logged(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def _reduce(self, captured: Captured) -> Logged | None:
+    def reduce(self, captured: Captured) -> Logged | None:
+        """
+        Reduces this :doc:`log pattern </log-pattern-matching>` using the given :class:`Captured` log.
+
+        - No match - The same :doc:`log pattern </log-pattern-matching>` is returned.
+        - Partial match - A smaller :doc:`log pattern </log-pattern-matching>` is returned.
+        - Full match - :data:`None` is returned.
+
+        .. note::
+
+            This method is for building high-level log assertions. It is not generally used when writing tests.
+
+        :param captured: The :class:`Captured` log.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -132,7 +145,7 @@ class _RecordLogged(Logged):
     def __repr__(self) -> str:
         return f"log({self._level!r}, {self._msg!r})"
 
-    def _reduce(self, captured: Captured) -> Logged | None:
+    def reduce(self, captured: Captured) -> Logged | None:
         # Match `str` level.
         if isinstance(self._level, str):
             if self._level != captured.levelname:
@@ -191,9 +204,9 @@ class _OrderedAllLogged(_ComposedLogged):
     def __repr__(self) -> str:
         return f"({' >> '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, captured: Captured) -> Logged | None:
+    def reduce(self, captured: Captured) -> Logged | None:
         logged = self._logged_items[0]
-        reduced = logged._reduce(captured)
+        reduced = logged.reduce(captured)
         # Handle full reduction.
         if reduced is None:
             return _OrderedAllLogged.from_reduce(self._logged_items[1:])
@@ -213,9 +226,9 @@ class _UnorderedAllLogged(_ComposedLogged):
     def __repr__(self) -> str:
         return f"({' & '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, captured: Captured) -> Logged | None:
+    def reduce(self, captured: Captured) -> Logged | None:
         for n, logged in enumerate(self._logged_items):
-            reduced = logged._reduce(captured)
+            reduced = logged.reduce(captured)
             # Handle full reduction.
             if reduced is None:
                 return _UnorderedAllLogged.from_reduce((*self._logged_items[:n], *self._logged_items[n + 1 :]))
@@ -237,9 +250,9 @@ class _AnyLogged(_ComposedLogged):
     def __repr__(self) -> str:
         return f"({' | '.join(map(repr, self._logged_items))})"
 
-    def _reduce(self, captured: Captured) -> Logged | None:
+    def reduce(self, captured: Captured) -> Logged | None:
         for n, logged in enumerate(self._logged_items):
-            reduced = logged._reduce(captured)
+            reduced = logged.reduce(captured)
             # Handle full reduction.
             if reduced is None:
                 return None

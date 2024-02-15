@@ -8,7 +8,7 @@ def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
     for captured in captured_items:
         # The `Logged` should not have been fully reduced.
         assert logged is not None
-        logged = logged._reduce(captured)
+        logged = logged.reduce(captured)
     # Once captured items are consumed, the `Logged` should have been fully-reduced.
     assert logged is None
 
