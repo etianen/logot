@@ -4,7 +4,7 @@ import logging
 
 from logot import Logot, logged
 
-logger = logging.getLogger("tests")
+logger = logging.getLogger(__name__)
 
 
 def test_capturing() -> None:
@@ -33,7 +33,7 @@ def test_capturing_level_reset() -> None:
     assert logger.level == logging.NOTSET
     # Set a fairly non-verbose log level.
     try:
-        with Logot().capturing(level=logging.INFO, name="tests"):
+        with Logot().capturing(level=logging.INFO, name=__name__):
             # The logger will have been overridden for the required verbosity.
             assert logger.level == logging.INFO
         # When the capture ends, the logging verbosity is restored.
@@ -43,7 +43,13 @@ def test_capturing_level_reset() -> None:
         logger.setLevel(logging.NOTSET)
 
 
-def test_capturing_name_pass() -> None:
+def test_capturing_name_exact_pass() -> None:
+    with Logot().capturing(name=__name__) as logot:
+        logger.info("foo bar")
+        logot.assert_logged(logged.info("foo bar"))
+
+
+def test_capturing_name_prefix_pass() -> None:
     with Logot().capturing(name="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
