@@ -13,10 +13,8 @@ Using with :mod:`structlog`
       do_something()
       logot.assert_logged(logged.info("App started"))
 
-:mod:`logot` preserves the preconfigured :mod:`structlog` processor chain. Events are captured at the end of the chain,
-but before the final processor, as it is responsible for emitting the log event to the underlying logging system. For
-more information, see the
-`structlog documentation <https://www.structlog.org/en/stable/processors.html#adapting-and-rendering>`_.
+:mod:`logot` will capture logs before any processors are invoked. Any filtering, formatting, or other processing from
+the processor chain will not be applied to the captured logs.
 
 .. note::
 
