@@ -28,13 +28,7 @@ class StructlogCapturer(Capturer):
         else:
             levelno = level
 
-        # We need to insert our processor before the last processor, as this is the processor that transforms the
-        # `event_dict` into the final log message. As this depends on the wrapped logger's formatting requirements,
-        # it can interfere with our capturing.
-        # See https://www.structlog.org/en/stable/processors.html#adapting-and-rendering
-        structlog.configure(
-            processors=[*processors[:-1], partial(_processor, logot=logot, name=name, levelno=levelno), processors[-1]]
-        )
+        structlog.configure(processors=[partial(_processor, logot=logot, name=name, levelno=levelno), *processors])
 
     def stop_capturing(self) -> None:
         structlog.configure(processors=self._old_processors)
