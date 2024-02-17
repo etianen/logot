@@ -49,6 +49,13 @@ def test_capturing_name_pass() -> None:
         logot.assert_logged(logged.info("foo bar"))
 
 
+def test_capturing_name_prefix_pass() -> None:
+    logger = logging.getLogger("tests.something")
+    with Logot().capturing(name="tests") as logot:
+        logger.info("foo bar")
+        logot.assert_logged(logged.info("foo bar"))
+
+
 def test_capturing_name_fail() -> None:
     with Logot().capturing(name="boom") as logot:
         logger.info("foo bar")

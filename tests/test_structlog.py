@@ -78,6 +78,13 @@ def test_capturing_name_pass(stdlib_logger: None) -> None:
         logot.assert_logged(logged.info("foo bar"))
 
 
+def test_capturing_name_prefix_pass(stdlib_logger: None) -> None:
+    logger = structlog.get_logger("tests.something")
+    with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
+        logger.info("foo bar")
+        logot.assert_logged(logged.info("foo bar"))
+
+
 def test_capturing_name_fail(stdlib_logger: None) -> None:
     logger = structlog.get_logger("tests")
     with Logot(capturer=StructlogCapturer).capturing(name="boom") as logot:

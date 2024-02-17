@@ -37,7 +37,7 @@ def test_capturing_level_fail() -> None:
 
 
 def test_capturing_name_pass() -> None:
-    with Logot(capturer=LoguruCapturer).capturing(name="tests") as logot:
+    with Logot(capturer=LoguruCapturer).capturing(name="tests.test_loguru") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
