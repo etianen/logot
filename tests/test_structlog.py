@@ -9,7 +9,7 @@ from structlog.stdlib import LoggerFactory
 from logot import Logot, logged
 from logot.structlog import StructlogCapturer
 
-logger = structlog.get_logger()
+logger = structlog.get_logger(__name__)
 
 
 @pytest.fixture
@@ -71,22 +71,19 @@ def test_capturing_level_as_int_fail() -> None:
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
-def test_capturing_name_pass(stdlib_logger: None) -> None:
-    logger = structlog.get_logger("tests")
-    with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
+def test_capturing_name_exact_pass(stdlib_logger: None) -> None:
+    with Logot(capturer=StructlogCapturer).capturing(name=__name__) as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
 def test_capturing_name_prefix_pass(stdlib_logger: None) -> None:
-    logger = structlog.get_logger("tests.something")
     with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
 def test_capturing_name_fail(stdlib_logger: None) -> None:
-    logger = structlog.get_logger("tests")
     with Logot(capturer=StructlogCapturer).capturing(name="boom") as logot:
         logger.info("foo bar")
         logot.assert_not_logged(logged.info("foo bar"))
