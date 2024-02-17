@@ -34,6 +34,19 @@ def test_capturing() -> None:
     logot.assert_not_logged(logged.info("foo bar"))
 
 
+def test_multiple_capturing() -> None:
+    with Logot(capturer=StructlogCapturer).capturing() as logot_1:
+        with Logot(capturer=StructlogCapturer).capturing() as logot_2:
+            # Ensure log capturing is enabled.
+            logger.info("foo bar")
+            logot_1.assert_logged(logged.info("foo bar"))
+            logot_2.assert_logged(logged.info("foo bar"))
+    # Ensure log capturing is disabled.
+    logger.info("foo bar")
+    logot_1.assert_not_logged(logged.info("foo bar"))
+    logot_2.assert_not_logged(logged.info("foo bar"))
+
+
 def test_capturing_level_pass() -> None:
     with Logot(capturer=StructlogCapturer).capturing(level="INFO") as logot:
         logger.info("foo bar")

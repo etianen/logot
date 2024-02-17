@@ -1,38 +1,14 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import Any, MutableMapping
 
 import structlog
-from structlog.exceptions import DropEvent
+from structlog.processors import NAME_TO_LEVEL
+from structlog.types import EventDict, WrappedLogger
 
 from logot._capture import Captured
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
-
-EventDict = MutableMapping[str, Any]
-WrappedLogger = Any
-
-
-CRITICAL = 50
-FATAL = CRITICAL
-ERROR = 40
-WARNING = 30
-WARN = WARNING
-INFO = 20
-DEBUG = 10
-NOTSET = 0
-
-NAME_TO_LEVEL = {
-    "critical": CRITICAL,
-    "exception": ERROR,
-    "error": ERROR,
-    "warn": WARNING,
-    "warning": WARNING,
-    "info": INFO,
-    "debug": DEBUG,
-    "notset": NOTSET,
-}
 
 
 class StructlogCapturer(Capturer):
@@ -40,37 +16,38 @@ class StructlogCapturer(Capturer):
     A :class:`logot.Capturer` implementation for :mod:`structlog`.
     """
 
-    __slots__ = ("_old_processors", "_old_wrapper_class")
+    __slots__ = ("_old_processors",)
 
     def start_capturing(self, logot: Logot, /, *, level: Level, name: Name) -> None:
         config = structlog.get_config()
         processors = config["processors"]
-        wrapper_class = config["wrapper_class"]
-        self._old_processors = processors.copy()
-        self._old_wrapper_class = wrapper_class
-        processors.clear()
-        processors.append(partial(_processor, logot=logot, name=name))
+        self._old_processors = processors
 
-        if level is not None:
-            if isinstance(level, str):
-                levelno = NAME_TO_LEVEL[level.lower()]
-                wrapper_class = structlog.make_filtering_bound_logger(levelno)
+        if isinstance(level, str):
+            levelno = NAME_TO_LEVEL[level.lower()]
+        else:
+            levelno = level
 
-        structlog.configure(processors=processors, wrapper_class=wrapper_class)
+        # We need to insert our processor before the last processor, as this is the processor that transforms the
+        # `event_dict` into the final log message. As this depends on the wrapped logger's formatting requirements,
+        # it can interfere with our capturing.
+        # See https://www.structlog.org/en/stable/processors.html#adapting-and-rendering
+        structlog.configure(
+            processors=[*processors[:-1], partial(_processor, logot=logot, name=name, levelno=levelno), processors[-1]]
+        )
 
     def stop_capturing(self) -> None:
-        processors = structlog.get_config()["processors"]
-        processors.clear()
-        processors.extend(self._old_processors)
-        structlog.configure(processors=processors, wrapper_class=self._old_wrapper_class)
+        structlog.configure(processors=self._old_processors)
 
 
-def _processor(logger: WrappedLogger, method_name: str, event_dict: EventDict, *, logot: Logot, name: Name) -> None:
+def _processor(
+    logger: WrappedLogger, method_name: str, event_dict: EventDict, *, logot: Logot, name: Name, levelno: int
+) -> EventDict:
     msg = event_dict["event"]
     level = method_name.upper()
-    levelno = NAME_TO_LEVEL[method_name]
+    event_levelno = NAME_TO_LEVEL[method_name]
 
-    if name is None or logger.name == name:
-        logot.capture(Captured(level, msg, levelno=levelno))
+    if getattr(logger, "name", None) == name and event_levelno >= levelno:
+        logot.capture(Captured(level, msg, levelno=event_levelno))
 
-    raise DropEvent
+    return event_dict
