@@ -59,6 +59,18 @@ def test_capturing_level_fail() -> None:
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
+def test_capturing_level_as_int_pass() -> None:
+    with Logot(capturer=StructlogCapturer).capturing(level=20) as logot:
+        logger.info("foo bar")
+        logot.assert_logged(logged.info("foo bar"))
+
+
+def test_capturing_level_as_int_fail() -> None:
+    with Logot(capturer=StructlogCapturer).capturing(level=20) as logot:
+        logger.debug("foo bar")
+        logot.assert_not_logged(logged.debug("foo bar"))
+
+
 def test_capturing_name_pass(stdlib_logger: None) -> None:
     logger = structlog.get_logger("tests")
     with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
@@ -78,7 +90,6 @@ def test_capture(logot: Logot) -> None:
     logot.assert_logged(logged.info("foo bar"))
 
 
-@pytest.mark.skipif(structlog.__version__ < "22", reason="requires structlog>=22")
 def test_capture_levelno(logot: Logot) -> None:
     logger.log(20, "foo bar")
     logot.assert_logged(logged.log(20, "foo bar"))
