@@ -11,7 +11,7 @@ Using with :mod:`structlog`
 
    with Logot(capturer=StructlogCapturer).capturing() as logot:
       do_something()
-      logot.assert_logged(logged.info("App started"))
+      logot.assert_logged(logged.info("Something was done"))
 
 :mod:`logot` will capture logs before any processors are invoked. Any filtering, formatting, or other processing from
 the processor chain will not be applied to the captured logs.
