@@ -19,7 +19,7 @@ the processor chain will not be applied to the captured logs.
 .. note::
 
    :class:`logot.structlog.StructlogCapturer` works by changing the :mod:`structlog` configuration. If you have
-   `cache_logger_on_first_use` enabled in your :func:`structlog.configure` or :func:`structlog.wrap_logger` call for
+   ``cache_logger_on_first_use`` enabled in your :func:`structlog.configure` or :func:`structlog.wrap_logger` call for
    performance reasons, you will need to disable it during tests to enable log capturing.
 
 
