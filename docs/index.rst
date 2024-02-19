@@ -111,7 +111,7 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
 
    See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
-   See :ref:`integrations-async` for other supported asynchronous frameworks (e.g. :doc:`trio </integrations/trio>`).
+   See :ref:`integrations-async` for other supported asynchronous frameworks.
 
 
 Testing synchronous code
