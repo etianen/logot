@@ -9,7 +9,7 @@ Log capturing
 
    with Logot().capturing() as logot:
       do_something()
-      logot.assert_logged(logged.info("App started"))
+      logot.assert_logged(logged.info("Something was done"))
 
 .. seealso::
 
@@ -36,7 +36,7 @@ The :meth:`Logot.capturing` method defaults to capturing **all** records from th
 
    with Logot().capturing(level=logging.WARNING, name="app") as logot:
       do_something()
-      logot.assert_logged(logged.info("App started"))
+      logot.assert_logged(logged.info("Something was done"))
 
 For advanced use-cases, multiple :meth:`Logot.capturing` calls on the same :class:`Logot` instance are supported. Be
 careful to avoid capturing duplicate logs with overlapping calls to :meth:`Logot.capturing`!

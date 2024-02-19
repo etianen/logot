@@ -11,7 +11,7 @@ Using with :mod:`loguru`
 
    with Logot(capturer=LoguruCapturer).capturing() as logot:
       do_something()
-      logot.assert_logged(logged.info("App started"))
+      logot.assert_logged(logged.info("Something was done"))
 
 
 Installing
