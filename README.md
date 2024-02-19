@@ -17,7 +17,7 @@ def test_something(logot: Logot) -> None:
     logot.assert_logged(logged.info("Something was done"))
 ```
 
-`logot` integrates with popular testing (e.g. [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)), asynchronous (e.g. [`asyncio`](https://logot.readthedocs.io/latest/index.html#index-testing-threaded), [`trio`](https://logot.readthedocs.io/latest/integrations/trio.html)) and logging frameworks (e.g. [`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [`loguru`](https://logot.readthedocs.io/latest/integrations/loguru.html), [`structlog`](https://logot.readthedocs.io/latest/integrations/structlog.html)). It can be extended to support many others. 💪
+`logot` integrates with popular testing ([`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)), asynchronous ([`asyncio`](https://logot.readthedocs.io/latest/index.html#index-testing-threaded), [3rd-party](https://logot.readthedocs.io/latest/integrations/index.html)) and logging frameworks ([`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [3rd-party](https://logot.readthedocs.io/latest/integrations/index.html)). It can be extended to support many others. 💪
 
 ## Documentation 📖
 

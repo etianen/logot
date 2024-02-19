@@ -13,8 +13,7 @@ Log capturing
 
 .. seealso::
 
-   See :ref:`integrations-logging` for other supported logging frameworks (e.g. :doc:`loguru </integrations/loguru>`,
-   :doc:`structlog </integrations/structlog>`).
+   See :ref:`integrations-logging` for other supported logging frameworks.
 
 
 Test framework integrations
