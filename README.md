@@ -21,9 +21,7 @@ def test_something(logot: Logot) -> None:
 
 ## Documentation 📖
 
-Full documentation is published on [Read the Docs](https://logot.readthedocs.io).
-
-Learn more about `logot` with the following guides:
+Full documentation is published on [Read the Docs](https://logot.readthedocs.io). Learn more about `logot` with the following guides:
 
 - [Log message matching](https://logot.readthedocs.io/latest/log-message-matching.html)
 - [Log pattern matching](https://logot.readthedocs.io/latest/log-pattern-matching.html)
