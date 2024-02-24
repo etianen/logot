@@ -21,15 +21,25 @@ def test_something(logot: Logot) -> None:
 
 ## Documentation 📖
 
-Full documentation is published on [Read the Docs](https://logot.readthedocs.io).
+Full documentation is published on [Read the Docs](https://logot.readthedocs.io). Learn more about `logot` with the following guides:
+
+- [Log message matching](https://logot.readthedocs.io/latest/log-message-matching.html)
+- [Log pattern matching](https://logot.readthedocs.io/latest/log-pattern-matching.html)
+- [Log capturing](https://logot.readthedocs.io/latest/log-capturing.html)
+- [Using with `pytest`](https://logot.readthedocs.io/latest/using-pytest.html)
+- [Using with `unittest`](https://logot.readthedocs.io/latest/using-unittest.html)
+- [Installing](https://logot.readthedocs.io/latest/installing.html)
+
 
 ## Bugs / feedback 🐛
 
 Issue tracking is hosted on [GitHub](https://github.com/etianen/logot/issues).
 
+
 ## Changelog 🏗️
 
 Release notes are published on [GitHub](https://github.com/etianen/logot/releases).
+
 
 ## License ⚖️
 
