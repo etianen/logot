@@ -1,27 +1,25 @@
 from __future__ import annotations
 
+import dataclasses
+
 from logot._capture import Captured
 from logot._match import Matcher
 from logot._typing import Level
 
 
+@dataclasses.dataclass()
 class _LevelNameMatcher(Matcher):
-    __slots__ = ("_levelname",)
-
-    def __init__(self, levelname: str) -> None:
-        self._levelname = levelname
+    __slots__ = ("levelname",)
+    levelname: str
 
     def match(self, captured: Captured) -> bool:
-        return captured.levelname == self._levelname
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, _LevelNameMatcher) and other._levelname == self._levelname
+        return captured.levelname == self.levelname
 
     def __repr__(self) -> str:
-        return repr(self._levelname)
+        return repr(self.levelname)
 
     def __str__(self) -> str:
-        return f"[{self._levelname}]"
+        return f"[{self.levelname}]"
 
 
 DEBUG_MATCHER: Matcher = _LevelNameMatcher("DEBUG")
@@ -31,23 +29,19 @@ ERROR_MATCHER: Matcher = _LevelNameMatcher("ERROR")
 CRITICAL_MATCHER: Matcher = _LevelNameMatcher("CRITICAL")
 
 
+@dataclasses.dataclass()
 class _LevelNoMatcher(Matcher):
-    __slots__ = ("_levelno",)
-
-    def __init__(self, levelno: int) -> None:
-        self._levelno = levelno
+    __slots__ = ("levelno",)
+    levelno: int
 
     def match(self, captured: Captured) -> bool:
-        return captured.levelno == self._levelno
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, _LevelNoMatcher) and other._levelno == self._levelno
+        return captured.levelno == self.levelno
 
     def __repr__(self) -> str:
-        return repr(self._levelno)
+        return repr(self.levelno)
 
     def __str__(self) -> str:
-        return f"[Level {self._levelno}]"
+        return f"[Level {self.levelno}]"
 
 
 def level_matcher(level: Level) -> Matcher:
