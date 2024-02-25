@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 
 
-@dataclasses.dataclass()
+@dataclasses.dataclass(init=False)
 class Captured:
     """
     A captured log record.
