@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 from _thread import allocate_lock
 from abc import ABC, abstractmethod
 from collections import deque
@@ -325,9 +326,9 @@ class Capturer(ABC):
 class _Capturing:
     __slots__ = ("_logot", "_capturer_obj", "_level", "_name")
 
-    def __init__(self, logot: Logot, capturer: Capturer, *, level: Level, name: Name) -> None:
+    def __init__(self, logot: Logot, capturer_obj: Capturer, *, level: Level, name: Name) -> None:
         self._logot = logot
-        self._capturer_obj = capturer
+        self._capturer_obj = capturer_obj
         self._level = level
         self._name = name
 
@@ -344,10 +345,9 @@ class _Capturing:
         self._capturer_obj.stop_capturing()
 
 
+@dataclasses.dataclass()
 class _Wait(Generic[W]):
     __slots__ = ("logged", "timeout", "waiter_obj")
-
-    def __init__(self, *, logged: Logged | None, timeout: float, waiter_obj: W) -> None:
-        self.logged = logged
-        self.timeout = timeout
-        self.waiter_obj = waiter_obj
+    logged: Logged | None
+    timeout: float
+    waiter_obj: W
