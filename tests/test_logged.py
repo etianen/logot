@@ -13,18 +13,18 @@ def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
     assert logged is None
 
 
-def test_record_logged_eq_pass() -> None:
+def test_matcher_logged_eq_pass() -> None:
     assert logged.info("foo bar") == logged.info("foo bar")
 
 
-def test_record_logged_eq_fail() -> None:
+def test_matcher_logged_eq_fail() -> None:
     # Different levels are not equal.
     assert logged.info("foo bar") != logged.debug("foo bar")
     # Different messages are not equal.
     assert logged.info("foo bar") != logged.info("foo")
 
 
-def test_record_logged_repr() -> None:
+def test_matcher_logged_repr() -> None:
     assert repr(logged.log(10, "foo bar")) == "log(10, 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
@@ -34,7 +34,7 @@ def test_record_logged_repr() -> None:
     assert repr(logged.critical("foo bar")) == "log('CRITICAL', 'foo bar')"
 
 
-def test_record_logged_str() -> None:
+def test_matcher_logged_str() -> None:
     assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
@@ -44,7 +44,7 @@ def test_record_logged_str() -> None:
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
 
 
-def test_record_logged_reduce() -> None:
+def test_matcher_logged_reduce() -> None:
     # Test `str` level.
     assert_reduce(
         logged.log("INFO", "foo bar"),
