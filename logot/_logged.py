@@ -141,7 +141,8 @@ class _RecordMatcher(Logged):
         return isinstance(other, _RecordMatcher) and other._matchers == self._matchers
 
     def __repr__(self) -> str:
-        return f"log({', '.join(map(repr, self._matchers))})"
+        matchers_repr = ", ".join(map(repr, self._matchers))
+        return f"log({matchers_repr})"
 
     def reduce(self, captured: Captured) -> Logged | None:
         if all(matcher.match(captured) for matcher in self._matchers):
