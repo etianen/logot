@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from logot._format import format_log
-
 
 class Captured:
     """
@@ -55,6 +53,3 @@ class Captured:
 
     def __repr__(self) -> str:
         return f"Captured({self.levelname!r}, {self.msg!r}, levelno={self.levelno!r})"
-
-    def __str__(self) -> str:
-        return format_log(self.levelname, self.msg)

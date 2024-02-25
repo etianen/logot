@@ -3,10 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from logot._capture import Captured
-from logot._format import format_level, format_log
-from logot._msg import compile_msg_matcher
+from logot._level import CRITICAL_MATCHER, DEBUG_MATCHER, ERROR_MATCHER, INFO_MATCHER, WARNING_MATCHER, level_matcher
+from logot._match import Matcher
+from logot._msg import msg_matcher
 from logot._typing import Level
-from logot._validate import validate_level
 
 
 class Logged(ABC):
@@ -78,7 +78,7 @@ def log(level: Level, msg: str) -> Logged:
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged(validate_level(level), msg)
+    return _RecordMatcher(level_matcher(level), msg_matcher(msg))
 
 
 def debug(msg: str) -> Logged:
@@ -88,7 +88,7 @@ def debug(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged("DEBUG", msg)
+    return _RecordMatcher(DEBUG_MATCHER, msg_matcher(msg))
 
 
 def info(msg: str) -> Logged:
@@ -98,7 +98,7 @@ def info(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged("INFO", msg)
+    return _RecordMatcher(INFO_MATCHER, msg_matcher(msg))
 
 
 def warning(msg: str) -> Logged:
@@ -108,7 +108,7 @@ def warning(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged("WARNING", msg)
+    return _RecordMatcher(WARNING_MATCHER, msg_matcher(msg))
 
 
 def error(msg: str) -> Logged:
@@ -118,7 +118,7 @@ def error(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged("ERROR", msg)
+    return _RecordMatcher(ERROR_MATCHER, msg_matcher(msg))
 
 
 def critical(msg: str) -> Logged:
@@ -128,42 +128,28 @@ def critical(msg: str) -> Logged:
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
     """
-    return _RecordLogged("CRITICAL", msg)
+    return _RecordMatcher(CRITICAL_MATCHER, msg_matcher(msg))
 
 
-class _RecordLogged(Logged):
-    __slots__ = ("_level", "_msg", "_msg_matcher")
+class _RecordMatcher(Logged):
+    __slots__ = ("_matchers",)
 
-    def __init__(self, level: Level, msg: str) -> None:
-        self._level = level
-        self._msg = msg
-        self._msg_matcher = compile_msg_matcher(msg)
+    def __init__(self, *matchers: Matcher) -> None:
+        self._matchers = matchers
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, _RecordLogged) and other._level == self._level and other._msg == self._msg
+        return isinstance(other, _RecordMatcher) and other._matchers == self._matchers
 
     def __repr__(self) -> str:
-        return f"log({self._level!r}, {self._msg!r})"
+        return f"log({', '.join(map(repr, self._matchers))})"
 
     def reduce(self, captured: Captured) -> Logged | None:
-        # Match `str` level.
-        if isinstance(self._level, str):
-            if self._level != captured.levelname:
-                return self
-        # Match `int` level.
-        elif isinstance(self._level, int):
-            if self._level != captured.levelno:
-                return self
-        else:  # pragma: no cover
-            raise TypeError(f"Invalid level: {self._level!r}")
-        # Match message.
-        if not self._msg_matcher(captured.msg):
-            return self
-        # We matched!
+        if all(matcher.match(captured) for matcher in self._matchers):
+            return None
         return None
 
     def _str(self, *, indent: str) -> str:
-        return format_log(format_level(self._level), self._msg)
+        return " ".join(map(str, self._matchers))
 
 
 class _ComposedLogged(Logged):
