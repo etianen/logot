@@ -148,7 +148,7 @@ class _MatcherLogged(Logged):
         return " ".join(map(str, self.matchers))
 
 
-@dataclasses.dataclass(repr=False, init=False)
+@dataclasses.dataclass(init=False, repr=False)
 class _ComposedLogged(Logged):
     __slots__ = ("logged_items",)
     logged_items: tuple[Logged, ...]
