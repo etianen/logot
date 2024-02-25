@@ -145,9 +145,11 @@ class _RecordMatcher(Logged):
         return f"log({matchers_repr})"
 
     def reduce(self, captured: Captured) -> Logged | None:
+        # Handle full reduction.
         if all(matcher.match(captured) for matcher in self._matchers):
             return None
-        return None
+        # Handle no reduction.
+        return self
 
     def _str(self, *, indent: str) -> str:
         return " ".join(map(str, self._matchers))

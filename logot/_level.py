@@ -51,8 +51,11 @@ class _LevelNoMatcher(Matcher):
 
 
 def level_matcher(level: Level) -> Matcher:
+    # Handle `str` level.
     if isinstance(level, str):
         return _LevelNameMatcher(level)
+    # Handle `int` level.
     if isinstance(level, int):
         return _LevelNoMatcher(level)
+    # Handle invalid level.
     raise TypeError(f"Invalid level: {level!r}")
