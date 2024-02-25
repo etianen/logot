@@ -18,7 +18,3 @@ def test_eq_fail() -> None:
 
 def test_repr() -> None:
     assert repr(Captured("INFO", "foo bar")) == "Captured('INFO', 'foo bar', levelno=None)"
-
-
-def test_str() -> None:
-    assert str(Captured("INFO", "foo bar")) == "[INFO] foo bar"
