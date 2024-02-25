@@ -128,7 +128,7 @@ def critical(msg: str) -> Logged:
     return _MatcherLogged((CRITICAL_MATCHER, msg_matcher(msg)))
 
 
-@dataclasses.dataclass(repr=False)
+@dataclasses.dataclass(repr=False, frozen=True)
 class _MatcherLogged(Logged):
     __slots__ = ("matchers",)
     matchers: tuple[Matcher, ...]
@@ -148,14 +148,13 @@ class _MatcherLogged(Logged):
         return " ".join(map(str, self.matchers))
 
 
-@dataclasses.dataclass(init=False, repr=False)
+@dataclasses.dataclass(repr=False, frozen=True)
 class _ComposedLogged(Logged):
     __slots__ = ("logged_items",)
     logged_items: tuple[Logged, ...]
 
-    def __init__(self, logged_items: tuple[Logged, ...]) -> None:
-        assert len(logged_items) > 1
-        self.logged_items = logged_items
+    def __post_init__(self) -> None:
+        assert len(self.logged_items) > 1
 
     @classmethod
     def from_compose(cls, logged_a: Logged, logged_b: Logged) -> Logged:

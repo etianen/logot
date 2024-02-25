@@ -7,7 +7,7 @@ from logot._match import Matcher
 from logot._typing import Level
 
 
-@dataclasses.dataclass(repr=False)
+@dataclasses.dataclass(repr=False, frozen=True)
 class _LevelNameMatcher(Matcher):
     __slots__ = ("levelname",)
     levelname: str
@@ -29,7 +29,7 @@ ERROR_MATCHER: Matcher = _LevelNameMatcher("ERROR")
 CRITICAL_MATCHER: Matcher = _LevelNameMatcher("CRITICAL")
 
 
-@dataclasses.dataclass(repr=False)
+@dataclasses.dataclass(repr=False, frozen=True)
 class _LevelNoMatcher(Matcher):
     __slots__ = ("levelno",)
     levelno: int
