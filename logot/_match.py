@@ -13,10 +13,6 @@ class Matcher(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def __eq__(self, other: object) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
     def __repr__(self) -> str:
         raise NotImplementedError
 

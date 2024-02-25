@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import re
 
 from logot._capture import Captured
@@ -37,23 +38,19 @@ _CONVERSION_MAP = {
 }
 
 
+@dataclasses.dataclass()
 class _MessageMatcher(Matcher):
-    __slots__ = ("_msg",)
-
-    def __init__(self, msg: str) -> None:
-        self._msg = msg
+    __slots__ = ("msg",)
+    msg: str
 
     def match(self, captured: Captured) -> bool:
-        return captured.msg == self._msg
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, _MessageMatcher) and other._msg == self._msg
+        return captured.msg == self.msg
 
     def __repr__(self) -> str:
-        return repr(self._msg)
+        return repr(self.msg)
 
     def __str__(self) -> str:
-        return self._msg
+        return self.msg
 
 
 class _MessagePatternMatcher(_MessageMatcher):

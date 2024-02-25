@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import dataclasses
 
+
+@dataclasses.dataclass()
 class Captured:
     """
     A captured log record.
@@ -42,14 +45,3 @@ class Captured:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno
-
-    def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, Captured)
-            and other.levelname == self.levelname
-            and other.msg == self.msg
-            and other.levelno == self.levelno
-        )
-
-    def __repr__(self) -> str:
-        return f"Captured({self.levelname!r}, {self.msg!r}, levelno={self.levelno!r})"

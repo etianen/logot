@@ -325,9 +325,9 @@ class Capturer(ABC):
 class _Capturing:
     __slots__ = ("_logot", "_capturer_obj", "_level", "_name")
 
-    def __init__(self, logot: Logot, capturer: Capturer, *, level: Level, name: Name) -> None:
+    def __init__(self, logot: Logot, capturer_obj: Capturer, *, level: Level, name: Name) -> None:
         self._logot = logot
-        self._capturer_obj = capturer
+        self._capturer_obj = capturer_obj
         self._level = level
         self._name = name
 

@@ -8,17 +8,6 @@ from logot._level import level_matcher
 from logot._typing import Level
 
 
-def test_eq_pass() -> None:
-    assert level_matcher("INFO") == level_matcher("INFO")
-    assert level_matcher(20) == level_matcher(20)
-
-
-def test_eq_fail() -> None:
-    assert level_matcher("INFO") != level_matcher("WARNING")
-    assert level_matcher(20) != level_matcher(30)
-    assert level_matcher("INFO") != level_matcher(20)
-
-
 def test_repr() -> None:
     assert repr(level_matcher("INFO")) == "'INFO'"
     assert repr(level_matcher(20)) == "20"

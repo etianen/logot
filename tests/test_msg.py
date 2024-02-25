@@ -18,14 +18,6 @@ def assert_matches(pattern: str, *values: Any) -> None:
     assert matcher.match(Captured("DEBUG", expected)), f"{pattern} does not match {expected}"
 
 
-def test_eq_pass() -> None:
-    assert msg_matcher("foo %d bar") == msg_matcher("foo %d bar")
-
-
-def test_eq_fail() -> None:
-    assert msg_matcher("foo %d bar") != msg_matcher("bar %d foo")
-
-
 def test_repr() -> None:
     assert repr(msg_matcher("foo %d bar")) == "'foo %d bar'"
 
