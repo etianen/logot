@@ -38,7 +38,7 @@ _CONVERSION_MAP = {
 }
 
 
-@dataclasses.dataclass(repr=False, frozen=True)
+@dataclasses.dataclass(frozen=True, repr=False)
 class _MessageMatcher(Matcher):
     __slots__ = ("msg",)
     msg: str
