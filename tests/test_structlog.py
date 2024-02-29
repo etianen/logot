@@ -12,11 +12,12 @@ from logot.structlog import StructlogCapturer
 logger = structlog.get_logger(__name__)
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def stdlib_logger() -> Iterator[None]:
+    config = structlog.get_config()
     structlog.configure(logger_factory=LoggerFactory())
     yield
-    structlog.reset_defaults()
+    structlog.configure(logger_factory=config["logger_factory"])
 
 
 @pytest.fixture(scope="session")
@@ -59,31 +60,31 @@ def test_capturing_level_fail() -> None:
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
-def test_capturing_level_as_int_pass() -> None:
+def test_capturing_level_int_pass() -> None:
     with Logot(capturer=StructlogCapturer).capturing(level=20) as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
-def test_capturing_level_as_int_fail() -> None:
+def test_capturing_level_int_fail() -> None:
     with Logot(capturer=StructlogCapturer).capturing(level=20) as logot:
         logger.debug("foo bar")
         logot.assert_not_logged(logged.debug("foo bar"))
 
 
-def test_capturing_name_exact_pass(stdlib_logger: None) -> None:
+def test_capturing_name_exact_pass() -> None:
     with Logot(capturer=StructlogCapturer).capturing(name=__name__) as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
-def test_capturing_name_prefix_pass(stdlib_logger: None) -> None:
+def test_capturing_name_prefix_pass() -> None:
     with Logot(capturer=StructlogCapturer).capturing(name="tests") as logot:
         logger.info("foo bar")
         logot.assert_logged(logged.info("foo bar"))
 
 
-def test_capturing_name_fail(stdlib_logger: None) -> None:
+def test_capturing_name_fail() -> None:
     with Logot(capturer=StructlogCapturer).capturing(name="boom") as logot:
         logger.info("foo bar")
         logot.assert_not_logged(logged.info("foo bar"))
@@ -97,3 +98,8 @@ def test_capture(logot: Logot) -> None:
 def test_capture_levelno(logot: Logot) -> None:
     logger.log(20, "foo bar")
     logot.assert_logged(logged.log(20, "foo bar"))
+
+
+def test_capture_name(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar", name=__name__))
