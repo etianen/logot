@@ -7,6 +7,7 @@ from logot._capture import Captured
 from logot._level import CRITICAL_MATCHER, DEBUG_MATCHER, ERROR_MATCHER, INFO_MATCHER, WARNING_MATCHER, level_matcher
 from logot._match import Matcher
 from logot._msg import msg_matcher
+from logot._name import name_matcher
 from logot._typing import Level
 
 
@@ -67,65 +68,78 @@ class Logged(ABC):
         raise NotImplementedError
 
 
-def log(level: Level, msg: str) -> Logged:
+def log(level: Level, msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at the given ``level`` with the given
     ``msg``.
 
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((level_matcher(level), msg_matcher(msg)))
+    return _log(level_matcher(level), msg, name=name)
 
 
-def debug(msg: str) -> Logged:
+def debug(msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((DEBUG_MATCHER, msg_matcher(msg)))
+    return _log(DEBUG_MATCHER, msg, name=name)
 
 
-def info(msg: str) -> Logged:
+def info(msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``INFO`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((INFO_MATCHER, msg_matcher(msg)))
+    return _log(INFO_MATCHER, msg, name=name)
 
 
-def warning(msg: str) -> Logged:
+def warning(msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``WARNING`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((WARNING_MATCHER, msg_matcher(msg)))
+    return _log(WARNING_MATCHER, msg, name=name)
 
 
-def error(msg: str) -> Logged:
+def error(msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``ERROR`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((ERROR_MATCHER, msg_matcher(msg)))
+    return _log(ERROR_MATCHER, msg, name=name)
 
 
-def critical(msg: str) -> Logged:
+def critical(msg: str, *, name: str | None = None) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param name: A logger name.
     """
-    return _MatcherLogged((CRITICAL_MATCHER, msg_matcher(msg)))
+    return _log(CRITICAL_MATCHER, msg, name=name)
+
+
+def _log(level_matcher: Matcher, msg: str, *, name: str | None) -> _MatcherLogged:
+    matchers = [level_matcher, msg_matcher(msg)]
+    if name is not None:
+        matchers.append(name_matcher(name))
+    return _MatcherLogged((*matchers,))
 
 
 @dataclasses.dataclass(frozen=True, repr=False)

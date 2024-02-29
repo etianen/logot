@@ -19,9 +19,15 @@ class Captured:
     :param levelname: See :attr:`Captured.levelname`.
     :param msg: See :attr:`Captured.msg`.
     :param levelno: See :attr:`Captured.levelno`.
+    :param name: See :attr:`Captured.name`.
     """
 
-    __slots__ = ("levelname", "msg", "levelno")
+    __slots__ = (
+        "levelname",
+        "msg",
+        "levelno",
+        "name",
+    )
 
     levelname: str
     """
@@ -41,7 +47,16 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int | None = None) -> None:
+    name: str | None
+    """
+    The logger name.
+
+    This is an *optional* log capture field. When provided, it allows matching
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
+    """
+
+    def __init__(self, levelname: str, msg: str, *, levelno: int | None = None, name: str | None = None) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno
+        self.name = name
