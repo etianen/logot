@@ -16,6 +16,7 @@ def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
 def test_matcher_logged_repr() -> None:
     assert repr(logged.log(10, "foo bar")) == "log(10, 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar")) == "log('DEBUG', 'foo bar')"
+    assert repr(logged.log("DEBUG", "foo bar", name="tests")) == "log('DEBUG', 'foo bar', name='tests')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
     assert repr(logged.warning("foo bar")) == "log('WARNING', 'foo bar')"
@@ -26,6 +27,7 @@ def test_matcher_logged_repr() -> None:
 def test_matcher_logged_str() -> None:
     assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
+    assert str(logged.log("DEBUG", "foo bar", name="tests")) == "[DEBUG] foo bar (name='tests')"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
     assert str(logged.warning("foo bar")) == "[WARNING] foo bar"
