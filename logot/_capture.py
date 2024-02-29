@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 
+from logot._typing import MISSING, Name
+
 
 @dataclasses.dataclass(init=False)
 class Captured:
@@ -47,7 +49,7 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    name: str | None
+    name: Name
     """
     The logger name.
 
@@ -55,7 +57,7 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int | None = None, name: str | None = None) -> None:
+    def __init__(self, levelname: str, msg: str, *, levelno: int = MISSING, name: str | None = MISSING) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno
