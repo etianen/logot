@@ -24,12 +24,7 @@ class Captured:
     :param name: See :attr:`Captured.name`.
     """
 
-    __slots__ = (
-        "levelname",
-        "msg",
-        "levelno",
-        "name",
-    )
+    __slots__ = ("levelname", "msg", "levelno", "name")
 
     levelname: str
     """
