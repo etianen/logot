@@ -69,3 +69,8 @@ def test_capture(logot: Logot) -> None:
 def test_capture_levelno(logot: Logot) -> None:
     logger.log(logging.INFO, "foo bar")
     logot.assert_logged(logged.log(logging.INFO, "foo bar"))
+
+
+def test_capture_name(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar", name=__name__))

@@ -16,6 +16,7 @@ def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
 def test_matcher_logged_repr() -> None:
     assert repr(logged.log(10, "foo bar")) == "log(10, 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar")) == "log('DEBUG', 'foo bar')"
+    assert repr(logged.log("DEBUG", "foo bar", name="tests")) == "log('DEBUG', 'foo bar', name='tests')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
     assert repr(logged.warning("foo bar")) == "log('WARNING', 'foo bar')"
@@ -26,6 +27,7 @@ def test_matcher_logged_repr() -> None:
 def test_matcher_logged_str() -> None:
     assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
+    assert str(logged.log("DEBUG", "foo bar", name="tests")) == "[DEBUG] foo bar (name='tests')"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
     assert str(logged.warning("foo bar")) == "[WARNING] foo bar"
@@ -33,19 +35,36 @@ def test_matcher_logged_str() -> None:
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
 
 
-def test_matcher_logged_reduce() -> None:
-    # Test `str` level.
+def test_matcher_logged_reduce_level_str() -> None:
     assert_reduce(
         logged.log("INFO", "foo bar"),
         Captured("INFO", "boom!"),  # Non-matching.
         Captured("DEBUG", "foo bar"),  # Non-matching.
         Captured("INFO", "foo bar"),  # Matching.
     )
-    # Test `int` level.
+
+
+def test_matcher_logged_reduce_level_int() -> None:
     assert_reduce(
         logged.log(20, "foo bar"),
         Captured("INFO", "foo bar"),  # Non-matching (needs levelno).
         Captured("INFO", "foo bar", levelno=20),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_name_none() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", name=None),
+        Captured("INFO", "foo bar"),  # Non-matching (needs name).
+        Captured("INFO", "foo bar", name=None),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_name_str() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", name="tests"),
+        Captured("INFO", "foo bar"),  # Non-matching (needs name).
+        Captured("INFO", "foo bar", name="tests"),  # Matching.
     )
 
 

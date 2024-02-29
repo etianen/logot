@@ -16,6 +16,5 @@ class Matcher(ABC):
     def __repr__(self) -> str:
         raise NotImplementedError
 
-    @abstractmethod
     def __str__(self) -> str:
-        raise NotImplementedError
+        return f"({self!r})"

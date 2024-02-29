@@ -42,5 +42,5 @@ class _Handler(logging.Handler):
         self._logot = logot
 
     def emit(self, record: logging.LogRecord) -> None:
-        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno)
+        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno, name=record.name)
         self._logot.capture(captured)
