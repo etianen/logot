@@ -35,19 +35,36 @@ def test_matcher_logged_str() -> None:
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
 
 
-def test_matcher_logged_reduce() -> None:
-    # Test `str` level.
+def test_matcher_logged_reduce_level_str() -> None:
     assert_reduce(
         logged.log("INFO", "foo bar"),
         Captured("INFO", "boom!"),  # Non-matching.
         Captured("DEBUG", "foo bar"),  # Non-matching.
         Captured("INFO", "foo bar"),  # Matching.
     )
-    # Test `int` level.
+
+
+def test_matcher_logged_reduce_level_int() -> None:
     assert_reduce(
         logged.log(20, "foo bar"),
         Captured("INFO", "foo bar"),  # Non-matching (needs levelno).
         Captured("INFO", "foo bar", levelno=20),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_name_none() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", name=None),
+        Captured("INFO", "foo bar"),  # Non-matching (needs name).
+        Captured("INFO", "foo bar", name=None),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_name_str() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", name="tests"),
+        Captured("INFO", "foo bar"),  # Non-matching (needs name).
+        Captured("INFO", "foo bar", name="tests"),  # Matching.
     )
 
 
