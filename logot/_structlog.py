@@ -40,9 +40,9 @@ def _processor(
     msg = event_dict["event"]
     level = method_name.upper()
     event_levelno = NAME_TO_LEVEL[method_name]
-    logger_name = getattr(logger, "name", "")
+    logger_name = getattr(logger, "name", None)
 
     if (name is None or f"{logger_name}.".startswith(f"{name}.")) and event_levelno >= levelno:
-        logot.capture(Captured(level, msg, levelno=event_levelno))
+        logot.capture(Captured(level, msg, levelno=event_levelno, name=logger_name))
 
     return event_dict
