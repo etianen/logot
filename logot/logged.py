@@ -5,6 +5,7 @@ Log :doc:`pattern matching </log-pattern-matching>` API.
 
     See :doc:`/log-pattern-matching` usage guide.
 """
+
 from __future__ import annotations
 
 from logot._logged import critical as critical

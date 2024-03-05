@@ -5,6 +5,7 @@ Integration API for :mod:`unittest`.
 
     See :doc:`/using-unittest` usage guide.
 """
+
 from __future__ import annotations
 
 from logot._unittest import LogotTestCase as LogotTestCase
