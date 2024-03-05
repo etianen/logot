@@ -5,6 +5,7 @@ Integration API for :mod:`structlog`.
 
     See :doc:`/integrations/structlog` usage guide.
 """
+
 from __future__ import annotations
 
 from logot._structlog import StructlogCapturer as StructlogCapturer
