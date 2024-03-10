@@ -5,12 +5,11 @@ build:
   tools:
     python: "3.12"
   jobs:
+    # See: https://docs.readthedocs.io/en/stable/build-customization.html#install-dependencies-with-poetry
     post_create_environment:
-    # See: https://github.com/readthedocs/readthedocs.org/issues/11150
-    - pip install 'poetry~=1.7.0'
-    - poetry config virtualenvs.create false
+    - pip install poetry
     post_install:
-    - poetry install --all-extras
+    - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --all-extras
 
 sphinx:
   configuration: docs/conf.py
