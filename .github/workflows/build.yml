@@ -28,6 +28,7 @@ jobs:
           - lib-versions: "trio~=0.22.0"
           - lib-versions: "trio~=0.23.0"
           - lib-versions: "trio~=0.24.0"
+          - lib-versions: "trio~=0.25.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}
