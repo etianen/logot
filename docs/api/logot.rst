@@ -17,6 +17,7 @@ API reference
    :members:
 
 .. autoclass:: Logged
+   :members:
 
 .. autoclass:: AsyncWaiter
    :members:

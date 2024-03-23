@@ -5,6 +5,7 @@ Main :mod:`logot` API for log-based testing.
 
     See :doc:`/index` usage guide.
 """
+
 from __future__ import annotations
 
 from logot._capture import Captured as Captured

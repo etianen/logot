@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from logot._format import format_log
+import dataclasses
+
+from logot._typing import MISSING, Name
 
 
+@dataclasses.dataclass(init=False)
 class Captured:
     """
     A captured log record.
@@ -18,9 +21,10 @@ class Captured:
     :param levelname: See :attr:`Captured.levelname`.
     :param msg: See :attr:`Captured.msg`.
     :param levelno: See :attr:`Captured.levelno`.
+    :param name: See :attr:`Captured.name`.
     """
 
-    __slots__ = ("levelname", "msg", "levelno")
+    __slots__ = ("levelname", "msg", "levelno", "name")
 
     levelname: str
     """
@@ -40,21 +44,16 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int | None = None) -> None:
+    name: Name
+    """
+    The logger name.
+
+    This is an *optional* log capture field. When provided, it allows matching
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
+    """
+
+    def __init__(self, levelname: str, msg: str, *, levelno: int = MISSING, name: str | None = MISSING) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno
-
-    def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, Captured)
-            and other.levelname == self.levelname
-            and other.msg == self.msg
-            and other.levelno == self.levelno
-        )
-
-    def __repr__(self) -> str:
-        return f"Captured({self.levelname!r}, {self.msg!r}, levelno={self.levelno!r})"
-
-    def __str__(self) -> str:
-        return format_log(self.levelname, self.msg)
+        self.name = name

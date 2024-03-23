@@ -1,13 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
 import re
-from typing import Callable
 
-from logot._typing import TypeAlias
-
-# Compiled matcher callable.
-# The returned `object` is truthy on successful match and falsy on failed match.
-MessageMatcher: TypeAlias = Callable[[str], object]
+from logot._capture import Captured
+from logot._match import Matcher
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -41,8 +38,34 @@ _CONVERSION_MAP = {
 }
 
 
-def compile_msg_matcher(pattern: str) -> MessageMatcher:
-    parts: list[str] = _RE_CONVERSION.split(pattern)
+@dataclasses.dataclass(frozen=True, repr=False)
+class _MessageMatcher(Matcher):
+    __slots__ = ("msg",)
+    msg: str
+
+    def match(self, captured: Captured) -> bool:
+        return captured.msg == self.msg
+
+    def __repr__(self) -> str:
+        return repr(self.msg)
+
+    def __str__(self) -> str:
+        return self.msg
+
+
+class _MessagePatternMatcher(_MessageMatcher):
+    __slots__ = ("_pattern",)
+
+    def __init__(self, msg: str, pattern: re.Pattern[str]) -> None:
+        super().__init__(msg)
+        self._pattern = pattern
+
+    def match(self, captured: Captured) -> bool:
+        return self._pattern.fullmatch(captured.msg) is not None
+
+
+def msg_matcher(msg: str) -> Matcher:
+    parts: list[str] = _RE_CONVERSION.split(msg)
     parts_len = len(parts)
     # If there is more than one part, at least one conversion specifier was found and we might need a regex matcher.
     if parts_len > 1:
@@ -60,8 +83,9 @@ def compile_msg_matcher(pattern: str) -> MessageMatcher:
         # Create regex matcher.
         if is_regex:
             parts[::2] = map(re.escape, parts[::2])
-            return re.compile("".join(parts), re.DOTALL).fullmatch
+            pattern = re.compile("".join(parts), re.DOTALL)
+            return _MessagePatternMatcher(msg, pattern)
         # Recreate the pattern with all escape sequences replaced.
-        pattern = "".join(parts)
+        msg = "".join(parts)
     # Create simple matcher.
-    return pattern.__eq__
+    return _MessageMatcher(msg)

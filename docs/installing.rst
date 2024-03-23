@@ -19,17 +19,11 @@ Installing package ``extras``
 -----------------------------
 
 :mod:`logot` provides package ``extras`` to ensure compatibility with supported
-:doc:`3rd-party integrations </integrations/index>`.
+:doc:`3rd-party integrations </integrations/index>`:
 
 .. code:: bash
 
-   pip install 'logot[loguru,pytest,trio]'
-
-Use the following package ``extras`` for supported 3rd-party integrations:
-
-- ``loguru`` - :doc:`/integrations/loguru`
-- ``pytest`` - :doc:`/using-pytest`
-- ``trio`` - :doc:`/integrations/trio`
+   pip install 'logot[pytest]'
 
 .. seealso::
 

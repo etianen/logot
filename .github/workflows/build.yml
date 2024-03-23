@@ -24,9 +24,12 @@ jobs:
           - lib-versions: "loguru~=0.7.0"
           - lib-versions: "pytest~=7.0"
           - lib-versions: "pytest~=8.0"
+          - lib-versions: "structlog~=23.3.0"
+          - lib-versions: "structlog~=24.1.0"
           - lib-versions: "trio~=0.22.0"
           - lib-versions: "trio~=0.23.0"
           - lib-versions: "trio~=0.24.0"
+          - lib-versions: "trio~=0.25.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}

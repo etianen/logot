@@ -27,4 +27,4 @@ class LoguruCapturer(Capturer):
 def _sink(msg: loguru.Message, *, logot: Logot) -> None:
     record = msg.record
     level = record["level"]
-    logot.capture(Captured(level.name, record["message"], levelno=level.no))
+    logot.capture(Captured(level.name, record["message"], levelno=level.no, name=record["name"]))

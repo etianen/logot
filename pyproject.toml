@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "logot"
-version = "1.0.0"
+version = "1.2.0"
 description = "Test whether your code is logging correctly 🪵"
 authors = ["Dave Hall <dave@etianen.com>"]
 license = "MIT"
@@ -26,12 +26,14 @@ packages = [{ include = "logot" }]
 python = "^3.8"
 loguru = { version = ">=0.6,<0.8", optional = true }
 pytest = { version = ">=7,<9", optional = true }
-trio = { version = ">=0.22,<0.25", optional = true }
+structlog = { version = ">=23.3,<25", optional = true }
+trio = { version = ">=0.22,<0.26", optional = true }
 typing-extensions = { version = ">=4.9", python = "<3.10" }
 
 [tool.poetry.extras]
 loguru = ["loguru"]
 pytest = ["pytest"]
+structlog = ["structlog"]
 trio = ["trio"]
 
 [tool.poetry.group.dev.dependencies]
@@ -39,7 +41,7 @@ coverage = "^7.4.1"
 furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.96.1"
 mypy = "^1.8.0"
-ruff = "^0.1.11"
+ruff = "^0.3.0"
 sphinx = { version = "7.2.6", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
 trio-typing = "^0.10.0"
@@ -75,6 +77,8 @@ addopts = "--tb=native --import-mode=importlib"
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
 line-length = 120
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]
 
 [build-system]

@@ -17,4 +17,12 @@ T = TypeVar("T")
 Level: TypeAlias = Union[str, int]
 Name: TypeAlias = Union[str, None]
 
-MISSING: Any = object()
+
+class _Missing:
+    __slots__ = ()
+
+    def __repr__(self) -> str:
+        return "..."
+
+
+MISSING: Any = _Missing()

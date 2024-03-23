@@ -37,7 +37,7 @@ using |caplog|_ as:
 - Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
 - Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
 - Support for testing :ref:`threaded <index-testing-threaded>` and :ref:`async <index-testing-async>` code.
-- Support for :ref:`3rd-party logging frameworks <integrations-logging>` (e.g. :doc:`loguru </integrations/loguru>`).
+- Support for :ref:`3rd-party logging frameworks <integrations-logging>`.
 - A cleaner, clearer syntax.
 
 

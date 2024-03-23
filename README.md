@@ -9,7 +9,7 @@
 
 `logot` makes it easy to test whether your code is logging correctly:
 
-``` python
+```python
 from logot import Logot, logged
 
 def test_something(logot: Logot) -> None:
@@ -17,12 +17,18 @@ def test_something(logot: Logot) -> None:
     logot.assert_logged(logged.info("Something was done"))
 ```
 
-`logot` integrates with popular testing (e.g. [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)), asynchronous (e.g. [`asyncio`](https://logot.readthedocs.io/latest/index.html#index-testing-threaded), [`trio`](https://logot.readthedocs.io/latest/integrations/trio.html)) and logging frameworks (e.g. [`logging`](https://logot.readthedocs.io/latest/log-capturing.html), [`loguru`](https://logot.readthedocs.io/latest/integrations/loguru.html)). It can be extended to support many others. 💪
-
+`logot` integrates with popular testing frameworks (e.g. [`pytest`](https://logot.readthedocs.io/latest/using-pytest.html), [`unittest`](https://logot.readthedocs.io/latest/using-unittest.html)). It supports many 3rd-party [asynchronous](https://logot.readthedocs.io/latest/integrations/index.html#asynchronous-frameworks) and [logging](https://logot.readthedocs.io/latest/integrations/index.html#logging-frameworks) frameworks, and can be extended to support many more. 💪
 
 ## Documentation 📖
 
-Full documentation is published on [Read the Docs](https://logot.readthedocs.io).
+Full documentation is published on [Read the Docs](https://logot.readthedocs.io). Learn more about `logot` with the following guides:
+
+- [Log message matching](https://logot.readthedocs.io/latest/log-message-matching.html)
+- [Log pattern matching](https://logot.readthedocs.io/latest/log-pattern-matching.html)
+- [Log capturing](https://logot.readthedocs.io/latest/log-capturing.html)
+- [Using with `pytest`](https://logot.readthedocs.io/latest/using-pytest.html)
+- [Using with `unittest`](https://logot.readthedocs.io/latest/using-unittest.html)
+- [Installing](https://logot.readthedocs.io/latest/installing.html)
 
 
 ## Bugs / feedback 🐛

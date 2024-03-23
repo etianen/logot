@@ -17,7 +17,7 @@ during tests and can be used to make log assertions:
 
       def test_something(self) -> None:
          do_something()
-         self.logot.assert_logged(logged.info("App started"))
+         self.logot.assert_logged(logged.info("Something was done"))
 
 
 Comparison to :meth:`assertLogs() <unittest.TestCase.assertLogs>`
@@ -43,7 +43,7 @@ testing. The above example can be rewritten using :meth:`assertLogs() <unittest.
 - Support for :doc:`log message matching </log-message-matching>` using ``%``-style placeholders.
 - Support for :doc:`log pattern matching </log-pattern-matching>` using *log pattern operators*.
 - Support for testing :ref:`threaded <index-testing-threaded>` and :ref:`async <index-testing-async>` code.
-- Support for :ref:`3rd-party logging frameworks <integrations-logging>` (e.g. :doc:`loguru </integrations/loguru>`).
+- Support for :ref:`3rd-party logging frameworks <integrations-logging>`.
 - A cleaner, clearer syntax.
 
 

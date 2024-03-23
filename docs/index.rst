@@ -15,10 +15,9 @@ Log-based testing 🪵
 
 .. note::
 
-   :mod:`logot` integrates with popular testing (e.g. :doc:`pytest </using-pytest>`,
-   :doc:`unittest </using-unittest>`), asynchronous (e.g. :ref:`asyncio <index-testing-threaded>`,
-   :doc:`trio </integrations/trio>`) and logging frameworks (e.g. :doc:`logging </log-capturing>`,
-   :doc:`loguru </integrations/loguru>`). It can be extended to support many others. 💪
+   :mod:`logot` integrates with popular testing frameworks (e.g. :doc:`pytest </using-pytest>`,
+   :doc:`unittest </using-unittest>`). It supports many 3rd-party :ref:`asynchronous <integrations-async>` and
+   :ref:`logging <integrations-logging>` frameworks, and can be extended to support many more. 💪
 
 
 Why test logging? 🤔
@@ -111,7 +110,7 @@ Use :meth:`Logot.await_for` to pause your test until the expected logs arrive or
 
    See :doc:`/log-pattern-matching` for examples of how to wait for logs that may arrive in an unpredictable order.
 
-   See :ref:`integrations-async` for other supported asynchronous frameworks (e.g. :doc:`trio </integrations/trio>`).
+   See :ref:`integrations-async` for other supported asynchronous frameworks.
 
 
 Testing synchronous code
