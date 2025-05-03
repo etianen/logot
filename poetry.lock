@@ -1188,7 +1188,7 @@ files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
-markers = {main = "python_version < \"3.10\""}
+markers = {main = "python_version == \"3.9\""}
 
 [[package]]
 name = "urllib3"
@@ -1445,5 +1445,5 @@ trio = ["trio"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.8"
-content-hash = "1273b1f52bba3f89654ff84fb853c3fec507d5b190d463f2c3643a06be105805"
+python-versions = "^3.9"
+content-hash = "278db374ba66de697dde7287fe5fe85d76582977b5b3e0a809b88bd6ec8a85dc"
