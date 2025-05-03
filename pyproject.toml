@@ -85,5 +85,5 @@ line-length = 120
 select = ["E", "F", "W", "I", "UP"]
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0"]
 build-backend = "poetry.core.masonry.api"
