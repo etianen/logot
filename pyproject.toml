@@ -17,10 +17,14 @@ pytest = ["pytest"]
 structlog = ["structlog"]
 trio = ["trio"]
 
-[tool.poetry]
+[project.urls]
 homepage = "https://logot.readthedocs.io"
 repository = "https://github.com/etianen/logot"
 documentation = "https://logot.readthedocs.io"
+Changelog = "https://github.com/etianen/logot/releases"
+Tracker = "https://github.com/etianen/logot/issues"
+
+[tool.poetry]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: AsyncIO",
@@ -51,10 +55,6 @@ ruff = ">=0.5.1,<0.7"
 sphinx = { version = "7.3.7", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
 trio-typing = "^0.10.0"
-
-[tool.poetry.urls]
-Changelog = "https://github.com/etianen/logot/releases"
-Tracker = "https://github.com/etianen/logot/issues"
 
 [tool.coverage.run]
 source = ["logot", "tests"]
