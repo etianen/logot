@@ -65,6 +65,7 @@ jobs:
       with:
         name: ${{ env.COVERAGE_FILE }}
         path: ${{ env.COVERAGE_FILE }}
+        include-hidden-files: true
 
   docs:
     runs-on: ubuntu-latest
