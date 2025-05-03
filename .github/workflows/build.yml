@@ -48,7 +48,7 @@ jobs:
     - name: Install dependencies
       run: poetry install --all-extras --no-root
     - name: Install lib versions
-      run: pip install -e .[pytest,trio] ${{ matrix.lib-versions }}
+      run: pip install -e .[loguru,pytest,structlog,trio] ${{ matrix.lib-versions }}
     # Run checks.
     - name: Check (ruff)
       run: ruff check
