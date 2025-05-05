@@ -9,7 +9,7 @@ runs:
       shell: bash
     - uses: actions/setup-python@v5
       with:
-        python-version: ${{ inputs.python-version || '3.12' }}
+        python-version: ${{ inputs.python-version || '3.13' }}
         cache: poetry
     # Run pre-install checks.
     - run: poetry check
