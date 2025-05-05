@@ -21,8 +21,8 @@ trio = ["trio"]
 homepage = "https://logot.readthedocs.io"
 repository = "https://github.com/etianen/logot"
 documentation = "https://logot.readthedocs.io"
-changelog = "https://github.com/etianen/logot/releases"
-tracker = "https://github.com/etianen/logot/issues"
+Changelog = "https://github.com/etianen/logot/releases"
+Tracker = "https://github.com/etianen/logot/issues"
 
 [tool.poetry]
 classifiers = [
