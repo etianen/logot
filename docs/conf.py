@@ -6,11 +6,11 @@ from pathlib import Path
 import tomllib
 
 _root = Path(__file__).parent.parent
-_poetry = tomllib.loads((_root / "pyproject.toml").read_text())["tool"]["poetry"]
+_project = tomllib.loads((_root / "pyproject.toml").read_text())["project"]
 
-project = _poetry["name"]
-release = version = _poetry["version"]
-author = ", ".join(author[0] for author in _poetry["authors"])
+project = _project["name"]
+release = version = _project["version"]
+author = ", ".join(f"{author['name']} <{author['email']}>" for author in _project["authors"])
 copyright = f"{date.today().year} Dave Hall"
 
 exclude_patterns = ["_build"]
