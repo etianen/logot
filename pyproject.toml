@@ -51,7 +51,7 @@ coverage = "^7.9.1"
 furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.135.11"
 mypy = "^1.16.0"
-ruff = ">=0.5.1,<0.12"
+ruff = ">=0.5.1,<0.13"
 sphinx = { version = "8.2.3", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
 trio-typing = "^0.10.0"
