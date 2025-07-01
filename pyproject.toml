@@ -50,7 +50,7 @@ typing-extensions = { version = ">=4.9", python = "<3.10" }
 coverage = "^7.9.1"
 furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.135.20"
-mypy = "^1.16.0"
+mypy = "^1.16.1"
 ruff = ">=0.5.1,<0.13"
 sphinx = { version = "8.2.3", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
