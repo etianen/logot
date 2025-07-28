@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import dataclasses
+from types import EllipsisType
 
-from logot._typing import MISSING, Name
+from logot._typing import Name
 
 
 @dataclasses.dataclass(init=False)
@@ -36,7 +37,7 @@ class Captured:
     The log message.
     """
 
-    levelno: int | None
+    levelno: int | EllipsisType | None
     """
     The log level number (e.g. :data:`logging.DEBUG`).
 
@@ -44,7 +45,7 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    name: Name
+    name: EllipsisType | Name
     """
     The logger name.
 
@@ -52,7 +53,14 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int = MISSING, name: str | None = MISSING) -> None:
+    def __init__(
+        self,
+        levelname: str,
+        msg: str,
+        *,
+        levelno: int | EllipsisType = ...,
+        name: str | EllipsisType | None = ...,
+    ) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno

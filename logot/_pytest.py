@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Generator
+from types import EllipsisType
 from typing import Callable
 
 import pytest
 
 from logot._import import import_any_parsed
 from logot._logot import Capturer, Logot
-from logot._typing import MISSING, Level, Name, T
+from logot._typing import Level, Name, T
 from logot._wait import AsyncWaiter
 
 
@@ -111,10 +112,10 @@ def get_optname(name: str) -> str:
 
 def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, help: str) -> None:
     qualname = get_qualname(name)
-    parser.addini(qualname, default=MISSING, help=help)
+    parser.addini(qualname, default=..., help=help)
     group.addoption(
         get_optname(name),
-        default=MISSING,
+        default=...,
         dest=qualname,
         metavar=name.upper(),
         help=help,
@@ -124,10 +125,10 @@ def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, 
 def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[str], T], default: T) -> T:
     qualname = get_qualname(name)
     # Try to get the value from the command line, followed by the config file.
-    value: str = request.config.getoption(qualname, default=MISSING)
-    if value is MISSING:
+    value: str | EllipsisType = request.config.getoption(qualname, default=...)
+    if value is ...:
         value = request.config.getini(qualname)
-        if value is MISSING:
+        if value is ...:
             # Give up and return the default.
             return default
     # Parse and return the value.

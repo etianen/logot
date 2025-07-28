@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import dataclasses
 import re
+from types import EllipsisType
 
 from logot._capture import Captured
-from logot._match import Matcher
+from logot._match import AnyMatcher, Matcher
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -64,7 +65,11 @@ class _MessagePatternMatcher(_MessageMatcher):
         return self._pattern.fullmatch(captured.msg) is not None
 
 
-def msg_matcher(msg: str) -> Matcher:
+def msg_matcher(msg: str | EllipsisType) -> Matcher:
+    # Handle wildcard message.
+    if msg is ...:
+        return AnyMatcher("...")
+    # Parse the message.
     parts: list[str] = _RE_CONVERSION.split(msg)
     parts_len = len(parts)
     # If there is more than one part, at least one conversion specifier was found and we might need a regex matcher.

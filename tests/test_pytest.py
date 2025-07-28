@@ -8,7 +8,7 @@ import pytest
 
 from logot import Capturer, Logot
 from logot._pytest import get_optname, get_qualname
-from logot._typing import MISSING, Level, Name
+from logot._typing import Level, Name
 from logot._wait import AsyncWaiter
 from logot.asyncio import AsyncioWaiter
 from logot.logging import LoggingCapturer
@@ -21,7 +21,7 @@ def assert_fixture_config(
     name: str,
     value: Any,
     *,
-    expected: Any = MISSING,
+    expected: Any = ...,
     passed: bool = True,
 ) -> None:
     qualname = get_qualname(name)
@@ -34,7 +34,7 @@ def assert_fixture_config(
         """
     )
     # Set the expected `ContextVar`.
-    if expected is MISSING:
+    if expected is ...:
         expected = value
     expected_token = EXPECTED_VAR.set(expected)
     try:
