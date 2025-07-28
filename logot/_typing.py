@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, TypeAlias, TypeVar, Union
+from typing import TYPE_CHECKING, TypeVar, Union
 
 if sys.version_info >= (3, 10):
     from typing import ParamSpec as ParamSpec
