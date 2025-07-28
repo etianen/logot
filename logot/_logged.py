@@ -80,7 +80,7 @@ def log(level: Wildcard[Level], msg: Wildcard[str], *, name: Wildcard[Name] = ..
     return _log(level_matcher(level), msg, name=name)
 
 
-def debug(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
+def debug(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
     ``msg``.
@@ -91,7 +91,7 @@ def debug(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     return _log(DEBUG_MATCHER, msg, name=name)
 
 
-def info(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
+def info(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``INFO`` level with the given
     ``msg``.
@@ -102,7 +102,7 @@ def info(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     return _log(INFO_MATCHER, msg, name=name)
 
 
-def warning(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
+def warning(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``WARNING`` level with the given
     ``msg``.
@@ -113,7 +113,7 @@ def warning(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     return _log(WARNING_MATCHER, msg, name=name)
 
 
-def error(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
+def error(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``ERROR`` level with the given
     ``msg``.
@@ -124,7 +124,7 @@ def error(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     return _log(ERROR_MATCHER, msg, name=name)
 
 
-def critical(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
+def critical(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
     ``msg``.
