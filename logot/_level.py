@@ -3,8 +3,8 @@ from __future__ import annotations
 import dataclasses
 
 from logot._capture import Captured
-from logot._match import Matcher
-from logot._typing import Level
+from logot._match import AnyMatcher, Matcher
+from logot._typing import Level, Wildcard
 
 
 @dataclasses.dataclass(frozen=True, repr=False)
@@ -44,7 +44,10 @@ class _LevelNoMatcher(Matcher):
         return f"[Level {self.levelno}]"
 
 
-def level_matcher(level: Level) -> Matcher:
+def level_matcher(level: Wildcard[Level]) -> Matcher:
+    # Handle wildcard level.
+    if level is ...:
+        return AnyMatcher(msg="[...]")
     # Handle `str` level.
     if isinstance(level, str):
         return _LevelNameMatcher(level)

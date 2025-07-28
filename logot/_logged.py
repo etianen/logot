@@ -8,7 +8,7 @@ from logot._level import CRITICAL_MATCHER, DEBUG_MATCHER, ERROR_MATCHER, INFO_MA
 from logot._match import Matcher
 from logot._msg import msg_matcher
 from logot._name import name_matcher
-from logot._typing import MISSING, Level, Name
+from logot._typing import Level, Name, Wildcard
 
 
 class Logged(ABC):
@@ -68,7 +68,7 @@ class Logged(ABC):
         raise NotImplementedError
 
 
-def log(level: Level, msg: str, *, name: Name = MISSING) -> Logged:
+def log(level: Wildcard[Level], msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at the given ``level`` with the given
     ``msg``.
@@ -80,7 +80,7 @@ def log(level: Level, msg: str, *, name: Name = MISSING) -> Logged:
     return _log(level_matcher(level), msg, name=name)
 
 
-def debug(msg: str, *, name: Name = MISSING) -> Logged:
+def debug(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
     ``msg``.
@@ -91,7 +91,7 @@ def debug(msg: str, *, name: Name = MISSING) -> Logged:
     return _log(DEBUG_MATCHER, msg, name=name)
 
 
-def info(msg: str, *, name: Name = MISSING) -> Logged:
+def info(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``INFO`` level with the given
     ``msg``.
@@ -102,7 +102,7 @@ def info(msg: str, *, name: Name = MISSING) -> Logged:
     return _log(INFO_MATCHER, msg, name=name)
 
 
-def warning(msg: str, *, name: Name = MISSING) -> Logged:
+def warning(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``WARNING`` level with the given
     ``msg``.
@@ -113,7 +113,7 @@ def warning(msg: str, *, name: Name = MISSING) -> Logged:
     return _log(WARNING_MATCHER, msg, name=name)
 
 
-def error(msg: str, *, name: Name = MISSING) -> Logged:
+def error(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``ERROR`` level with the given
     ``msg``.
@@ -124,7 +124,7 @@ def error(msg: str, *, name: Name = MISSING) -> Logged:
     return _log(ERROR_MATCHER, msg, name=name)
 
 
-def critical(msg: str, *, name: Name = MISSING) -> Logged:
+def critical(msg: str, *, name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
     ``msg``.
@@ -135,9 +135,9 @@ def critical(msg: str, *, name: Name = MISSING) -> Logged:
     return _log(CRITICAL_MATCHER, msg, name=name)
 
 
-def _log(level_matcher: Matcher, msg: str, *, name: Name) -> _MatcherLogged:
+def _log(level_matcher: Matcher, msg: Wildcard[str], *, name: Wildcard[Name]) -> _MatcherLogged:
     matchers = [level_matcher, msg_matcher(msg)]
-    if name is not MISSING:
+    if name is not ...:
         matchers.append(name_matcher(name))
     return _MatcherLogged((*matchers,))
 

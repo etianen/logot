@@ -14,6 +14,7 @@ def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
 
 
 def test_matcher_logged_repr() -> None:
+    assert repr(logged.log(..., ...)) == "log(..., ...)"
     assert repr(logged.log(10, "foo bar")) == "log(10, 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar", name="tests")) == "log('DEBUG', 'foo bar', name='tests')"
@@ -25,6 +26,7 @@ def test_matcher_logged_repr() -> None:
 
 
 def test_matcher_logged_str() -> None:
+    assert str(logged.log(..., ...)) == "[...] ..."
     assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
     assert str(logged.log("DEBUG", "foo bar", name="tests")) == "[DEBUG] foo bar (name='tests')"
@@ -33,6 +35,14 @@ def test_matcher_logged_str() -> None:
     assert str(logged.warning("foo bar")) == "[WARNING] foo bar"
     assert str(logged.error("foo bar")) == "[ERROR] foo bar"
     assert str(logged.critical("foo bar")) == "[CRITICAL] foo bar"
+
+
+def test_matcher_logged_reduce_level_ellipsis() -> None:
+    assert_reduce(
+        logged.log(..., "foo bar"),
+        Captured("INFO", "boom!"),  # Non-matching.
+        Captured("INFO", "foo bar"),  # Matching.
+    )
 
 
 def test_matcher_logged_reduce_level_str() -> None:

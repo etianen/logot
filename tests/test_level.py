@@ -9,11 +9,13 @@ from logot._typing import Level
 
 
 def test_repr() -> None:
+    assert repr(level_matcher(...)) == "..."
     assert repr(level_matcher("INFO")) == "'INFO'"
     assert repr(level_matcher(20)) == "20"
 
 
 def test_str() -> None:
+    assert str(level_matcher(...)) == "[...]"
     assert str(level_matcher("INFO")) == "[INFO]"
     assert str(level_matcher(20)) == "[Level 20]"
 

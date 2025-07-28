@@ -43,3 +43,29 @@ Placeholder  Matches
 ``%a``       Any string (non-greedy).
 ``%%``       Escape sequence, results in a ``%`` character in the result.
 ===========  ===========================================================================================================
+
+
+Wildcards
+---------
+
+The special ``...`` (ellipsis) acts as a wildcard when matching log messages.
+
+Use ``...`` to match log records with *any* message:
+
+.. code:: python
+
+   from logot import Logot, logged
+
+   def test_something(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.info(...))
+
+Or use ``...`` to match log records with *any* level:
+
+.. code:: python
+
+   from logot import Logot, logged
+
+   def test_something(logot: Logot) -> None:
+      do_something()
+      logot.assert_logged(logged.log(..., "Something %s done"))

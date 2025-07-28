@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import dataclasses
 
-from logot._typing import MISSING, Name
+from logot._typing import Name, Wildcard
 
 
 @dataclasses.dataclass(init=False)
@@ -36,7 +36,7 @@ class Captured:
     The log message.
     """
 
-    levelno: int | None
+    levelno: Wildcard[int | None]
     """
     The log level number (e.g. :data:`logging.DEBUG`).
 
@@ -44,7 +44,7 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    name: Name
+    name: Wildcard[Name]
     """
     The logger name.
 
@@ -52,7 +52,14 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
     """
 
-    def __init__(self, levelname: str, msg: str, *, levelno: int = MISSING, name: str | None = MISSING) -> None:
+    def __init__(
+        self,
+        levelname: str,
+        msg: str,
+        *,
+        levelno: Wildcard[int] = ...,
+        name: Wildcard[str | None] = ...,
+    ) -> None:
         self.levelname = levelname
         self.msg = msg
         self.levelno = levelno
