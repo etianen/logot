@@ -479,14 +479,14 @@ files = [
 
 [[package]]
 name = "hypothesis"
-version = "6.135.26"
+version = "6.136.1"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "hypothesis-6.135.26-py3-none-any.whl", hash = "sha256:fa237cbe2ae2c31d65f7230dcb866139ace635dcfec6c30dddf25974dd8ff4b9"},
-    {file = "hypothesis-6.135.26.tar.gz", hash = "sha256:73af0e46cd5039c6806f514fed6a3c185d91ef88b5a1577477099ddbd1a2e300"},
+    {file = "hypothesis-6.136.1-py3-none-any.whl", hash = "sha256:2585c89cf69a14a4b67dbc4e68a0bc3c321d34b12ced612aec383ad0112de44e"},
+    {file = "hypothesis-6.136.1.tar.gz", hash = "sha256:ddceffdf0f489439d47ec032b23bf696c1c82600b9e675e60260ab23b55aa958"},
 ]
 
 [package.dependencies]
@@ -1518,4 +1518,4 @@ trio = ["trio"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "1f53da2e5e00b5855fa008063d3456d93d70f940f6c08b0eb62c208ba5e191c5"
+content-hash = "e6feb642b3975173457d13bdd981b9eb82c852f17a91457b7a159a9802f6c1cd"
