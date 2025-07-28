@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import dataclasses
-from types import EllipsisType
 
-from logot._typing import Name
+from logot._typing import Name, Wildcard
 
 
 @dataclasses.dataclass(init=False)
@@ -37,7 +36,7 @@ class Captured:
     The log message.
     """
 
-    levelno: int | EllipsisType | None
+    levelno: Wildcard[int | None]
     """
     The log level number (e.g. :data:`logging.DEBUG`).
 
@@ -45,7 +44,7 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a numeric ``level``.
     """
 
-    name: EllipsisType | Name
+    name: Wildcard[Name]
     """
     The logger name.
 
@@ -58,8 +57,8 @@ class Captured:
         levelname: str,
         msg: str,
         *,
-        levelno: int | EllipsisType = ...,
-        name: str | EllipsisType | None = ...,
+        levelno: Wildcard[int] = ...,
+        name: Wildcard[str | None] = ...,
     ) -> None:
         self.levelname = levelname
         self.msg = msg

@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Generator
-from types import EllipsisType
 from typing import Callable
 
 import pytest
 
 from logot._import import import_any_parsed
 from logot._logot import Capturer, Logot
-from logot._typing import Level, Name, T
+from logot._typing import Level, Name, T, Wildcard
 from logot._wait import AsyncWaiter
 
 
@@ -125,7 +124,7 @@ def _add_option(parser: pytest.Parser, group: pytest.OptionGroup, *, name: str, 
 def _get_option(request: pytest.FixtureRequest, *, name: str, parser: Callable[[str], T], default: T) -> T:
     qualname = get_qualname(name)
     # Try to get the value from the command line, followed by the config file.
-    value: str | EllipsisType = request.config.getoption(qualname, default=...)
+    value: Wildcard[str] = request.config.getoption(qualname, default=...)
     if value is ...:
         value = request.config.getini(qualname)
         if value is ...:

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import dataclasses
 import re
-from types import EllipsisType
 
 from logot._capture import Captured
 from logot._match import AnyMatcher, Matcher
+from logot._typing import Wildcard
 
 # Regex matching a simplified conversion specifier.
 _RE_CONVERSION = re.compile(r"%(.|$)")
@@ -65,7 +65,7 @@ class _MessagePatternMatcher(_MessageMatcher):
         return self._pattern.fullmatch(captured.msg) is not None
 
 
-def msg_matcher(msg: str | EllipsisType) -> Matcher:
+def msg_matcher(msg: Wildcard[str]) -> Matcher:
     # Handle wildcard message.
     if msg is ...:
         return AnyMatcher("...")

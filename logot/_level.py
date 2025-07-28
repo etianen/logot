@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import dataclasses
-from types import EllipsisType
 
 from logot._capture import Captured
 from logot._match import AnyMatcher, Matcher
-from logot._typing import Level
+from logot._typing import Level, Wildcard
 
 
 @dataclasses.dataclass(frozen=True, repr=False)
@@ -45,7 +44,7 @@ class _LevelNoMatcher(Matcher):
         return f"[Level {self.levelno}]"
 
 
-def level_matcher(level: Level | EllipsisType) -> Matcher:
+def level_matcher(level: Wildcard[Level]) -> Matcher:
     # Handle wildcard level.
     if level is ...:
         return AnyMatcher(msg="[...]")
