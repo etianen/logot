@@ -24,6 +24,8 @@ extensions = [
 
 autodoc_member_order = "bysource"
 
+autodoc_preserve_defaults = True
+
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "loguru": ("https://loguru.readthedocs.io/en/latest/", None),
