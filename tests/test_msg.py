@@ -19,11 +19,21 @@ def assert_matches(pattern: str, *values: Any) -> None:
 
 
 def test_repr() -> None:
+    assert repr(msg_matcher(...)) == "..."
+    assert repr(msg_matcher("foo bar")) == "'foo bar'"
     assert repr(msg_matcher("foo %d bar")) == "'foo %d bar'"
 
 
 def test_str() -> None:
+    assert str(msg_matcher(...)) == "..."
+    assert str(msg_matcher("foo bar")) == "foo bar"
     assert str(msg_matcher("foo %d bar")) == "foo %d bar"
+
+
+@given(st.text())
+def test_wildcard_matches(msg: str) -> None:
+    matcher = msg_matcher(...)
+    assert matcher.match(Captured("DEBUG", msg))
 
 
 @given(st.integers())
