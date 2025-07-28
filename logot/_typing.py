@@ -18,4 +18,10 @@ T = TypeVar("T")
 Level: TypeAlias = Union[str, int]
 Name: TypeAlias = Union[str, None]
 
-Wildcard: TypeAlias = T | EllipsisType
+if TYPE_CHECKING:  # pragma: no cover
+    Wildcard: TypeAlias = T | EllipsisType
+else:  # pragma: no cover
+    # Hide `| EllipsisType` from the docs.
+    class Wildcard:
+        def __class_getitem__(cls, key):
+            return key
