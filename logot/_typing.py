@@ -22,7 +22,7 @@ Name: TypeAlias = Union[str, None]
 
 if TYPE_CHECKING:  # pragma: no cover
     # TODO: Use `UnionType` when we only need to support Python 3.10+.
-    Wildcard: TypeAlias = Union[T, Any]
+    Wildcard: TypeAlias = Union[T, EllipsisType]
 else:  # pragma: no cover
     # Hide `| EllipsisType` from the docs.
     class Wildcard:
