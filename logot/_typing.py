@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sys
-from types import EllipsisType
 from typing import TYPE_CHECKING, TypeAlias, TypeVar, Union
 
 if sys.version_info >= (3, 10):
@@ -19,6 +18,8 @@ Level: TypeAlias = Union[str, int]
 Name: TypeAlias = Union[str, None]
 
 if TYPE_CHECKING:  # pragma: no cover
+    from types import EllipsisType
+
     Wildcard: TypeAlias = T | EllipsisType
 else:  # pragma: no cover
     # Hide `| EllipsisType` from the docs.
