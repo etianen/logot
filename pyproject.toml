@@ -47,7 +47,7 @@ trio = { version = ">=0.22,<0.31", optional = true }
 typing-extensions = { version = ">=4.9", python = "<3.10" }
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.9.2"
+coverage = "^7.10.3"
 furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.136.1"
 mypy = "^1.17.0"
