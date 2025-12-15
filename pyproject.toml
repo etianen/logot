@@ -80,6 +80,7 @@ addopts = "--tb=native --import-mode=importlib"
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
 line-length = 120
+target-version = "py39"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]
