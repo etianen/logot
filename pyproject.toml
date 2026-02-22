@@ -12,10 +12,10 @@ dynamic = ["classifiers", "dependencies", "requires-python"]
 logot = "logot._pytest"
 
 [project.optional-dependencies]
-loguru = ["loguru"]
-pytest = ["pytest"]
-structlog = ["structlog"]
-trio = ["trio"]
+loguru = ["loguru>=0.6,<0.8"]
+pytest = ["pytest>=7,<10"]
+structlog = ["structlog>=23.3,<26"]
+trio = ["trio>=0.22,<0.34"]
 
 [project.urls]
 homepage = "https://logot.readthedocs.io"
@@ -40,10 +40,6 @@ packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-loguru = { version = ">=0.6,<0.8", optional = true }
-pytest = { version = ">=7,<10", optional = true }
-structlog = { version = ">=23.3,<26", optional = true }
-trio = { version = ">=0.22,<0.34", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.10.7"
