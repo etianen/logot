@@ -1,17 +1,20 @@
 changelog:
   categories:
-  - title: Breaking changes 💥
-    labels:
-    - breaking change
-  - title: New features 🚀
-    labels:
-    - enhancement
-  - title: Bug fixes 🐛
-    labels:
-    - bug
-  - title: Documentation changes 📖
-    labels:
-    - documentation
-  - title: Other changes
-    labels:
-    - "*"
+    - title: Breaking changes 💥
+      labels:
+        - breaking change
+    - title: New features 🚀
+      labels:
+        - enhancement
+    - title: Bug fixes 🐛
+      labels:
+        - bug
+    - title: Documentation changes 📖
+      labels:
+        - documentation
+    - title: Other changes
+      labels:
+        - "*"
+  exclude:
+    authors:
+      - dependabot[bot]
