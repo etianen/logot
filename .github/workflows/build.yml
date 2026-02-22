@@ -19,6 +19,7 @@ jobs:
           - python-version: "3.11"
           - python-version: "3.12"
           - python-version: "3.13"
+          - python-version: "3.14"
           # - python-version: "3.14-dev"
           - lib-versions: "loguru~=0.6.0"
           - lib-versions: "loguru~=0.7.0"
