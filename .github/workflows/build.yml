@@ -46,7 +46,7 @@ jobs:
       PYTHONDEVMODE: 1
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup
         uses: ./.github/actions/setup
         with:
@@ -71,7 +71,7 @@ jobs:
         run: coverage run -m pytest
       # Upload coverage.
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.COVERAGE_FILE }}
           path: ${{ env.COVERAGE_FILE }}
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup
         uses: ./.github/actions/setup
       # Install dependencies.
@@ -99,7 +99,7 @@ jobs:
     if: always()
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup
         uses: ./.github/actions/setup
       # Install dependencies.
@@ -107,7 +107,7 @@ jobs:
         run: poetry install --all-extras
       # Report coverage.
       - name: Download coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           pattern: .coverage.*
           merge-multiple: true
@@ -116,7 +116,7 @@ jobs:
       - name: Report coverage
         run: coverage report
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       # Fail if any `needs` job was not a success.
