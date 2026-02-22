@@ -52,7 +52,7 @@ furo = { version = "*", python = "^3.12" }
 hypothesis = "^6.141.1"
 mypy = "^1.19.1"
 ruff = "^0.14.9"
-sphinx = { version = "8.2.3", python = "^3.12" }
+sphinx = { version = "9.1.0", python = "^3.12" }
 sphinx-autobuild = { version = "*", python = "^3.12" }
 trio-typing = "^0.10.0"
 
