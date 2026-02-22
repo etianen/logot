@@ -25,6 +25,7 @@ jobs:
           - lib-versions: "loguru~=0.7.0"
           - lib-versions: "pytest~=7.0"
           - lib-versions: "pytest~=8.0"
+          - lib-versions: "pytest~=9.0"
           - lib-versions: "structlog~=23.3.0"
           - lib-versions: "structlog~=24.1.0"
           - lib-versions: "structlog~=25.3.0"
