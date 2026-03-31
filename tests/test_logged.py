@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from logot import Captured, Logged, logged
-from tests import lines
+from tests import ExampleException, lines
 
 
 def assert_reduce(logged: Logged | None, *captured_items: Captured) -> None:
@@ -17,6 +17,7 @@ def test_matcher_logged_repr() -> None:
     assert repr(logged.log(..., ...)) == "log(..., ...)"
     assert repr(logged.log(10, "foo bar")) == "log(10, 'foo bar')"
     assert repr(logged.log("DEBUG", "foo bar")) == "log('DEBUG', 'foo bar')"
+    assert repr(logged.log("DEBUG", "foo bar", exc_info=True)) == "log('DEBUG', 'foo bar', exc_info=True)"
     assert repr(logged.log("DEBUG", "foo bar", name="tests")) == "log('DEBUG', 'foo bar', name='tests')"
     assert repr(logged.debug("foo bar")) == "log('DEBUG', 'foo bar')"
     assert repr(logged.info("foo bar")) == "log('INFO', 'foo bar')"
@@ -29,6 +30,7 @@ def test_matcher_logged_str() -> None:
     assert str(logged.log(..., ...)) == "[...] ..."
     assert str(logged.log(10, "foo bar")) == "[Level 10] foo bar"
     assert str(logged.log("DEBUG", "foo bar")) == "[DEBUG] foo bar"
+    assert str(logged.log("DEBUG", "foo bar", exc_info=True)) == "[DEBUG] foo bar (exc_info=True)"
     assert str(logged.log("DEBUG", "foo bar", name="tests")) == "[DEBUG] foo bar (name='tests')"
     assert str(logged.debug("foo bar")) == "[DEBUG] foo bar"
     assert str(logged.info("foo bar")) == "[INFO] foo bar"
@@ -60,6 +62,44 @@ def test_matcher_logged_reduce_level_int() -> None:
         Captured("INFO", "foo bar"),  # Non-matching (needs levelno).
         Captured("INFO", "foo bar", levelno=20),  # Matching.
     )
+
+
+def test_matcher_logged_reduce_exc_info_none() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", exc_info=None),
+        Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
+        Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Non-matching (needs None exc_info).
+        Captured("INFO", "foo bar", exc_info=None),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_exc_info_exception() -> None:
+    ex = ExampleException("foo")
+    assert_reduce(
+        logged.log("INFO", "foo bar", exc_info=ex),
+        Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
+        Captured("INFO", "foo bar", exc_info=None),  # Non-matching (needs not-None exc_info).
+        Captured("INFO", "foo bar", exc_info=ExampleException("bar")),  # Non-matching (needs matching exc_info).
+        Captured("INFO", "foo bar", exc_info=ex),  # Matching.
+    )
+
+
+def test_matcher_logged_reduce_exc_info_true() -> None:
+    ex = ExampleException("foo")
+    assert_reduce(
+        logged.log("INFO", "foo bar", exc_info=True),
+        Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
+        Captured("INFO", "foo bar", exc_info=None),  # Non-matching (needs not-None exc_info).
+        Captured("INFO", "foo bar", exc_info=ex),  # Matching.
+    )
+
+
+# def test_matcher_logged_reduce_exc_info_bool() -> None:
+#     assert_reduce(
+#         logged.log("INFO", "foo bar", exc_info=True),
+#         Captured("INFO", "foo bar", exc_info=None),  # Non-matching (needs exception).
+#         Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Matching.
+#     )
 
 
 def test_matcher_logged_reduce_name_none() -> None:
