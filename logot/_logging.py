@@ -48,5 +48,6 @@ class _Handler(logging.Handler):
             exc_info=capture_exc_info(record.exc_info),
             levelno=record.levelno,
             name=record.name,
+            record=record,
         )
         self._logot.capture(captured)

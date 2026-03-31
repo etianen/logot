@@ -49,6 +49,7 @@ def _processor(
             exc_info=capture_exc_info(event_dict.get("exc_info")),
             levelno=event_levelno,
             name=logger_name,
+            record=event_dict,
         )
         logot.capture(captured)
 
