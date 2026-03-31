@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from functools import partial
 
 import structlog
@@ -43,6 +44,15 @@ def _processor(
     logger_name = getattr(logger, "name", None)
 
     if (name is None or f"{logger_name}.".startswith(f"{name}.")) and event_levelno >= levelno:
-        logot.capture(Captured(level, msg, levelno=event_levelno, name=logger_name))
+        exc_info_val = event_dict.get("exc_info")
+        if exc_info_val is True:
+            exc_info = sys.exc_info()[1]
+        elif isinstance(exc_info_val, BaseException):
+            exc_info = exc_info_val
+        elif isinstance(exc_info_val, tuple) and exc_info_val[1] is not None:
+            exc_info = exc_info_val[1]
+        else:
+            exc_info = None
+        logot.capture(Captured(level, msg, exc_info=exc_info, levelno=event_levelno, name=logger_name))
 
     return event_dict
