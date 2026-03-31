@@ -9,6 +9,7 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 Level: TypeAlias = str | int
+ExcInfo: TypeAlias = bool | BaseException | None
 Name: TypeAlias = str | None
 
 if TYPE_CHECKING:  # pragma: no cover
