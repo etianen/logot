@@ -11,7 +11,7 @@ from tests import ExampleException
 
 def test_repr() -> None:
     assert repr(exc_info_matcher(True)) == "exc_info=True"
-    assert repr(exc_info_matcher(False)) == "exc_info=False"
+    assert repr(exc_info_matcher(False)) == "exc_info=None"
     ex = ExampleException("foo")
     assert repr(exc_info_matcher(ex)) == f"exc_info={ex!r}"
     assert repr(exc_info_matcher(None)) == "exc_info=None"

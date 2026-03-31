@@ -73,6 +73,15 @@ def test_matcher_logged_reduce_exc_info_none() -> None:
     )
 
 
+def test_matcher_logged_reduce_exc_info_false() -> None:
+    assert_reduce(
+        logged.log("INFO", "foo bar", exc_info=False),
+        Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
+        Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Non-matching (needs None exc_info).
+        Captured("INFO", "foo bar", exc_info=None),  # Matching.
+    )
+
+
 def test_matcher_logged_reduce_exc_info_exception() -> None:
     ex = ExampleException("foo")
     assert_reduce(
@@ -90,15 +99,6 @@ def test_matcher_logged_reduce_exc_info_true() -> None:
         Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
         Captured("INFO", "foo bar", exc_info=None),  # Non-matching (needs not-None exc_info).
         Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Matching.
-    )
-
-
-def test_matcher_logged_reduce_exc_info_false() -> None:
-    assert_reduce(
-        logged.log("INFO", "foo bar", exc_info=False),
-        Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
-        Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Non-matching (needs None exc_info).
-        Captured("INFO", "foo bar", exc_info=None),  # Matching.
     )
 
 

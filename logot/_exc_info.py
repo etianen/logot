@@ -19,21 +19,6 @@ class _ExcInfoTrueMatcher(Matcher):
 
 
 @dataclasses.dataclass(frozen=True, repr=False)
-class _ExcInfoFalseMatcher(Matcher):
-    __slots__ = ()
-
-    def match(self, captured: Captured) -> bool:
-        return captured.exc_info is None
-
-    def __repr__(self) -> str:
-        return "exc_info=False"
-
-
-_TRUE_MATCHER = _ExcInfoTrueMatcher()
-_FALSE_MATCHER = _ExcInfoFalseMatcher()
-
-
-@dataclasses.dataclass(frozen=True, repr=False)
 class _ExcInfoExceptionMatcher(Matcher):
     __slots__ = ("exc_info",)
     exc_info: BaseException | None
@@ -45,14 +30,18 @@ class _ExcInfoExceptionMatcher(Matcher):
         return f"exc_info={self.exc_info!r}"
 
 
+_TRUE_MATCHER = _ExcInfoTrueMatcher()
+_NONE_MATCHER = _ExcInfoExceptionMatcher(None)
+
+
 def exc_info_matcher(exc_info: ExcInfo) -> Matcher:
     # Handle `bool` name.
     if exc_info is True:
         return _TRUE_MATCHER
-    if exc_info is False:
-        return _FALSE_MATCHER
+    if exc_info in (False, None):
+        return _NONE_MATCHER
     # Handle `none`
-    if exc_info is None or isinstance(exc_info, BaseException):
+    if isinstance(exc_info, BaseException):
         return _ExcInfoExceptionMatcher(exc_info)
     # Handle invalid name.
     raise TypeError(f"Invalid exc_info: {exc_info!r}")
