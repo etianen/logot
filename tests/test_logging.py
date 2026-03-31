@@ -88,8 +88,8 @@ def test_capture_exc_info_true(logot: Logot) -> None:
 def test_capture_exc_info_exception(logot: Logot) -> None:
     try:
         raise ExampleException("foo")
-    except Exception:
-        logger.exception("foo bar", exc_info=True)
+    except Exception as ex:
+        logger.exception("foo bar", exc_info=ex)
     logot.assert_logged(logged.error("foo bar", exc_info=ExampleException("foo")))
 
 
