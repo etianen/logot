@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from logot._capture import Captured
+from logot._capture import Captured, capture_exc_info
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
 
@@ -42,5 +42,11 @@ class _Handler(logging.Handler):
         self._logot = logot
 
     def emit(self, record: logging.LogRecord) -> None:
-        captured = Captured(record.levelname, record.getMessage(), levelno=record.levelno, name=record.name)
+        captured = Captured(
+            record.levelname,
+            record.getMessage(),
+            exc_info=capture_exc_info(record.exc_info),
+            levelno=record.levelno,
+            name=record.name,
+        )
         self._logot.capture(captured)

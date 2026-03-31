@@ -9,6 +9,7 @@ from structlog.stdlib import LoggerFactory
 
 from logot import Logot, logged
 from logot.structlog import StructlogCapturer
+from tests import ExampleException
 
 logger = structlog.get_logger(__name__)
 
@@ -99,6 +100,27 @@ def test_capture(logot: Logot) -> None:
 def test_capture_levelno(logot: Logot) -> None:
     logger.log(20, "foo bar")
     logot.assert_logged(logged.log(20, "foo bar"))
+
+
+def test_capture_exc_info_none(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar", exc_info=None))
+
+
+def test_capture_exc_info_true(logot: Logot) -> None:
+    try:
+        raise ExampleException("foo")
+    except Exception:
+        logger.exception("foo bar", exc_info=True)
+    logot.assert_logged(logged.error("foo bar", exc_info=True))
+
+
+def test_capture_exc_info_exception(logot: Logot) -> None:
+    try:
+        raise ExampleException("foo")
+    except Exception as ex:
+        logger.exception("foo bar", exc_info=ex)
+    logot.assert_logged(logged.error("foo bar", exc_info=ExampleException("foo")))
 
 
 def test_capture_name(logot: Logot) -> None:

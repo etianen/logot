@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+import dataclasses
 from threading import Thread
 from time import sleep
 
 from logot import Captured, Logot
+
+
+@dataclasses.dataclass()
+class ExampleException(Exception):
+    msg: str
 
 
 def lines(*lines: str) -> str:

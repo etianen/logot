@@ -6,7 +6,7 @@ import structlog
 from structlog.processors import NAME_TO_LEVEL
 from structlog.types import EventDict, WrappedLogger
 
-from logot._capture import Captured
+from logot._capture import Captured, capture_exc_info
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
 
@@ -43,6 +43,13 @@ def _processor(
     logger_name = getattr(logger, "name", None)
 
     if (name is None or f"{logger_name}.".startswith(f"{name}.")) and event_levelno >= levelno:
-        logot.capture(Captured(level, msg, levelno=event_levelno, name=logger_name))
+        captured = Captured(
+            level,
+            msg,
+            exc_info=capture_exc_info(event_dict.get("exc_info")),
+            levelno=event_levelno,
+            name=logger_name,
+        )
+        logot.capture(captured)
 
     return event_dict

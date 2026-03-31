@@ -4,11 +4,12 @@ import dataclasses
 from abc import ABC, abstractmethod
 
 from logot._capture import Captured
+from logot._exc_info import exc_info_matcher
 from logot._level import CRITICAL_MATCHER, DEBUG_MATCHER, ERROR_MATCHER, INFO_MATCHER, WARNING_MATCHER, level_matcher
 from logot._match import Matcher
 from logot._msg import msg_matcher
 from logot._name import name_matcher
-from logot._typing import Level, Name, Wildcard
+from logot._typing import ExcInfo, Level, Name, Wildcard
 
 
 class Logged(ABC):
@@ -68,75 +69,97 @@ class Logged(ABC):
         raise NotImplementedError
 
 
-def log(level: Wildcard[Level], msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def log(
+    level: Wildcard[Level], msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at the given ``level`` with the given
     ``msg``.
 
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(level_matcher(level), msg, name=name)
+    return _log(level_matcher(level), msg, exc_info=exc_info, name=name)
 
 
-def debug(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def debug(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(DEBUG_MATCHER, msg, name=name)
+    return _log(DEBUG_MATCHER, msg, exc_info=exc_info, name=name)
 
 
-def info(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def info(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``INFO`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(INFO_MATCHER, msg, name=name)
+    return _log(INFO_MATCHER, msg, exc_info=exc_info, name=name)
 
 
-def warning(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def warning(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``WARNING`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(WARNING_MATCHER, msg, name=name)
+    return _log(WARNING_MATCHER, msg, exc_info=exc_info, name=name)
 
 
-def error(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def error(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``ERROR`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(ERROR_MATCHER, msg, name=name)
+    return _log(ERROR_MATCHER, msg, exc_info=exc_info, name=name)
 
 
-def critical(msg: Wildcard[str], *, name: Wildcard[Name] = ...) -> Logged:
+def critical(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
+        :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(CRITICAL_MATCHER, msg, name=name)
+    return _log(CRITICAL_MATCHER, msg, exc_info=exc_info, name=name)
 
 
-def _log(level_matcher: Matcher, msg: Wildcard[str], *, name: Wildcard[Name]) -> _MatcherLogged:
+def _log(
+    level_matcher: Matcher,
+    msg: Wildcard[str],
+    *,
+    exc_info: Wildcard[ExcInfo],
+    name: Wildcard[Name],
+) -> _MatcherLogged:
     matchers = [level_matcher, msg_matcher(msg)]
+    if exc_info is not ...:
+        matchers.append(exc_info_matcher(exc_info))
     if name is not ...:
         matchers.append(name_matcher(name))
     return _MatcherLogged((*matchers,))
