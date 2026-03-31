@@ -24,7 +24,7 @@ class Captured:
     :param name: See :attr:`Captured.name`.
     """
 
-    __slots__ = ("levelname", "msg", "levelno", "name")
+    __slots__ = ("levelname", "msg", "exc_info", "levelno", "name")
 
     levelname: str
     """
@@ -34,6 +34,14 @@ class Captured:
     msg: str
     """
     The log message.
+    """
+
+    exc_info: Wildcard[BaseException | None]
+    """
+    The log exception.
+
+    This is an *optional* log capture field. When provided, it allows matching
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``exc_info``.
     """
 
     levelno: Wildcard[int | None]
@@ -57,10 +65,12 @@ class Captured:
         levelname: str,
         msg: str,
         *,
+        exc_info: Wildcard[BaseException | None] = ...,
         levelno: Wildcard[int] = ...,
         name: Wildcard[str | None] = ...,
     ) -> None:
         self.levelname = levelname
         self.msg = msg
+        self.exc_info = exc_info
         self.levelno = levelno
         self.name = name
