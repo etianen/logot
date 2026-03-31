@@ -5,7 +5,7 @@ from functools import partial
 import loguru
 from loguru import logger
 
-from logot._capture import Captured
+from logot._capture import Captured, capture_exc_info
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
 
@@ -27,11 +27,10 @@ class LoguruCapturer(Capturer):
 def _sink(msg: loguru.Message, *, logot: Logot) -> None:
     record = msg.record
     level = record["level"]
-    exception = record["exception"]
     captured = Captured(
         level.name,
         record["message"],
-        exc_info=None if exception is None else exception.value,
+        exc_info=capture_exc_info(record["exception"]),
         levelno=level.no,
         name=record["name"],
     )

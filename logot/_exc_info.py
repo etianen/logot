@@ -18,6 +18,18 @@ class _ExcInfoBoolMatcher(Matcher):
         return f"name={self.name!r}"
 
 
+@dataclasses.dataclass(frozen=True, repr=False)
+class _ExcInfoExceptionMatcher(Matcher):
+    __slots__ = ("exc_info",)
+    exc_info: BaseE
+
+    def match(self, captured: Captured) -> bool:
+        return captured.name == self.name
+
+    def __repr__(self) -> str:
+        return f"name={self.name!r}"
+
+
 def name_matcher(name: Name) -> Matcher:
     # Handle `str` or `None` name.
     if name is None or isinstance(name, str):

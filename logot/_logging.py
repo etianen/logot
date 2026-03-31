@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from logot._capture import Captured
+from logot._capture import Captured, capture_exc_info
 from logot._logot import Capturer, Logot
 from logot._typing import Level, Name
 
@@ -45,7 +45,7 @@ class _Handler(logging.Handler):
         captured = Captured(
             record.levelname,
             record.getMessage(),
-            exc_info=None if record.exc_info is None or record.exc_info[1] is None else record.exc_info[1],
+            exc_info=capture_exc_info(record.exc_info),
             levelno=record.levelno,
             name=record.name,
         )

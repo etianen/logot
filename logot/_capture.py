@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import dataclasses
+import sys
+from types import TracebackType
 
 from logot._typing import Name, Wildcard
 
@@ -74,3 +76,20 @@ class Captured:
         self.exc_info = exc_info
         self.levelno = levelno
         self.name = name
+
+
+def capture_exc_info(
+    exc_info: bool
+    | None
+    | BaseException
+    | tuple[type[BaseException] | None, BaseException | None, TracebackType | None],
+) -> BaseException | None:
+    if exc_info is None or exc_info is False:
+        return None
+    if isinstance(exc_info, BaseException):
+        return exc_info
+    if exc_info is True:
+        exc_info = sys.exc_info()
+    if exc_info[1] is None:
+        return None
+    return exc_info[1]
