@@ -41,7 +41,7 @@ class Captured:
     The log exception.
 
     This is an *optional* log capture field. When provided, it allows matching
-    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``exc_info``.
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with an ``exc_info``.
     """
 
     levelno: Wildcard[int | None]
