@@ -33,5 +33,6 @@ def _sink(msg: loguru.Message, *, logot: Logot) -> None:
         exc_info=capture_exc_info(record["exception"]),
         levelno=level.no,
         name=record["name"],
+        record=record,
     )
     logot.capture(captured)

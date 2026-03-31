@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 from types import TracebackType
+from typing import Any
 
 from logot._typing import Name, Wildcard
 
@@ -26,7 +27,7 @@ class Captured:
     :param name: See :attr:`Captured.name`.
     """
 
-    __slots__ = ("levelname", "msg", "exc_info", "levelno", "name")
+    __slots__ = ("levelname", "msg", "exc_info", "levelno", "name", "record")
 
     levelname: str
     """
@@ -62,6 +63,18 @@ class Captured:
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
     """
 
+    record: Wildcard[Any]
+    """
+    The captured log record.
+
+    This is an *optional* log capture field. When provided, it allows matching
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with custom ``*matchers``.
+
+    .. note::
+
+        This is the underlying log record emitted by the :ref:`logging framework <integrations-logging>`.
+    """
+
     def __init__(
         self,
         levelname: str,
@@ -70,12 +83,14 @@ class Captured:
         exc_info: Wildcard[BaseException | None] = ...,
         levelno: Wildcard[int] = ...,
         name: Wildcard[str | None] = ...,
+        record: Wildcard[Any] = ...,
     ) -> None:
         self.levelname = levelname
         self.msg = msg
         self.exc_info = exc_info
         self.levelno = levelno
         self.name = name
+        self.record = record
 
 
 def capture_exc_info(

@@ -70,7 +70,11 @@ class Logged(ABC):
 
 
 def log(
-    level: Wildcard[Level], msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...
+    level: Wildcard[Level],
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
 ) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at the given ``level`` with the given
@@ -78,86 +82,118 @@ def log(
 
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(level_matcher(level), msg, exc_info=exc_info, name=name)
+    return _log(level_matcher(level), msg, matchers, exc_info=exc_info, name=name)
 
 
-def debug(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
+def debug(
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``DEBUG`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(DEBUG_MATCHER, msg, exc_info=exc_info, name=name)
+    return _log(DEBUG_MATCHER, msg, matchers, exc_info=exc_info, name=name)
 
 
-def info(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
+def info(
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``INFO`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(INFO_MATCHER, msg, exc_info=exc_info, name=name)
+    return _log(INFO_MATCHER, msg, matchers, exc_info=exc_info, name=name)
 
 
-def warning(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
+def warning(
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``WARNING`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(WARNING_MATCHER, msg, exc_info=exc_info, name=name)
+    return _log(WARNING_MATCHER, msg, matchers, exc_info=exc_info, name=name)
 
 
-def error(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
+def error(
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``ERROR`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(ERROR_MATCHER, msg, exc_info=exc_info, name=name)
+    return _log(ERROR_MATCHER, msg, matchers, exc_info=exc_info, name=name)
 
 
-def critical(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wildcard[Name] = ...) -> Logged:
+def critical(
+    msg: Wildcard[str],
+    *matchers: Matcher,
+    exc_info: Wildcard[ExcInfo] = ...,
+    name: Wildcard[Name] = ...,
+) -> Logged:
     """
     Creates a :doc:`log pattern </log-pattern-matching>` representing a log record at ``CRITICAL`` level with the given
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
     """
-    return _log(CRITICAL_MATCHER, msg, exc_info=exc_info, name=name)
+    return _log(CRITICAL_MATCHER, msg, matchers, exc_info=exc_info, name=name)
 
 
 def _log(
     level_matcher: Matcher,
     msg: Wildcard[str],
+    extra_matchers: tuple[Matcher, ...],
     *,
     exc_info: Wildcard[ExcInfo],
     name: Wildcard[Name],
 ) -> _MatcherLogged:
-    matchers = [level_matcher, msg_matcher(msg)]
+    matchers = [level_matcher, msg_matcher(msg), *extra_matchers]
     if exc_info is not ...:
         matchers.append(exc_info_matcher(exc_info))
     if name is not ...:
