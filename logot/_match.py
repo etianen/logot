@@ -7,10 +7,27 @@ from logot._capture import Captured
 
 
 class Matcher(ABC):
+    """
+    Protocol used for matching :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with an ``*args``
+    custom matcher.
+
+    Subclasses should typically be a :func:`dataclasses.dataclass` with ``frozen=True`` to ensure immutability and
+    provide an automatic ``__repr__`` implementation.
+
+    .. note::
+
+        This class is for creating custom matching logic. It is not generally used when writing tests.
+    """
+
     __slots__ = ()
 
     @abstractmethod
     def match(self, captured: Captured) -> bool:
+        """
+        Tests whether the given :class:`Captured` log record matches.
+
+        :param captured: The :class:`Captured` log record.
+        """
         raise NotImplementedError
 
     @abstractmethod

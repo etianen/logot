@@ -19,5 +19,8 @@ API reference
 .. autoclass:: Logged
    :members:
 
+.. autoclass:: Matcher
+   :members:
+
 .. autoclass:: AsyncWaiter
    :members:
