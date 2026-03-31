@@ -3,6 +3,7 @@ from __future__ import annotations
 import dataclasses
 import sys
 from types import TracebackType
+from typing import Any
 
 from logot._typing import Name, Wildcard
 
@@ -60,6 +61,15 @@ class Captured:
 
     This is an *optional* log capture field. When provided, it allows matching
     :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with a ``name``.
+    """
+
+    record: Any
+    """
+    The captured log record.
+
+    .. note::
+
+        This is the underlying log record emitted by the :ref:`logging framework <integrations-logging>`.
     """
 
     def __init__(
