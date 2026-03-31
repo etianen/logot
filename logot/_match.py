@@ -30,12 +30,8 @@ class Matcher(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def __repr__(self) -> str:
-        raise NotImplementedError
-
     def __str__(self) -> str:
-        return f"({self!r})"
+        return f"[{self!r}]"
 
 
 @dataclasses.dataclass(frozen=True, repr=False)
