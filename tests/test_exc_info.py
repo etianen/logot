@@ -6,11 +6,13 @@ import pytest
 
 from logot._exc_info import exc_info_matcher
 from logot._typing import ExcInfo
+from tests import ExampleException
 
 
 def test_repr() -> None:
     assert repr(exc_info_matcher(True)) == "exc_info=True"
     assert repr(exc_info_matcher(False)) == "exc_info=False"
+    assert repr(exc_info_matcher(ExampleException("foo"))) == 'exc_info=ExampleException("foo")'
     assert repr(exc_info_matcher(None)) == "exc_info=None"
 
 
