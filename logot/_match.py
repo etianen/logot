@@ -8,8 +8,8 @@ from logot._capture import Captured
 
 class Matcher(ABC):
     """
-    Protocol used for matching :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with an ``*args``
-    custom matcher.
+    Protocol used for matching :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with custom
+    ``*matchers``.
 
     Subclasses should typically be a :func:`dataclasses.dataclass` with ``frozen=True`` to ensure immutability and
     provide an automatic ``__repr__`` implementation.

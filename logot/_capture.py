@@ -68,7 +68,7 @@ class Captured:
     The captured log record.
 
     This is an *optional* log capture field. When provided, it allows matching
-    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with an ``*args`` custom matcher.
+    :doc:`log patterns </log-pattern-matching>` from :func:`logged.log` with custom ``*matchers``.
 
     .. note::
 

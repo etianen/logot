@@ -153,6 +153,7 @@ def critical(msg: Wildcard[str], *, exc_info: Wildcard[ExcInfo] = ..., name: Wil
 def _log(
     level_matcher: Matcher,
     msg: Wildcard[str],
+    matchers: tuple[Matcher, ...],
     *,
     exc_info: Wildcard[ExcInfo],
     name: Wildcard[Name],
