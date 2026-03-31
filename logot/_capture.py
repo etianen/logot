@@ -90,6 +90,4 @@ def capture_exc_info(
         return exc_info
     if exc_info is True:
         exc_info = sys.exc_info()
-    if exc_info[1] is None:  # pragma: no cover
-        return None
     return exc_info[1]
