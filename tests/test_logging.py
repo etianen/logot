@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 from logot import Logot, logged
+from tests import ExampleException
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,27 @@ def test_capture(logot: Logot) -> None:
 def test_capture_levelno(logot: Logot) -> None:
     logger.log(logging.INFO, "foo bar")
     logot.assert_logged(logged.log(logging.INFO, "foo bar"))
+
+
+def test_capture_exc_info_none(logot: Logot) -> None:
+    logger.info("foo bar")
+    logot.assert_logged(logged.info("foo bar", exc_info=None))
+
+
+def test_capture_exc_info_true(logot: Logot) -> None:
+    try:
+        raise ExampleException("foo")
+    except Exception:
+        logger.exception("foo bar", exc_info=True)
+    logot.assert_logged(logged.error("foo bar", exc_info=True))
+
+
+def test_capture_exc_info_exception(logot: Logot) -> None:
+    try:
+        raise ExampleException("foo")
+    except Exception:
+        logger.exception("foo bar", exc_info=True)
+    logot.assert_logged(logged.error("foo bar", exc_info=ExampleException("foo")))
 
 
 def test_capture_name(logot: Logot) -> None:
