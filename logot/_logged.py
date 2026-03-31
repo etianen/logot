@@ -82,6 +82,7 @@ def log(
 
     :param level: A log level name (e.g. ``"DEBUG"``) or numeric level (e.g. :data:`logging.DEBUG`).
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
@@ -100,6 +101,7 @@ def debug(
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
@@ -118,6 +120,7 @@ def info(
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
@@ -136,6 +139,7 @@ def warning(
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
@@ -154,6 +158,7 @@ def error(
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
@@ -172,6 +177,7 @@ def critical(
     ``msg``.
 
     :param msg: A log :doc:`message pattern </log-message-matching>`.
+    :param matchers: Optional additional custom :class:`logot.Matcher` instances.
     :param exc_info: An optional exception to match. If :data:`True`, matches *any* exception. If :data:`False` or
         :data:`None`, matches *no* exception.
     :param name: An optional logger name.
