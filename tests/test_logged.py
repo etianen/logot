@@ -83,13 +83,12 @@ def test_matcher_logged_reduce_exc_info_false() -> None:
 
 
 def test_matcher_logged_reduce_exc_info_exception() -> None:
-    ex = ExampleException("foo")
     assert_reduce(
-        logged.log("INFO", "foo bar", exc_info=ex),
+        logged.log("INFO", "foo bar", exc_info=ExampleException("foo")),
         Captured("INFO", "foo bar"),  # Non-matching (needs exc_info).
         Captured("INFO", "foo bar", exc_info=None),  # Non-matching (needs not-None exc_info).
         Captured("INFO", "foo bar", exc_info=ExampleException("bar")),  # Non-matching (needs matching exc_info).
-        Captured("INFO", "foo bar", exc_info=ex),  # Matching.
+        Captured("INFO", "foo bar", exc_info=ExampleException("foo")),  # Matching.
     )
 
 
