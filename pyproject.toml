@@ -13,7 +13,7 @@ logot = "logot._pytest"
 
 [project.optional-dependencies]
 loguru = ["loguru>=0.6,<0.8"]
-pytest = ["pytest>=7,<10"]
+pytest = ["pytest>=9.0.3,<10"]
 structlog = ["structlog>=23.3,<26"]
 trio = ["trio>=0.22,<0.34"]
 
