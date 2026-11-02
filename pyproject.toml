@@ -15,7 +15,7 @@ logot = "logot._pytest"
 loguru = ["loguru>=0.6,<0.8"]
 pytest = ["pytest>=7,<10"]
 structlog = ["structlog>=23.3,<27"]
-trio = ["trio>=0.22,<0.36"]
+trio = ["trio>=0.23,<0.36"]
 
 [project.urls]
 homepage = "https://logot.readthedocs.io"

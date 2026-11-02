@@ -29,8 +29,6 @@ jobs:
           - lib-versions: "structlog~=24.1.0"
           - lib-versions: "structlog~=25.3.0"
           - lib-versions: "structlog~=26.1.0"
-          - lib-versions: "trio~=0.22.0"
-            python-version: "3.12"
           - lib-versions: "trio~=0.23.0"
             python-version: "3.12"
           - lib-versions: "trio~=0.24.0"
