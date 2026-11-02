@@ -42,14 +42,13 @@ packages = [{ include = "logot" }]
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.14.0"
-furo = { version = "*", python = "^3.12" }
-hypothesis = "^6.155.3"
-mypy = "^2.1.0"
-ruff = "^0.15.17"
-sphinx = { version = "9.1.0", python = "^3.12" }
-sphinx-autobuild = { version = "*", python = "^3.12" }
-trio-typing = "^0.10.0"
+coverage = "^7.17.0"
+furo = { version = "*", python = "^3.13" }
+hypothesis = "^6.170.14"
+mypy = "^2.4.1"
+ruff = "^0.17.3"
+sphinx = { version = "9.2.0", python = "^3.13" }
+sphinx-autobuild = { version = "*", python = "^3.13" }
 
 [tool.coverage.run]
 source = ["logot", "tests"]
