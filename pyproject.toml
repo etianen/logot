@@ -1,6 +1,6 @@
 [project]
 name = "logot"
-version = "1.7.0"
+version = "1.8.0"
 description = "Test whether your code is logging correctly 🪵"
 authors = [{ name = "Dave Hall", email = "dave@etianen.com" }]
 license = "MIT"
@@ -14,8 +14,8 @@ logot = "logot._pytest"
 [project.optional-dependencies]
 loguru = ["loguru>=0.6,<0.8"]
 pytest = ["pytest>=7,<10"]
-structlog = ["structlog>=23.3,<26"]
-trio = ["trio>=0.22,<0.34"]
+structlog = ["structlog>=23.3,<27"]
+trio = ["trio>=0.23,<0.36"]
 
 [project.urls]
 homepage = "https://logot.readthedocs.io"
@@ -39,17 +39,16 @@ classifiers = [
 packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.14.0"
-furo = { version = "*", python = "^3.12" }
-hypothesis = "^6.155.3"
-mypy = "^2.1.0"
-ruff = "^0.15.17"
-sphinx = { version = "9.1.0", python = "^3.12" }
-sphinx-autobuild = { version = "*", python = "^3.12" }
-trio-typing = "^0.10.0"
+coverage = "^7.17.0"
+furo = { version = "*", python = "^3.13" }
+hypothesis = "^6.170.14"
+mypy = "^2.4.1"
+ruff = "^0.17.3"
+sphinx = { version = "9.2.0", python = "^3.13" }
+sphinx-autobuild = { version = "*", python = "^3.13" }
 
 [tool.coverage.run]
 source = ["logot", "tests"]
@@ -75,7 +74,7 @@ addopts = "--tb=native --import-mode=importlib"
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
 line-length = 120
-target-version = "py39"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]

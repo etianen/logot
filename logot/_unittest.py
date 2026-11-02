@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, ClassVar
+from collections.abc import Callable
+from typing import ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Capturer, Logot
@@ -61,10 +62,7 @@ class LogotTestCase(TestCase):
             timeout=self.__class__.logot_timeout,
             async_waiter=self.__class__.logot_async_waiter,
         )
-        # TODO: Use `TestCase.enterContext()` when we only need to support Python 3.11+.
-        ctx = self.logot.capturing(level=self.logot_level, name=self.logot_name)
-        ctx.__enter__()
-        self.addCleanup(ctx.__exit__, None, None, None)
+        self.enterContext(self.logot.capturing(level=self.logot_level, name=self.logot_name))
 
     def run(self, result: TestResult | None = None) -> TestResult | None:
         self._logot_setup()
