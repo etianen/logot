@@ -28,6 +28,7 @@ jobs:
           - lib-versions: "structlog~=23.3.0"
           - lib-versions: "structlog~=24.1.0"
           - lib-versions: "structlog~=25.3.0"
+          - lib-versions: "structlog~=26.1.0"
           - lib-versions: "trio~=0.22.0"
           - lib-versions: "trio~=0.23.0"
           - lib-versions: "trio~=0.24.0"
@@ -40,6 +41,8 @@ jobs:
           - lib-versions: "trio~=0.31.0"
           - lib-versions: "trio~=0.32.0"
           - lib-versions: "trio~=0.33.0"
+          - lib-versions: "trio~=0.34.0"
+          - lib-versions: "trio~=0.35.0"
       fail-fast: false
     env:
       COVERAGE_FILE: .coverage.${{ matrix.python-version }}${{ matrix.lib-versions }}

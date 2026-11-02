@@ -1880,4 +1880,4 @@ trio = ["trio"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "ff972ac6f20fd112e1d795e0f54af69cc00286fa2566dc1413732f953263d0c2"
+content-hash = "3927070d310ab99b0dc123806d33e4f208204720d9fb5de3dc18077043ad3e6f"
