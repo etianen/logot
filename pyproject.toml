@@ -39,7 +39,7 @@ classifiers = [
 packages = [{ include = "logot" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.14.0"
@@ -75,7 +75,7 @@ addopts = "--tb=native --import-mode=importlib"
 [tool.ruff]
 include = ["docs/**/*.py", "logot/**/*.py", "tests/**/*.py"]
 line-length = 120
-target-version = "py39"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP"]

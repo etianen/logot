@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, ClassVar
+from collections.abc import Callable
+from typing import ClassVar
 from unittest import TestCase, TestResult
 
 from logot._logot import Capturer, Logot

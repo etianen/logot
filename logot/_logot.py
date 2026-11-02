@@ -3,9 +3,10 @@ from __future__ import annotations
 from _thread import allocate_lock
 from abc import ABC, abstractmethod
 from collections import deque
+from collections.abc import Callable
 from contextlib import AbstractContextManager
 from types import TracebackType
-from typing import Any, Callable, ClassVar, Generic
+from typing import Any, ClassVar, Generic
 
 from logot._capture import Captured
 from logot._import import LazyCallable

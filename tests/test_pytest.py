@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from contextvars import ContextVar
 from shlex import quote
-from typing import Any, Callable
+from typing import Any
 
 import pytest
 
