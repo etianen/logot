@@ -42,7 +42,7 @@ packages = [{ include = "logot" }]
 python = "^3.11"
 
 [tool.poetry.group.dev.dependencies]
-coverage = "^7.17.0"
+coverage = "^7.17.2"
 furo = { version = "*", python = "^3.13" }
 hypothesis = "^6.170.14"
 mypy = "^2.4.1"
